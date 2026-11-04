@@ -1,0 +1,11 @@
+{
+  "application": "보안길잡이 AI",
+  "version": "0.4-krds-20261026",
+  "mode": "browser-only-simulation",
+  "source_git_blob_sha1": {
+    "engine.js": "31ea2aa9f66f49bafdb488de9d9a8344f465cc26",
+    "styles.css": "279558d710a2f9daf7b2abe13ded091d807c9493",
+    "app.js": "a740f558da412b07d59de1971f35843c04450df0"
+  },
+  "notice": "Synthetic demo data only. No real LLM, authentication, official approval, or firewall changes."
+}

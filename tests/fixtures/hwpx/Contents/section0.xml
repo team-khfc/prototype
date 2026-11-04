@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hs:sec xmlns:hs="http://www.hancom.co.kr/hwpml/2011/section" xmlns:hp="http://www.hancom.co.kr/hwpml/2011/paragraph">
+  <hp:p><hp:run><hp:t>파일등록 시험 방화벽 신청서</hp:t></hp:run></hp:p>
+  <hp:p><hp:run><hp:t>* 사업명</hp:t></hp:run></hp:p>
+  <hp:p><hp:run><hp:t>* 출발지 IP</hp:t></hp:run></hp:p>
+  <hp:p><hp:run><hp:t>* 목적지 IP</hp:t></hp:run></hp:p>
+  <hp:p><hp:run><hp:t>* 허용 포트</hp:t></hp:run></hp:p>
+  <hp:p><hp:run><hp:t>* 업무 영향도</hp:t></hp:run></hp:p>
+</hs:sec>

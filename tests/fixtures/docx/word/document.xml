@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    <w:p><w:r><w:t>파일등록 시험 보안성 검토서</w:t></w:r></w:p>
+    <w:p><w:r><w:t>* 프로젝트명</w:t></w:r></w:p>
+    <w:p><w:r><w:t>* 운영 환경</w:t></w:r></w:p>
+    <w:p><w:r><w:t>* 개인정보 처리 여부</w:t></w:r></w:p>
+    <w:p><w:r><w:t>* 보안 대책</w:t></w:r></w:p>
+    <w:p><w:r><w:t>비고</w:t></w:r></w:p>
+  </w:body>
+</w:document>

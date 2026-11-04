@@ -1,0 +1,13 @@
+{
+  "name": "secureflow-2026-prototype",
+  "version": "0.2.0",
+  "private": true,
+  "description": "기관별 양식과 처리 절차를 설정하는 보안길잡이 AI 정적 프로토타입",
+  "scripts": {
+    "check": "node --check docs/app.js && node --check docs/config-engine.js && node --check docs/admin-ui.js",
+    "test": "node --test --test-isolation=none tests/config-engine.test.cjs"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

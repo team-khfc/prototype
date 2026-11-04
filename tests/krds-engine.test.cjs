@@ -1,0 +1,44 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const E=require('../docs/engine.js');
+function begin(at='staff',cfg=E.config('a')){return E.sampleProject(cfg,at);}
+function fill(p,role){const values={};for(const f of E.activeFields(p).filter(f=>f.owner===role))values[f.key]=E.SAMPLE_STAFF[f.key]||'확인한 모의 내용';E.setAnswers(p,values,role);}
+function approveAll(p,final=false){for(const t of E.tasks(p,final))E.markReview(p,t.id,t.role,'검증용',final);}
+test('기관 A 순차, B 병렬 기본 절차',()=>{assert.equal(E.config('a').workflow[0].roles.length,1);assert.equal(E.config('b').workflow[0].roles.length,2);});
+test('신청 설정은 깊은 복사로 고정',()=>{const c=E.config('a'),p=E.createProject(c);c.fields[0].label='변경';assert.notEqual(p.config.fields[0].label,'변경');});
+test('설정 게시 시 기존 신청 버전 유지',()=>{const s=E.createState(false),p=E.createProject(s.orgs.a.published);s.orgs.a.draft.phaseNames[0]='기관 전용';E.publish(s.orgs.a,'admin');assert.equal(p.config.version,1);assert.equal(s.orgs.a.published.version,2);assert.notEqual(p.config.phaseNames[0],'기관 전용');});
+test('권한 없는 역할의 설정 게시 차단',()=>{const s=E.createState(false);assert.throws(()=>E.publish(s.orgs.a,'applicant'));});
+test('미확인 양식 매핑의 게시 차단',()=>{const s=E.createState(false);s.orgs.a.draft.mappingPending=true;assert.throws(()=>E.publish(s.orgs.a,'security'));});
+test('기본정보 누락 시 협의 요청 차단',()=>{const p=E.createProject(E.config('a'));assert.throws(()=>E.sendToStaff(p,'applicant'));});
+test('미확정 답변으로 사전 협의는 요청 가능',()=>{const p=begin('intake');E.setAnswers(p,{hosting:'확인 필요'},'applicant');E.sendToStaff(p,'applicant');assert.equal(p.phase,2);});
+test('신청자가 전문 담당 필드를 수정할 수 없음',()=>{const p=begin('intake');assert.throws(()=>E.setAnswers(p,{sourceIp:'192.0.2.1'},'applicant'));});
+test('다른 담당자의 일반 필드 수정 차단',()=>{const p=begin();assert.throws(()=>E.setAnswers(p,{sourceIp:'192.0.2.1'},'security'));});
+test('순차 검토의 후행 단계 차단',()=>{const p=begin();fill(p,'security');assert.throws(()=>E.markReview(p,'security:security','security'));});
+test('담당자 필수 기술정보 누락 시 협의 차단',()=>{const p=begin();assert.throws(()=>E.markReview(p,'infra:infra','infra'));});
+test('보안 정보 저장 시 이미 완료한 선행 인프라 협의 보존',()=>{const p=begin();fill(p,'infra');E.markReview(p,'infra:infra','infra');fill(p,'security');assert.equal(E.tasks(p)[0].done,true);E.markReview(p,'security:security','security');assert.equal(E.tasks(p)[1].done,true);});
+test('선행 인프라 변경은 후속 보안 협의 무효화',()=>{const p=begin();fill(p,'infra');fill(p,'security');approveAll(p);E.setAnswers(p,{port:'8443'},'infra');assert.ok(E.tasks(p).every(t=>!t.done));});
+test('병렬 그룹은 양쪽 완료 필요',()=>{const p=begin('staff',E.config('b'));fill(p,'infra');fill(p,'security');E.markReview(p,'parallel:infra','infra');assert.throws(()=>E.sendDraft(p,'infra'));E.markReview(p,'parallel:security','security');E.sendDraft(p,'security');assert.equal(p.phase,3);});
+test('미확정 조건은 생략하지 않고 보류',()=>{const p=begin('intake',E.config('b'));E.setAnswers(p,{personal:'확인 필요'},'applicant');E.sendToStaff(p,'applicant');assert.ok(E.tasks(p).some(t=>t.pending&&t.role==='privacy'));});
+test('개인정보 없음은 해당 조건 검토 생략',()=>{const p=begin('staff',E.config('b'));assert.ok(!E.tasks(p).some(t=>t.role==='privacy'));});
+test('개인정보 있음은 추가 검토 포함',()=>{const p=begin('intake',E.config('b'));E.setAnswers(p,{personal:'포함'},'applicant');E.sendToStaff(p,'applicant');assert.ok(E.tasks(p).some(t=>t.role==='privacy'));});
+test('완료 전 초안 전달 차단',()=>{assert.throws(()=>E.sendDraft(begin(),'security'));});
+test('초안은 하나의 공통 정보에서 생성',()=>{const p=begin('supplement');const f=p.documents.find(d=>d.id==='firewall');assert.equal(f.rows.find(r=>r.label==='목적지 포트').value,E.answer(p,'port'));});
+test('보완 답변 미작성은 최종 제출 차단',()=>{const p=begin('supplement');assert.throws(()=>E.submit(p,'applicant',p.documents.map(d=>d.id)));});
+test('서류별 확인 누락은 최종 제출 차단',()=>{const p=begin('supplement');E.respond(p,p.requests[0].id,'기간과 처리계획 확인','applicant');assert.throws(()=>E.submit(p,'applicant',['firewall']));});
+test('필수값이 미확정인 최종 제출 차단',()=>{const p=begin('supplement');E.respond(p,p.requests[0].id,'확인','applicant');E.setAnswers(p,{db:'확인 필요'},'applicant');assert.throws(()=>E.submit(p,'applicant',p.documents.map(d=>d.id)));});
+test('보완 정보 변경은 문서 최종 확인 해제',()=>{const p=begin('supplement');p.confirmedDocs=['firewall','security'];E.setAnswers(p,{usePeriod:'2026-12-01까지'},'applicant');assert.equal(p.confirmedDocs.length,0);});
+test('최종 제출본은 이후 변경과 분리된 스냅샷',()=>{const p=begin('final'),before=JSON.stringify(p.submissions[0]);E.addRequest(p,'security','기간을 다시 확인');E.setAnswers(p,{usePeriod:'2026-12-01까지'},'applicant');assert.equal(JSON.stringify(p.submissions[0]),before);assert.equal(p.phase,3);});
+test('최종 제출 후 직접 정보 수정 차단',()=>{const p=begin('final');assert.throws(()=>E.setAnswers(p,{port:'80'},'infra'));});
+test('재보완 요청 시 최종 검토와 적용 상태 초기화',()=>{const p=begin('final');approveAll(p,true);E.apply(p,'firewall','infra','모의 적용');E.addRequest(p,'security','추가 확인');assert.equal(p.phase,3);assert.equal(Object.keys(p.finalReviews).length,0);assert.equal(Object.keys(p.applications).length,0);});
+test('사용자 보완 중 기술정보 재확인 경로',()=>{const p=begin('supplement');E.returnToStaff(p,'applicant');assert.equal(p.phase,2);assert.ok(E.tasks(p).every(t=>!t.done));});
+test('최종 검토 완료 전 적용 차단',()=>{const p=begin('final');assert.throws(()=>E.apply(p,'firewall','infra','모의 적용'));});
+test('문서 적용 담당 역할 일치 검사',()=>{const p=begin('final');approveAll(p,true);assert.throws(()=>E.apply(p,'firewall','security','잘못된 담당'));});
+test('적용 결과 근거 없으면 완료 불가',()=>{const p=begin('final');approveAll(p,true);assert.throws(()=>E.apply(p,'firewall','infra',''));});
+test('모든 문서 적용 기록 후에만 전체 완료',()=>{const p=begin('final');approveAll(p,true);E.apply(p,'firewall','infra','시험 설정 적용 기록');assert.equal(p.completed,false);E.apply(p,'security','security','모의 검토결과 보관');assert.equal(p.completed,true);});
+test('중복 협의 완료 기록 차단',()=>{const p=begin();fill(p,'infra');E.markReview(p,'infra:infra','infra');assert.throws(()=>E.markReview(p,'infra:infra','infra'));});
+test('등록 단계 추출 결과는 자동 확정되지 않음',()=>{const p=E.createProject(E.config('a'),E.SAMPLE_INFO);E.extract(p);assert.ok(p.suggestions.length>0);assert.equal(E.answer(p,'db'),'');});
+test('명시되지 않은 IP는 추출하지 않음',()=>{const p=E.createProject(E.config('a'),E.SAMPLE_INFO);assert.ok(!E.extract(p).some(s=>['sourceIp','destIp','port'].includes(s.key)));});
+test('원문 변경 시 이전 원문 기반 답변 재확인',()=>{const p=E.createProject(E.config('a'),E.SAMPLE_INFO);E.extract(p);E.acceptSuggestions(p,'applicant');assert.equal(E.answer(p,'db'),'PostgreSQL');E.updateInfo(p,{description:'데이터베이스를 사용하지 않는 새로운 설명입니다.'},'applicant');assert.equal(E.answer(p,'db'),'');});
+test('기관 전용 질문은 새 신청과 양식에 반영',()=>{const c=E.config('a');c.fields.push(E.field('impact','업무 영향도','applicant',1));c.templates[1].fields.push('impact');const p=E.createProject(c,E.SAMPLE_INFO);assert.ok(E.missing(p,1).some(f=>f.key==='impact'));E.setAnswers(p,{impact:'낮음'},'applicant');E.makeDocuments(p);assert.equal(p.documents[1].rows.find(r=>r.label==='업무 영향도').value,'낮음');});
+test('데모 프로젝트 이름과 문서 이름의 일치',()=>{const s=E.createState();for(const p of s.projects)for(const d of p.documents)assert.equal(d.rows[0].value,p.name);});
+test('조건에 미해당인 방화벽 문서는 생성하지 않음',()=>{const p=begin('intake');E.setAnswers(p,{external:'없음'},'applicant');E.makeDocuments(p);assert.equal(p.documents.length,1);});
+test('설정의 보안 검토 필수 그룹 검사',()=>{const c=E.config('a');c.workflow=c.workflow.filter(g=>g.id!=='security');assert.ok(E.validateConfig(c).length>0);});
+test('원본 설정 기본값은 유효',()=>{assert.deepEqual(E.validateConfig(E.config('a')),[]);assert.deepEqual(E.validateConfig(E.config('b')),[]);});
