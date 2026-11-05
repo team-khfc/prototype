@@ -1,13 +1,24 @@
 {
-  "name": "secureflow-2026-prototype",
-  "version": "0.2.0",
+  "name": "secureflow-wide-prototype",
+  "version": "1.0.0",
   "private": true,
-  "description": "기관별 양식과 처리 절차를 설정하는 보안길잡이 AI 정적 프로토타입",
+  "type": "module",
   "scripts": {
-    "check": "node --check docs/app.js && node --check docs/config-engine.js && node --check docs/admin-ui.js",
-    "test": "node --test --test-isolation=none tests/config-engine.test.cjs"
+    "build": "next build --webpack",
+    "typecheck": "tsc --noEmit",
+    "dev:web": "node scripts/dev.mjs",
+    "test": "node scripts/test-domain.mjs"
   },
-  "engines": {
-    "node": ">=24"
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "lucide-react": "1.31.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   }
 }

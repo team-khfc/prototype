@@ -1,0 +1,9 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+spring:
+  application:
+    name: secureflow-prototype-api
+  jackson:
+    default-property-inclusion: non_null
+# Explicit --spring.profiles.active=demo is required to expose demo endpoints.
