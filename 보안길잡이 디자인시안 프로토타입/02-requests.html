@@ -1,0 +1,1272 @@
+<!doctype html>
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>협의 요청함 · 보안길잡이 디자인 편집본</title>
+    <link href="assets/vendor/krds/css/token/krds_tokens.css" rel="stylesheet" />
+    <link href="assets/css/tokens.css" rel="stylesheet" />
+    <link href="assets/css/styles.css" rel="stylesheet" />
+    <link href="assets/css/workspace.css" rel="stylesheet" />
+    <link href="assets/css/handoff.css" rel="stylesheet" />
+    <script defer="" src="assets/js/sample-data.js"></script>
+    <script defer="" src="assets/js/interactions.js"></script>
+  </head>
+  <body data-base="" data-screen="02-requests.html">
+    <a class="skip-link" href="#main-content">본문 바로가기</a>
+    <div class="demo-strip">
+      <div>디자인 편집본 · 합성 데이터 · 실제 저장·AI·기관 전송 없음</div>
+      <a download="" href="docs/design.md"
+        >design.md v3.0
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-download"
+          fill="none"
+          height="13"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewbox="0 0 24 24"
+          width="13"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M12 15V3"></path>
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <path d="m7 10 5 5 5-5"></path></svg
+      ></a>
+    </div>
+    <header class="app-header">
+      <div class="header-inner">
+        <button
+          aria-controls="side-nav"
+          aria-expanded="false"
+          aria-label="메뉴 열기"
+          class="icon-button mobile-nav"
+          data-action="menu"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-panel-left-open"
+            fill="none"
+            height="23"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+            width="23"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="18" rx="2" width="18" x="3" y="3"></rect>
+            <path d="M9 3v18"></path>
+            <path d="m14 9 3 3-3 3"></path>
+          </svg></button
+        ><a class="brand" href="01-workspace.html"
+          ><span class="brand-mark"
+            ><svg
+              aria-hidden="true"
+              class="lucide lucide-shield-check"
+              fill="none"
+              height="27"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="27"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+              ></path>
+              <path d="m9 12 2 2 4-4"></path></svg></span
+          ><strong>보안길잡이 <em>AI</em></strong></a
+        >
+        <div class="header-divider"></div>
+        <span class="header-description">안전한 서비스를 위한 첫걸음</span>
+        <div class="header-tools">
+          <button class="text-button screen-setting" data-action="display" type="button">
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-accessibility"
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="16" cy="4" r="1"></circle>
+              <path d="m18 19 1-7-6 1"></path>
+              <path d="m5 8 3-3 5.5 3-2.36 3.5"></path>
+              <path d="M4.24 14.5a5 5 0 0 0 6.88 6"></path>
+              <path d="M13.76 17.5a5 5 0 0 0-6.88-6"></path></svg
+            >화면 설정
+          </button>
+          <div class="role-picker">
+            <label for="role">화면 역할</label
+            ><select aria-label="화면 역할" id="role">
+              <option selected="" value="SECURITY">정보보안</option>
+              <option value="INFRA">ICT인프라</option>
+              <option value="APPLICANT">신청자</option>
+              <option value="ADMIN">기관 관리자</option>
+            </select>
+          </div>
+          <span class="user-avatar">김</span>
+        </div>
+      </div>
+    </header>
+    <div class="app-shell">
+      <aside class="sidebar" id="side-nav">
+        <div class="institution">
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-building2 lucide-building-2"
+            fill="none"
+            height="19"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewbox="0 0 24 24"
+            width="19"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M10 12h4"></path>
+            <path d="M10 8h4"></path>
+            <path d="M14 21v-3a2 2 0 0 0-4 0v3"></path>
+            <path
+              d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"
+            ></path>
+            <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
+          </svg>
+          <div><strong>디지털혁신기관</strong><small>예시 기관 · 업무 공간</small></div>
+        </div>
+        <div class="nav-label">협의 업무</div>
+        <nav aria-label="주요 메뉴">
+          <a class="" href="01-workspace.html"
+            ><svg
+              aria-hidden="true"
+              class="lucide lucide-layout-dashboard"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect height="9" rx="1" width="7" x="3" y="3"></rect>
+              <rect height="5" rx="1" width="7" x="14" y="3"></rect>
+              <rect height="9" rx="1" width="7" x="14" y="12"></rect>
+              <rect height="5" rx="1" width="7" x="3" y="16"></rect></svg
+            ><span>업무 한눈에 보기</span></a
+          ><a aria-current="page" class="active" href="02-requests.html"
+            ><svg
+              aria-hidden="true"
+              class="lucide lucide-inbox"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+              <path
+                d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+              ></path></svg
+            ><span>협의 요청함</span><b>12</b></a
+          ><a class="" href="12-documents.html"
+            ><svg
+              aria-hidden="true"
+              class="lucide lucide-file-text"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+              ></path>
+              <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+              <path d="M10 9H8"></path>
+              <path d="M16 13H8"></path>
+              <path d="M16 17H8"></path></svg
+            ><span>문서함</span></a
+          ><a href="16-components.html">컴포넌트 가이드</a>
+        </nav>
+        <div class="sidebar-help">
+          <span class="help-symbol"
+            ><svg
+              aria-hidden="true"
+              class="lucide lucide-shield-check"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+              ></path>
+              <path d="m9 12 2 2 4-4"></path></svg
+          ></span>
+          <h3>보안 협의, 함께 해결해요.</h3>
+          <p>준비부터 제출까지<br />필요한 절차를 안내합니다.</p>
+          <button class="text-button" data-action="help" type="button">
+            이용 안내<svg
+              aria-hidden="true"
+              class="lucide lucide-arrow-up-right"
+              fill="none"
+              height="16"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M7 7h10v10"></path>
+              <path d="M7 17 17 7"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="sidebar-bottom">
+          <button class="text-button" data-action="help" type="button">
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-circle-question-mark"
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <path d="M12 17h.01"></path></svg
+            >도움말·시연 설정</button
+          ><a href="index.html">전체 화면·편집 안내</a
+          ><small>KRDS 참고 · 프로젝트 확장<br />디자인 기준 v3.0</small>
+        </div>
+      </aside>
+      <div class="main-column">
+        <main id="main-content" tabindex="-1">
+          <!-- 이 영역의 HTML을 직접 편집하세요. 다른 페이지의 동일 컴포넌트도 함께 확인하세요. -->
+          <div class="sf-heading">
+            <div>
+              <h1 id="page-title" tabindex="-1">협의 요청함</h1>
+              <p>배정된 보안 협의를 확인하고, 필요한 검토를 이어가세요.</p>
+            </div>
+            <div class="sf-heading-actions">
+              <span class="heading-date">기준일 2026. 11. 05.</span>
+            </div>
+          </div>
+          <div class="stat-grid">
+            <button
+              aria-pressed="false"
+              class="stat-card"
+              data-action="phase"
+              data-phase="사전 협의 중"
+              type="button"
+            >
+              <div class="row-between">
+                <span>검토할 협의</span
+                ><span class="stat-icon blue"
+                  ><svg
+                    aria-hidden="true"
+                    class="lucide lucide-inbox"
+                    fill="none"
+                    height="22"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="22"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                    <path
+                      d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"
+                    ></path></svg
+                ></span>
+              </div>
+              <strong>07<small>건</small></strong>
+              <p>
+                담당자 확인이 필요해요<svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-right"
+                  fill="none"
+                  height="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewbox="0 0 24 24"
+                  width="17"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </p></button
+            ><button
+              aria-pressed="false"
+              class="stat-card"
+              data-action="phase"
+              data-phase="보완 중"
+              type="button"
+            >
+              <div class="row-between">
+                <span>보완 중</span
+                ><span class="stat-icon amber"
+                  ><svg
+                    aria-hidden="true"
+                    class="lucide lucide-message-square-text"
+                    fill="none"
+                    height="22"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="22"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"
+                    ></path>
+                    <path d="M7 11h10"></path>
+                    <path d="M7 15h6"></path>
+                    <path d="M7 7h8"></path></svg
+                ></span>
+              </div>
+              <strong>02<small>건</small></strong>
+              <p>
+                추가 정보를 기다려요<svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-right"
+                  fill="none"
+                  height="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewbox="0 0 24 24"
+                  width="17"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </p></button
+            ><button
+              aria-pressed="false"
+              class="stat-card"
+              data-action="phase"
+              data-phase="제출 준비"
+              type="button"
+            >
+              <div class="row-between">
+                <span>제출 준비</span
+                ><span class="stat-icon green"
+                  ><svg
+                    aria-hidden="true"
+                    class="lucide lucide-file-check-corner"
+                    fill="none"
+                    height="22"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="22"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10.5 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v6"
+                    ></path>
+                    <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                    <path d="m14 20 2 2 4-4"></path></svg
+                ></span>
+              </div>
+              <strong>03<small>건</small></strong>
+              <p>
+                사전 협의를 마쳤어요<svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-right"
+                  fill="none"
+                  height="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewbox="0 0 24 24"
+                  width="17"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </p></button
+            ><button
+              aria-pressed="false"
+              class="stat-card"
+              data-action="phase"
+              data-phase="제출됨"
+              type="button"
+            >
+              <div class="row-between">
+                <span>제출됨</span
+                ><span class="stat-icon gray"
+                  ><svg
+                    aria-hidden="true"
+                    class="lucide lucide-clock3 lucide-clock-3"
+                    fill="none"
+                    height="22"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="22"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6h4"></path></svg
+                ></span>
+              </div>
+              <strong>00<small>건</small></strong>
+              <p>
+                제출본을 확인하세요<svg
+                  aria-hidden="true"
+                  class="lucide lucide-arrow-right"
+                  fill="none"
+                  height="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewbox="0 0 24 24"
+                  width="17"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </p>
+            </button>
+          </div>
+          <section class="sf-panel list-panel">
+            <div class="list-panel-head">
+              <h2>전체 협의 목록</h2>
+              <div class="segmented">
+                <button
+                  aria-pressed="true"
+                  class="selected"
+                  data-action="field-filter"
+                  data-field="전체"
+                  type="button"
+                >
+                  전체 분야</button
+                ><button
+                  aria-pressed="false"
+                  class=""
+                  data-action="field-filter"
+                  data-field="SECURITY"
+                  type="button"
+                >
+                  정보보안 미완료</button
+                ><button
+                  aria-pressed="false"
+                  class=""
+                  data-action="field-filter"
+                  data-field="INFRA"
+                  type="button"
+                >
+                  ICT인프라 미완료
+                </button>
+              </div>
+            </div>
+            <div class="filter-area">
+              <div class="filter-grid">
+                <div class="filter-field">
+                  <label for="phase">신청 상태</label
+                  ><select id="phase">
+                    <option selected="">전체</option>
+                    <option>작성 중</option>
+                    <option>사전 협의 중</option>
+                    <option>보완 중</option>
+                    <option>제출 준비</option>
+                    <option>제출됨</option>
+                  </select>
+                </div>
+                <div class="filter-field period">
+                  <label for="date-start">접수 기간 (YYYY-MM-DD)</label>
+                  <div>
+                    <input aria-label="접수 시작일" id="date-start" type="date" value="" /><span
+                      >~</span
+                    ><input aria-label="접수 종료일" type="date" value="" />
+                  </div>
+                </div>
+                <form class="filter-field search-field">
+                  <label for="list-search">사업명·신청번호·신청자·부서 검색</label>
+                  <div>
+                    <span class="search-input"
+                      ><svg
+                        aria-hidden="true"
+                        class="lucide lucide-search"
+                        fill="none"
+                        height="19"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        viewbox="0 0 24 24"
+                        width="19"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="m21 21-4.34-4.34"></path>
+                        <circle cx="11" cy="11" r="8"></circle></svg
+                      ><input
+                        id="list-search"
+                        placeholder="검색어를 입력해 주세요"
+                        value="" /></span
+                    ><button class="button" data-action="search" type="submit">검색</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="table-toolbar">
+              <p role="status">검색 결과 <strong>12</strong>건</p>
+              <div>
+                <button class="text-button" data-action="download" type="button">
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-download"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M12 15V3"></path>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <path d="m7 10 5 5 5-5"></path></svg
+                  >조회 결과 다운로드 <span class="download-meta">CSV · 1.3KB</span></button
+                ><select aria-label="목록 정렬">
+                  <option selected="">기한순</option>
+                  <option>최신 접수순</option>
+                </select>
+              </div>
+            </div>
+            <div
+              aria-label="협의 목록, 좁은 화면에서 가로 스크롤"
+              class="table-scroll"
+              role="region"
+              tabindex="0"
+            >
+              <table class="sf-table">
+                <caption class="sr-only">
+                  보안 협의 검색 결과 12건
+                </caption>
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell" scope="col">
+                      <label class="table-check"
+                        ><input aria-label="현재 페이지 전체 선택" type="checkbox"
+                      /></label>
+                    </th>
+                    <th scope="col">사업명 / 신청번호</th>
+                    <th scope="col">신청자 / 부서</th>
+                    <th scope="col">신청 상태</th>
+                    <th scope="col">담당 분야</th>
+                    <th aria-sort="ascending" scope="col">
+                      <button class="th-sort" data-action="notice" type="button">
+                        검토 기한<svg
+                          aria-hidden="true"
+                          class="lucide lucide-arrow-up-down"
+                          fill="none"
+                          height="15"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="15"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m21 16-4 4-4-4"></path>
+                          <path d="M17 20V4"></path>
+                          <path d="m3 8 4-4 4 4"></path>
+                          <path d="M7 4v16"></path>
+                        </svg>
+                      </button>
+                    </th>
+                    <th scope="col">상세</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="차세대 업무포털 구축 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="07-security-review.html"
+                        >차세대 업무포털 구축<span class="urgent-label">긴급</span></a
+                      ><small class="id-text">SF-2026-0123 · 신규 구축</small>
+                    </td>
+                    <td><span>이민주</span><small>디지털혁신부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="urgent-date">2026. 11. 05</span
+                      ><small class="urgent-date">우선 확인</small>
+                    </td>
+                    <td>
+                      <a
+                        aria-label="차세대 업무포털 구축 상세 보기"
+                        class="row-link"
+                        href="07-security-review.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="모바일 현장점검 서비스 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0124.html">모바일 현장점검 서비스</a
+                      ><small class="id-text">SF-2026-0124 · 서비스 연계</small>
+                    </td>
+                    <td><span>박서윤</span><small>현장지원부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 06</span></td>
+                    <td>
+                      <a
+                        aria-label="모바일 현장점검 서비스 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0124.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="데이터 분석 플랫폼 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0125.html">데이터 분석 플랫폼</a
+                      ><small class="id-text">SF-2026-0125 · 신규 구축</small>
+                    </td>
+                    <td><span>김지원</span><small>데이터전략부</small></td>
+                    <td><span class="sf-badge amber">보완 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 06</span></td>
+                    <td>
+                      <a
+                        aria-label="데이터 분석 플랫폼 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0125.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="그룹웨어 클라우드 전환 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0126.html">그룹웨어 클라우드 전환</a
+                      ><small class="id-text">SF-2026-0126 · 서비스 변경</small>
+                    </td>
+                    <td><span>최지우</span><small>정보기획부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 09</span></td>
+                    <td>
+                      <a
+                        aria-label="그룹웨어 클라우드 전환 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0126.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="민원 AI 챗봇 서비스 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0127.html">민원 AI 챗봇 서비스</a
+                      ><small class="id-text">SF-2026-0127 · 신규 서비스</small>
+                    </td>
+                    <td><span>정하늘</span><small>대민서비스부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 10</span></td>
+                    <td>
+                      <a
+                        aria-label="민원 AI 챗봇 서비스 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0127.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="연구용 PC 교체 사업 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0128.html">연구용 PC 교체 사업</a
+                      ><small class="id-text">SF-2026-0128 · 장비 교체</small>
+                    </td>
+                    <td><span>윤태호</span><small>연구지원부</small></td>
+                    <td><span class="sf-badge green">제출 준비</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="finished">정보보안 완료</span
+                        ><span class="finished">ICT인프라 완료</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 10</span></td>
+                    <td>
+                      <a
+                        aria-label="연구용 PC 교체 사업 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0128.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="통합문서 관리 시스템 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0129.html">통합문서 관리 시스템</a
+                      ><small class="id-text">SF-2026-0129 · 서비스 변경</small>
+                    </td>
+                    <td><span>홍예린</span><small>운영지원부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 11</span></td>
+                    <td>
+                      <a
+                        aria-label="통합문서 관리 시스템 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0129.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="재난대응 모바일 업무 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0130.html">재난대응 모바일 업무</a
+                      ><small class="id-text">SF-2026-0130 · 신규 구축</small>
+                    </td>
+                    <td><span>백도윤</span><small>재난관리부</small></td>
+                    <td><span class="sf-badge amber">보완 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 11</span></td>
+                    <td>
+                      <a
+                        aria-label="재난대응 모바일 업무 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0130.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="공공데이터 연계 고도화 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0131.html">공공데이터 연계 고도화</a
+                      ><small class="id-text">SF-2026-0131 · 서비스 연계</small>
+                    </td>
+                    <td><span>강시우</span><small>데이터전략부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 12</span></td>
+                    <td>
+                      <a
+                        aria-label="공공데이터 연계 고도화 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0131.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="전자결재 시스템 개선 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0132.html">전자결재 시스템 개선</a
+                      ><small class="id-text">SF-2026-0132 · 서비스 변경</small>
+                    </td>
+                    <td><span>유하진</span><small>정보기획부</small></td>
+                    <td><span class="sf-badge green">제출 준비</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="finished">정보보안 완료</span
+                        ><span class="finished">ICT인프라 완료</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 12</span></td>
+                    <td>
+                      <a
+                        aria-label="전자결재 시스템 개선 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0132.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="내부망 모니터링 구축 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0133.html">내부망 모니터링 구축</a
+                      ><small class="id-text">SF-2026-0133 · 신규 구축</small>
+                    </td>
+                    <td><span>이민주</span><small>디지털혁신부</small></td>
+                    <td><span class="sf-badge blue">사전 협의 중</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="">정보보안 검토</span><span class="">ICT인프라 검토</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 13</span></td>
+                    <td>
+                      <a
+                        aria-label="내부망 모니터링 구축 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0133.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                  <tr class="">
+                    <td>
+                      <label class="table-check"
+                        ><input aria-label="통합 계정 관리 시스템 선택" type="checkbox"
+                      /></label>
+                    </td>
+                    <td>
+                      <a class="case-title" href="cases/SF-2026-0134.html">통합 계정 관리 시스템</a
+                      ><small class="id-text">SF-2026-0134 · 신규 구축</small>
+                    </td>
+                    <td><span>김유진</span><small>정보보안부</small></td>
+                    <td><span class="sf-badge green">제출 준비</span></td>
+                    <td>
+                      <div class="role-status">
+                        <span class="finished">정보보안 완료</span
+                        ><span class="finished">ICT인프라 완료</span>
+                      </div>
+                    </td>
+                    <td><span class="">2026. 11. 13</span></td>
+                    <td>
+                      <a
+                        aria-label="통합 계정 관리 시스템 상세 보기"
+                        class="row-link"
+                        href="cases/SF-2026-0134.html"
+                        >상세<svg
+                          aria-hidden="true"
+                          class="lucide lucide-chevron-right"
+                          fill="none"
+                          height="17"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          viewbox="0 0 24 24"
+                          width="17"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="m9 18 6-6-6-6"></path></svg
+                      ></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <span>1 / 1페이지</span>
+              <nav aria-label="목록 페이지">
+                <button
+                  aria-label="첫 페이지"
+                  data-action="paginate"
+                  data-page="첫 페이지"
+                  disabled=""
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-chevrons-left"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="m11 17-5-5 5-5"></path>
+                    <path d="m18 17-5-5 5-5"></path>
+                  </svg></button
+                ><button
+                  aria-label="이전 페이지"
+                  data-action="paginate"
+                  data-page="이전 페이지"
+                  disabled=""
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-chevron-left"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="m15 18-6-6 6-6"></path>
+                  </svg></button
+                ><button
+                  aria-current="page"
+                  class="selected"
+                  data-action="paginate"
+                  data-page="1"
+                  type="button"
+                >
+                  1</button
+                ><button
+                  aria-label="다음 페이지"
+                  data-action="paginate"
+                  data-page="다음 페이지"
+                  disabled=""
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-chevron-right"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="m9 18 6-6-6-6"></path>
+                  </svg></button
+                ><button
+                  aria-label="마지막 페이지"
+                  data-action="paginate"
+                  data-page="마지막 페이지"
+                  disabled=""
+                  type="button"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="lucide lucide-chevrons-right"
+                    fill="none"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewbox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="m6 17 5-5-5-5"></path>
+                    <path d="m13 17 5-5-5-5"></path>
+                  </svg>
+                </button>
+              </nav>
+              <select aria-label="페이지당 표시 수">
+                <option selected="" value="6">6개씩 보기</option>
+                <option value="12">12개씩 보기</option>
+              </select>
+            </div>
+          </section>
+          <div class="list-notice">
+            <span class="urgent-dot"></span>
+            <p>협의 완료와 실제 보안 조치 완료는 별도로 관리합니다.</p>
+            <span class="muted">현재 기관: 디지털혁신기관 (예시)</span>
+          </div>
+          <p class="list-bottom-note">시연 데이터 · 실제 기관 및 인물의 정보가 아닙니다.</p>
+        </main>
+        <footer class="app-footer">
+          <div>
+            <strong>보안길잡이 AI</strong
+            ><span>2026 공공 AI 대전환 챌린지 · 팀 검토용 프로토타입</span>
+          </div>
+          <button class="text-button" data-action="help" type="button">데이터 처리 안내</button
+          ><small>© 2026 보안길잡이 프로젝트</small>
+        </footer>
+      </div>
+    </div>
+    <dialog aria-labelledby="design-dialog-title" class="sf-dialog" id="design-dialog">
+      <h2 id="design-dialog-title">화면 예시</h2>
+      <div class="sf-dialog-body" id="design-dialog-body"></div>
+      <div class="sf-dialog-actions" id="design-dialog-actions"></div>
+      <button
+        aria-label="대화상자 닫기"
+        class="icon-button dialog-close"
+        data-close=""
+        type="button"
+      >
+        ×
+      </button>
+    </dialog>
+    <div class="toast" hidden="" id="design-toast" role="status"></div>
+  </body>
+</html>
