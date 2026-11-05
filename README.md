@@ -1,87 +1,102 @@
-# 보안길잡이 AI · 와이드 웹 프로토타입
+# 보안길잡이 AI · 프론트엔드 우선 개발 프로토타입
 
-1920px PC 업무 화면을 중심으로 기존 SVG 시안의 협의 요청함, 3열 협의 상세, 기관 관리 화면을 React + Next.js로 구현했습니다. 작은 화면에서는 메뉴와 패널이 재배치되고, 긴 업무 표는 가로로 스크롤됩니다.
+React·Next.js 프론트엔드와 Spring Boot·Gradle·H2 백엔드를 분리한 개발 시작 프로젝트입니다. 기존 KRDS 기반 화면과 합성 데이터 시연을 유지합니다.
 
-## 바로 실행
+## 먼저 프론트엔드 실행
 
-요구 환경: Node.js 22.13 이상, npm. 아래 명령을 저장소 루트에서 실행합니다.
+Node.js 22 또는 24와 npm이 필요합니다. 저장소 루트에서 실행합니다.
 
 ```bash
 npm ci
-npm run dev:web
+npm run dev
 ```
 
-브라우저에서 http://localhost:3000 을 엽니다.
-
-```bash
-npm test
-npm run typecheck
-npm run build
-```
-
-`out/`이 Next.js 정적 내보내기 결과입니다. 배포된 웹 시연은 이 정적 출력물을 사용하며, 샘플 데이터는 해당 브라우저의 localStorage에 저장됩니다. 다른 사용자·브라우저와 공유되지 않습니다.
-
-## 체험 순서
-
-1. 협의 요청함에서 검색·상태·담당 분야 필터를 적용합니다.
-2. `차세대 업무포털 구축`을 열어 AI 요약(합성 예시), 검토 항목, 원문·근거 탭을 봅니다.
-3. 검토 항목 3개를 확인하고 의견을 입력해 임시 저장합니다. 내부 메모와 보완 요청은 별도 이력으로 남습니다.
-4. 사전 협의를 완료하면 목록의 상태와 통계가 함께 변경됩니다. 이는 최종 승인이나 방화벽 적용이 아닙니다.
-5. 오른쪽 위 역할에서 ICT인프라 담당자를 선택하면 해당 분야 체크리스트가 표시됩니다.
-6. 기관 관리에서 질문·필수 시점·작성 주체를 수정하고 초안 저장 → 게시합니다.
-7. 새 신청을 만들면 새 설정 버전이 적용됩니다. 기존 신청의 설정 버전은 유지됩니다.
-8. 시연 데이터 초기화로 처음 상태로 복원할 수 있습니다.
-
-역할 전환은 디자인 검토를 위한 시뮬레이션입니다. 로그인·인증·기관 격리 권한을 구현한 것이 아닙니다.
+http://localhost:3000 에 접속합니다. **Java, DB, 백엔드 실행 없이 모든 시연 화면을 사용할 수 있습니다.** 프론트엔드만 수정할 때는 `cd frontend` 후 `npm run dev`도 가능합니다. 의존성은 루트 `package-lock.json` 하나로 관리합니다.
 
 ## 프로젝트 구조
 
-| 위치 | 역할 |
-| --- | --- |
-| `app/` | Next.js App Router 진입점, 메타데이터, 공통 스타일 |
-| `components/workspace.tsx` | 요청함·상세·기관 관리·문서함 UI와 상호작용 |
-| `lib/domain.ts` | 화면 DTO, 합성 초기 데이터, 역할·상태 정의 |
-| `lib/gateway.ts` | UI와 데이터 접근 분리, 브라우저 저장/API 어댑터 |
-| `backend/` | Java 21 + Spring Boot 3.5.16 로컬 데모 API 샘플 |
-| `scripts/test-domain.mjs` | 핵심 상태·버전 보존 로직 검증 |
-| `docs/architecture.md` | 실제 서비스로 확장할 때의 책임 분리 |
-| `docs/api-contract.md` | 샘플 API의 명령과 요청 형식 |
-| `docs/validation.md` | 실제 수행한 검증 범위와 제한 |
+| 경로 | 역할 |
+|---|---|
+| `frontend/app/` | Next.js App Router 진입점·전역 CSS |
+| `frontend/components/` | 화면 셸·공통 UI |
+| `frontend/features/` | 업무 요약·신청·검토·문서함·기관 설정 |
+| `frontend/lib/` | 시연 데이터·업무 상태 전이·저장 |
+| `frontend/public/` | KRDS 토큰·폰트·디자인 문서·소스 ZIP |
+| `frontend/scripts/` | 프론트 테스트·개발 서버·스모크 검사 |
+| `backend/src/` | Spring Boot API·JPA·H2 예제 및 테스트 |
+| `backend/gradle/`, `backend/gradlew*` | Gradle Wrapper 8.14.6 |
+| `backend/examples/legacy-v1/` | 기존 Maven·인메모리 코드 보관, 빌드 제외 |
+| `scripts/` | 정적 빌드 수집·소스 패키징 |
+| `specs/` | 제안 API 계약·검증 기록 |
 
-UI 화면은 현재 하나의 App Router 페이지에서 전환됩니다. 프로토타입의 탭·화면 상태는 새로고침하면 초기화되며 저장된 데이터는 남습니다. URL별 라우트 분할은 다음 개발 단계입니다.
+현재 고정 버전은 Next.js 16.3.4, React 19.2.6, TypeScript 5.9.3, Java 21, Spring Boot 3.5.16입니다. 자세한 버전은 각 빌드 파일을 기준으로 합니다.
 
-## Spring Boot 연결
+## 프론트엔드 체험 순서
 
-Java 21과 Maven 3.6.3 이상이 필요합니다. 백엔드는 로컬 데모 전용으로 127.0.0.1:8080에만 바인딩하고 `demo` 프로필을 명시해야 API가 활성화됩니다.
+1. 업무 요약에서 상태별 협의 요청을 확인하고 목록으로 이동합니다.
+2. 상단 역할을 신청자로 변경하고 새 신청의 4단계 흐름을 진행합니다.
+3. 파일 정보와 합성 AI 제안을 확인하고 사전 협의를 요청합니다.
+4. 정보보안·ICT인프라 담당자 역할에서 검토·보완 요청·의견 기록을 체험합니다.
+5. 신청자가 보완에 답변하고 담당자가 재검토합니다. 미확정 값을 확인하고 두 분야 협의를 마치면 최종 제출할 수 있습니다.
+6. 문서함에서 초안/제출본 검색·미리보기·다운로드를 체험합니다.
+7. 기관 관리자 역할에서 질문·절차 초안 저장과 게시를 체험합니다. 새 설정은 새 신청에 적용됩니다.
+
+## 백엔드 개발 시작
+
+JDK 21을 설치하고 `JAVA_HOME`을 설정합니다. 별도 Gradle 설치는 필요하지 않습니다.
 
 ```bash
 cd backend
-mvn test
-mvn spring-boot:run -Dspring-boot.run.profiles=demo
+./gradlew bootRun
+# Windows PowerShell: .\gradlew.bat bootRun
 ```
 
-프런트엔드 루트에 `.env.local`을 작성한 후 프런트엔드를 재시작합니다.
+- 서버: http://localhost:8080
+- 상태: http://localhost:8080/actuator/health
+- 샘플 초안: `GET/POST /api/v1/drafts`, `GET /api/v1/drafts/{id}`
+- H2 Console: http://localhost:8080/h2-console
+- JDBC URL: `jdbc:h2:mem:secureflow`, 사용자 `sa`, 비밀번호 공란
 
-```dotenv
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
-```
+기본 H2는 메모리 DB로 서버 종료 시 초기화됩니다. 파일 저장 선택과 API 예제는 [backend/README.md](backend/README.md)를 참고하세요. **현재 UI의 신청·검토 데이터는 이 API와 연결되지 않습니다.** API는 DB 개발을 시작하기 위한 작은 저장·조회 예제입니다.
+
+## Docker
 
 ```bash
-npm run dev:web
+# 프론트엔드만 실행 (기본)
+docker compose up --build -d
+# 백엔드·H2도 함께 실행
+docker compose --profile full up --build -d
 ```
 
-브라우저에서 http://localhost:3000 을 엽니다. 허용 CORS origin은 `http://localhost:3000`, `http://127.0.0.1:3000`입니다. API 모드는 실패 시 localStorage로 자동 우회하지 않고 오류를 표시합니다.
+프론트엔드는 localhost:3000, 백엔드는 full 프로필에서 localhost:8080입니다. [DOCKER.md](DOCKER.md)에 검사·종료 명령을 정리했습니다.
 
-이 백엔드는 메모리 저장소라 재시작하면 데이터가 초기화됩니다. 데이터베이스, SSO, Spring Security, 업로드, AI 호출을 구현한 서비스가 아닙니다. `role`은 신뢰할 인증 정보가 아니라 시연 입력값입니다. 실제 배포에서는 인증 주체에서 역할·기관을 조회해야 합니다.
+## 검증·빌드
 
-이 제작 환경에는 Java 17만 있고 Maven이 없어 Java 21 백엔드 실행·통합 검증은 수행하지 못했습니다. 프런트엔드 브라우저 시연은 검증했으며 백엔드는 연결 규격과 시작 코드를 제공합니다.
+```bash
+npm run typecheck
+npm test
+npm run build
+# backend/에서
+./gradlew test bootJar
+```
 
-## 구현 범위
+기본 빌드는 `frontend/out/`에 정적 HTML을 생성하고 루트 `out/`으로 복사합니다. Docker는 Next.js standalone 서버 모드를 사용합니다. npm workspace 설정으로 설치와 lockfile은 루트에서 관리하며 프론트 소스는 `frontend/`에 모읍니다.
 
-- 구현: 검색·필터·정렬·페이지 이동, 선택 행 CSV, 역할별 체크리스트, 의견 임시 저장, 보완 요청, 내부 메모, 사전 협의 완료, 새 신청, 질문 설정·버전 게시, 문서 초안 보기·텍스트 다운로드·인쇄.
-- 합성 예시: AI 요약, 원문, 첨부파일 내용. 실제 파일 업로드·모델 호출 없음.
-- 설정 시안: 순차/병렬 검토 방식 선택·저장·게시. 실제 업무 절차 실행 엔진 없음.
-- 후속 개발: 로그인·기관별 권한, Oracle 저장소, 실첨부파일, AI 근거 추출, 보완 답변, 최종 제출본 고정, 최종 승인·처리 기록, 감사로그.
-- `협의 완료`는 담당 작업 하나의 시연 상태입니다. 복수 필수 검토자의 완료를 집계하는 전역 승인 엔진이 아닙니다.
+```bash
+# 소스 ZIP 갱신 후 정적 배포 결과에 반영
+npm run package:source
+npm run build
+```
 
-디자인은 기존 3개 SVG의 색상·정보 배치·단계 의미를 참고해 웹 사용에 맞게 재구성했습니다. 픽셀 단위 복제나 KRDS 공식 인증을 의미하지 않습니다.
+## 데이터·구현 범위
+
+- 현재 업무 화면은 sessionStorage 기반입니다. 같은 탭 새로고침에 유지되며 사용자 간 공유나 서버 저장은 없습니다.
+- AI는 고정 합성 결과입니다. 파일은 이름·형식·크기만 확인하며 서버로 전송하지 않습니다.
+- 역할 선택·세션 만료는 화면 시연입니다. 실제 로그인, 기관별 권한, AI 연동은 후속 개발입니다.
+- 기관 질문은 공통 텍스트 입력입니다. 조건식 엔진·파일 질문 등 전체 필드 타입은 아직 구현하지 않았습니다.
+- 백엔드는 인증 없는 로컬 개발용입니다. 실서비스 업무 상태·권한·동시성은 [제안 API 계약](specs/spring-v3-contract.md)을 기준으로 구현해야 합니다.
+- 예전 v1 코드·문서는 참고 자료입니다. 현재 구조와 실행법은 이 README와 폴더별 README를 우선합니다.
+
+## 팀 개발 문서
+
+[AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md), [CODING_STYLE.md](CODING_STYLE.md), [design.md](design.md)를 함께 읽으세요. Google Java·TS/JS 스타일을 참고한 팀 규칙은 유지하며, 신규 폴더별 지침을 추가했습니다. 검사 결과는 [분리 구성 검증 기록](specs/validation-frontend-backend.md)에 기록합니다.

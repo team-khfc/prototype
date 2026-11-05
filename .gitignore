@@ -5,4 +5,9 @@ out/
 !.env.example
 *.tsbuildinfo
 backend/target/
+backend/build/
+backend/.gradle/
+backend/data/
 .openai/*.log
+__pycache__/
+*.pyc

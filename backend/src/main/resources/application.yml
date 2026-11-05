@@ -1,9 +1,27 @@
 server:
-  address: 127.0.0.1
-  port: 8080
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}
 spring:
   application:
-    name: secureflow-prototype-api
+    name: secureflow-api
+  profiles:
+    default: local
+  datasource:
+    url: ${DB_URL:jdbc:h2:mem:secureflow;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.h2.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
   jackson:
     default-property-inclusion: non_null
-# Explicit --spring.profiles.active=demo is required to expose demo endpoints.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

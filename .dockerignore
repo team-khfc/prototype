@@ -1,0 +1,15 @@
+**/node_modules
+**/.next
+**/out
+.git
+.openai
+**/.env
+**/.env.*
+!**/.env.example
+**/*.tsbuildinfo
+**/*.log
+**/*.zip
+!frontend/public/secureflow-prototype-source.zip
+backend
+**/__pycache__
+**/*.pyc

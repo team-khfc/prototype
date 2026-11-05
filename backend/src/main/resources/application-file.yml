@@ -1,0 +1,4 @@
+# Run with --spring.profiles.active=local,file to retain local sample data.
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/secureflow;DB_CLOSE_ON_EXIT=FALSE

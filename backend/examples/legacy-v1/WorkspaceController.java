@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 public class WorkspaceController {
  private final WorkspaceService service;
  public WorkspaceController(WorkspaceService service) { this.service = service; }
+ @GetMapping("/health") public java.util.Map<String, String> health() {
+  return java.util.Map.of("status", "UP", "application", "secureflow-prototype-api", "mode", "demo-v1");
+ }
  @GetMapping("/workspace") public JsonNode workspace() { return service.snapshot(); }
  @PostMapping("/commands") public JsonNode command(@RequestBody JsonNode command) { return service.execute(command); }
 }

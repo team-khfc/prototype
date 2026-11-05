@@ -1,24 +1,20 @@
 {
-  "name": "secureflow-wide-prototype",
-  "version": "1.0.0",
+  "name": "secureflow",
+  "version": "5.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0"
+  },
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
-    "build": "next build --webpack",
-    "typecheck": "tsc --noEmit",
-    "dev:web": "node scripts/dev.mjs",
-    "test": "node scripts/test-domain.mjs"
-  },
-  "dependencies": {
-    "next": "16.3.4",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "lucide-react": "1.31.0"
-  },
-  "devDependencies": {
-    "typescript": "5.9.3",
-    "@types/node": "22.19.19",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3"
+    "dev": "npm run dev --workspace frontend --",
+    "dev:web": "npm run dev --workspace frontend --",
+    "build": "node scripts/build-frontend.mjs",
+    "typecheck": "npm run typecheck --workspace frontend",
+    "test": "npm test --workspace frontend",
+    "package:source": "python3 scripts/package-source.py"
   }
 }
