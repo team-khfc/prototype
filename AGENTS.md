@@ -1,6 +1,6 @@
 # AGENTS.md — SecurityAdvisor(보안길잡이)
 
-v1.5 · 2026-11-06 · 4단계 업무 규칙 팀 확정 반영: 차수 반환 시 값 보존+보완 필요 항목 강조 표시, 할당/검토(협의) 분리, 종결(반려)·철회, 1차 범위 INFRA 선행 고정 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
+v1.7 · 2026-11-07 · 9장에 작업 전 문서 버전 확인 의무 추가 · v1.6: 사업 건(BusinessCase) 1 : N 신청(SecurityRequest) 구조 반영 · v1.5: 차수 반환 시 값 보존+보완 필요 항목 강조 표시, 할당/검토(협의) 분리, 종결(반려)·철회, 1차 범위 INFRA 선행 고정 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
 
 사람과 AI 에이전트(Claude Code, Codex, Cursor, Copilot 등)가 함께 지키는 규칙이다. 작업을 시작하기 전에 이 파일을 끝까지 읽는다.
 
@@ -15,7 +15,7 @@ v1.5 · 2026-11-06 · 4단계 업무 규칙 팀 확정 반영: 차수 반환 시
 
 **SecurityAdvisor(보안길잡이)**: 공공기관 직원이 보안성검토·방화벽 허용 등 보안 서류를 쉽게 작성하도록 돕는 웹 시스템이다. 서류 생성기가 아니라, 보안을 모르는 현업과 전문가 사이의 지식 비대칭을 중계하는 플랫폼이다. 기능 요구·도메인 분할은 FUNCTIONAL_SPEC.md를 따른다.
 
-사용자 역할은 기획 기준 4종이다: 일반 사용자(서류 작성), 정보보안 담당자, ICT인프라 담당자(각자 검토·보완), 기관 관리자(절차·양식·LLM 구성 관리). 처리 절차는 4단계다 — 작성 → 담당자 협의(1차 범위: INFRA 선행 고정 — INFRA가 서버·IP·포트 **할당**, 할당과 검토(협의)는 별도 단계라 할당만 하고 검토 보류 가능, SECURITY는 할당 완료 후 검토) → 사용자 최종 검토(AI 최종 초안은 미확정) → 확정·관리(서류 확정 ≠ 방화벽 실제 적용). 차수 반환(2→1, 3→2, 3→1, 4→3)은 사유 필수이고 **기존 값은 비우지 않고 보존하며 보완 필요 지정 항목만 강조 표시**한다. 정상 흐름 밖 종료는 종결(반려)·철회다. 상세 규칙·불변식은 FUNCTIONAL_SPEC.md 3-1장·5장. USB 사용 등 추가 서류는 1차 범위(방화벽·보안성검토 2종) 밖이며 2026-11-11 이후 확장이다.
+사용자 역할은 기획 기준 4종이다: 일반 사용자(서류 작성), 정보보안 담당자, ICT인프라 담당자(각자 검토·보완), 기관 관리자(절차·양식·LLM 구성 관리). 처리 절차는 4단계다 — 작성 → 담당자 협의(1차 범위: INFRA 선행 고정 — INFRA가 서버·IP·포트 **할당**, 할당과 검토(협의)는 별도 단계라 할당만 하고 검토 보류 가능, SECURITY는 할당 완료 후 검토) → 사용자 최종 검토(AI 최종 초안은 미확정) → 확정·관리(서류 확정 ≠ 방화벽 실제 적용). 차수 반환(2→1, 3→2, 3→1, 4→3)은 사유 필수이고 **기존 값은 비우지 않고 보존하며 보완 필요 지정 항목만 강조 표시**한다. 정상 흐름 밖 종료는 종결(반려)·철회다. **사용자는 한 번에 여러 서류를 신청할 수 있다 — 사업 건(BusinessCase) 1개가 서류별 신청(SecurityRequest) N개를 거느리고, 공통 정보는 사업 건에 한 번 저장되며, 위의 4단계·반환·협의·제출은 모두 신청 단위로 독립 진행한다.** 상세 규칙·불변식은 FUNCTIONAL_SPEC.md 3-1·3-2장·5장. USB 사용 등 추가 서류는 1차 범위(방화벽·보안성검토 2종) 밖이며 2026-11-11 이후 확장이다.
 
 **개발 방법론은 도메인 주도 설계(DDD)를 따른다**(2026-11-06 확정, 상세는 5장). 업무 규칙은 domain 계층에 모으고, 코드는 기획의 업무 용어(유비쿼터스 언어)를 쓴다.
 
@@ -82,9 +82,9 @@ docs/                # 설계 문서, ADR(결정 기록), glossary.md(용어 대
 ### 도메인 주도 설계(DDD) — 팀 방법론
 
 - **바운디드 컨텍스트:** 기능 패키지 하나가 컨텍스트 하나다(FUNCTIONAL_SPEC.md 1장 도메인 맵 기준). 컨텍스트 간 참조는 ID와 공개 서비스 인터페이스로만 하고, 다른 컨텍스트의 엔티티를 직접 조회·수정하지 않는다.
-- **유비쿼터스 언어:** 코드 식별자는 기획의 업무 용어에 대응하는 영어를 쓴다(신청 SecurityRequest, 협의 Review, 보완 Supplement, 제출본 Submission, 게시본 Publication, 출처 ValueSource 등 — FUNCTIONAL_SPEC.md 2장). 대응표는 docs/glossary.md로 관리하고, 새 용어는 기획(안대웅)·팀장과 합의 후 추가한다. 같은 개념에 두 이름을 쓰지 않는다.
+- **유비쿼터스 언어:** 코드 식별자는 기획의 업무 용어에 대응하는 영어를 쓴다(사업 건 BusinessCase, 신청 SecurityRequest, 답변 범위 AnswerScope, 협의 Review, 보완 Supplement, 제출본 Submission, 게시본 Publication, 출처 ValueSource 등 — FUNCTIONAL_SPEC.md 2장). 대응표는 docs/glossary.md로 관리하고, 새 용어는 기획(안대웅)·팀장과 합의 후 추가한다. 같은 개념에 두 이름을 쓰지 않는다.
 - **도메인 불변식:** 업무 규칙은 domain 계층이 지킨다. 상태 전이는 setter가 아니라 의미 있는 도메인 메서드(`complete()`, `submit()`, `publish()`)로 표현하고, 불변식 위반(미확정 값이 있는 제출, 협의 미완료 제출, 사유 없는 차수 반환·종결·철회, 할당 완료를 협의 완료로 취급 등 — FUNCTIONAL_SPEC.md 5장)은 도메인 예외로 막는다. **11장 업무 불변 원칙은 곧 도메인 불변식이다.**
-- **애그리거트:** 리포지토리는 애그리거트 루트 단위로만 둔다. 다른 애그리거트는 ID로 참조한다. 한 트랜잭션은 한 애그리거트 변경을 원칙으로 하고, 여러 애그리거트에 걸친 변화는 애플리케이션 서비스가 조율하거나 도메인 이벤트를 쓴다.
+- **애그리거트:** 리포지토리는 애그리거트 루트 단위로만 둔다. 다른 애그리거트는 ID로 참조한다. 예: BusinessCase와 SecurityRequest는 같은 `request` 컨텍스트에 있지만 별개 애그리거트이며, 신청은 caseId만 가진다. 사업 건의 진행 상태는 저장하지 않고 하위 신청에서 계산한다. 한 트랜잭션은 한 애그리거트 변경을 원칙으로 하고, 여러 애그리거트에 걸친 변화는 애플리케이션 서비스가 조율하거나 도메인 이벤트를 쓴다.
 - **프레임워크 비의존:** domain 계층은 Spring Web·Spring AI 타입에 의존하지 않는다(JPA 애너테이션은 허용). ArchUnit 규칙으로 검사한다.
 - **실용 범위:** 11.11까지는 전술 패턴(애그리거트·도메인 메서드·불변식·용어집)까지만 적용한다. 이벤트 소싱·CQRS 같은 무거운 패턴은 도입하지 않는다(필요해지면 ADR로 결정).
 
@@ -117,7 +117,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 
 ### API 규칙
 
-- 경로: /api/<복수형-kebab-case> (/api/security-requests, /api/security-requests/{id}).
+- 경로: /api/<복수형-kebab-case> (/api/security-requests, /api/security-requests/{id}). 소속 관계는 한 단계까지만 중첩한다(/api/business-cases/{id}/security-requests).
 - 메서드: 조회 GET, 생성 POST, 전체 수정 PUT, 부분 수정 PATCH, 삭제 DELETE.
 - 오류 응답은 항상 ProblemDetail. 성공 응답은 DTO를 그대로 반환한다(감싸는 공통 응답 객체 없음).
 - API 문서: 실행 후 http://localhost:8080/swagger-ui.html
@@ -131,7 +131,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 ### 테스트
 
 - 위치: src/test/java의 같은 패키지 구조. 이름은 <대상>Test.
-- 도메인 불변식(상태 전이·제출 조건·출처 규칙·차수 반환·종결·철회)은 프레임워크 없는 단위 테스트로 우선 검증한다.
+- 도메인 불변식(상태 전이·제출 조건·출처 규칙·차수 반환·종결·철회·사업 건 내 서류 유형 중복·공통 답변 변경 전파)은 프레임워크 없는 단위 테스트로 우선 검증한다.
 - 컨트롤러: @WebMvcTest + @MockitoBean. 저장소·통합: @DataJpaTest/@SpringBootTest + TestcontainersConfiguration.
 - @DisplayName에 한국어로 무엇을 확인하는지 적는다.
 
@@ -170,6 +170,8 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 ## 9. AI 에이전트 작업 규칙
 
 - 작업 전에: 이 파일과 FUNCTIONAL_SPEC.md(담당 기능 F-xx), 관련 기능 폴더를 읽고, 비슷한 기존 코드가 있는지 먼저 찾는다. 있으면 재사용한다.
+- **작업 전 버전 확인:** 참조하는 규칙 문서(이 파일, FUNCTIONAL_SPEC.md, SECURE_CODING.md, design.md 등)의 머리말 버전이 PROJECT_CONTEXT.md 5장 기준 버전 표와 같은지 확인한다. 저장소 사본이 표보다 낮거나 문서끼리 내용이 다르면, 작업을 진행하지 말고 차이(문서명·저장소 버전·기준 버전)를 먼저 보고한다. `python3 tools/check_doc_versions.py`가 있으면 실행해 결과를 그대로 보고한다.
+- 규칙 문서를 고쳤다면 PROJECT_RULES.md 7-1의 개정 절차(머리말 → 기준 버전 표 → 사본 동기화 → 공지)를 같은 PR에서 진행한다.
 - 요청받은 범위만 고친다. 관련 없는 파일의 포맷·이름·구조를 함께 바꾸지 않는다.
 - 요구사항이 모호하면 추측해서 크게 만들지 말고 질문하거나, 가정한 내용을 PR 설명에 적는다.
 - 테스트를 통과시키려고 테스트의 기대값을 바꾸거나 테스트를 지우거나 @Disabled 하지 않는다.
@@ -188,7 +190,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 - docs/glossary.md: 유비쿼터스 언어 대응표(업무 용어 ↔ 코드 식별자)
 - 운영 규칙(팀·범위·일정·제출 책임): PROJECT_RULES.md · 시큐어코딩: SECURE_CODING.md · 코딩 스타일: CODING_STYLE.md · 협업 절차: CONTRIBUTING.md · 화면 기준: design.md
 - 디자인 시안: prototype 저장소 `보안길잡이 디자인시안 프로토타입/` (index.html에서 화면 목록)
-- 전체 그림·확정 결정의 이력은 팀 Claude 프로젝트의 PROJECT_CONTEXT.md에 관리한다.
+- 전체 그림·확정 결정의 이력과 **문서별 기준 버전 표(5장)** 는 팀 Claude 프로젝트의 PROJECT_CONTEXT.md에 관리한다. 문서 개정 절차는 PROJECT_RULES.md 7-1.
 
 ## 11. 업무 불변 원칙 — 모든 기능에 적용 (= 도메인 불변식)
 
@@ -232,6 +234,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 | 할당/검토 분리 | 할당 완료와 협의 완료는 별도 상태. INFRA는 할당만 하고 검토 보류 가능, SECURITY는 할당 완료 후 검토 | 확정 (2026-11-06) |
 | 검토 순서 | 1차 범위는 INFRA 선행 고정, 기관 설정 변경은 P3 | 확정 (2026-11-06) |
 | 종결·철회 | 담당자 종결(반려)·사용자 철회 — 사유 필수, 이력 보존, 이후 수정 불가. 1차 범위는 상태·전이·목록까지 | 확정 (2026-11-06) |
+| 다중 서류 신청 | 사업 건(BusinessCase) 1 : N 신청(SecurityRequest). 상태 단위는 신청, 사업 건 상태는 계산값, 공통 답변(scope=CASE) 1회 수집, 사업 건당 서류 유형 1건 — FUNCTIONAL_SPEC.md 3-2장 | 확정 (2026-11-07) |
 | 저장소 정책 | 본 저장소는 Security-Advisor, 모든 개발자·디자이너의 작업 시작점은 prototype | 확정 (2026-11-06) |
 | Java | Java 25 (LTS) — Gradle toolchain 고정 | 확정 (2026-11-06) |
 | 방법론 | DDD — 전술 패턴 범위. 이벤트 소싱·CQRS 미도입 | 확정 (2026-11-06) |
@@ -250,8 +253,10 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 - [ ] docs/glossary.md 초안: FUNCTIONAL_SPEC.md 2장 용어표 기반(기획 합의)
 - [ ] ArchUnit에 domain 계층의 Spring Web·Spring AI 비의존 규칙 추가
 - [ ] Spring AI 2.0 의존성 추가 + pgvector 도커 구성 + LLM 어댑터 구현체 연결
-- [ ] prototype의 구버전 규칙 문서를 "최신 규칙은 Security-Advisor" 안내로 교체, backend/gradlew 실행 권한 수정
+- [ ] prototype·Security-Advisor 저장소 루트의 규칙 문서를 기준 버전 표의 버전으로 교체(현재 prototype 루트는 11-06 기준), `tools/check_doc_versions.py` 추가, backend/gradlew 실행 권한 수정
 - [ ] Spotless 포맷터 엔진을 Google 스타일 기준으로 조정(google-java-format, Java 25 호환) 후 CODING_STYLE.md와 일치시킴
 - [ ] ESLint에 Next.js 특수 파일 default export 예외와 SECURE_CODING.md 금지 API 규칙 반영
 - [ ] 백엔드용 Java 시큐어코딩(행안부 소프트웨어 개발보안 가이드) 사본 확보 후 SECURE_CODING.md 보완
-- [ ] 반환 항목 하이라이트·강조 표시의 시각 규칙(색+아이콘·라벨)을 design.md에 반영 — 디자이너(박소영)
+- [x] 반환 항목 하이라이트·강조 표시의 시각 규칙을 design.md에 반영 — 디자이너(박소영), design.md v3.1 10.2.1
+- [ ] Flyway: `business_cases` 테이블, `security_requests.business_case_id` FK + `UNIQUE(business_case_id, doc_type)`, 답변 범위(CASE/REQUEST) 저장 구조 — 11.07 스키마 확정에 포함
+- [ ] 다중 서류 화면(서류 유형 복수 선택, 사업 건 화면, 공통 정보 변경 알림)을 design.md에 반영 — 디자이너(박소영)
