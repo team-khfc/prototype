@@ -62,12 +62,12 @@ export function AppShell({
           <Icon name={preview ? 'lock' : 'info'} width={16} height={16} />
           <span>
             {preview
-              ? '읽기전용 디자인 시안 · 합성 데이터 · 저장 및 업무 API 연결 없음'
-              : '공공 AI 대전환 챌린지 프로토타입 · 합성 정보만 입력해 주세요'}
+              ? '이전 개발 예제 · 읽기전용 합성 시안 · 저장 및 업무 API 연결 없음'
+              : '이전 개발 예제 · 기존 절차 API 연결 · 신규 업무는 개발 시작점을 이용해 주세요'}
           </span>
         </div>
-        <Link href={preview ? '/login' : '/design-preview/workspace'}>
-          {preview ? '실제 업무 로그인' : '읽기전용 시안'}
+        <Link href={preview ? '/starter' : '/security-requests'}>
+          최신 개발 시작점
           <Icon name="arrow" width={16} height={16} />
         </Link>
       </div>

@@ -5,6 +5,7 @@ import '@/public/assets/css/tokens.css';
 import '@/public/assets/css/styles.css';
 import '@/public/assets/css/workspace.css';
 import '@/styles/application.css';
+import '@/styles/starter.css';
 
 export const metadata: Metadata = {
   title: '보안길잡이 | 안전한 서비스를 위한 첫걸음',

@@ -91,7 +91,7 @@ export function LoginForm({
       activateDraftScope(`${session.user.institutionId}:${session.user.userId}`);
       queryClient.setQueryData(['session'], session);
       if (onSuccess) onSuccess(session);
-      else router.replace('/workspace');
+      else router.replace('/security-requests');
     } catch (failure) {
       setError(failure);
       setPassword('');
@@ -105,7 +105,7 @@ export function LoginForm({
         <Icon name="shield" width={32} height={32} />
       </div>
       <h1>{expired ? '로그인을 다시 확인해 주세요' : '보안길잡이 로그인'}</h1>
-      <p>기관에서 발급한 계정으로 업무 공간에 접속합니다.</p>
+      <p>시연 기관의 계정으로 업무 공간에 접속합니다. 실제 개인정보는 입력하지 마세요.</p>
       <ErrorNotice error={error} />
       <div className="sf-field">
         <label htmlFor="username">
@@ -142,8 +142,13 @@ export function LoginForm({
       </button>
       <p className="login-hint">역할과 기관은 인증된 서버 계정에 따라 결정됩니다.</p>
       {!expired && (
-        <Link className="text-button" href="/design-preview/workspace">
-          로그인 없이 읽기전용 디자인 시안 보기
+        <Link className="text-button" href="/signup">
+          일반 사용자로 회원가입
+        </Link>
+      )}
+      {!expired && (
+        <Link className="text-button" href="/starter">
+          로그인 없이 합성 데이터로 시연하기
           <Icon name="arrow" />
         </Link>
       )}

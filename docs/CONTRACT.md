@@ -1,5 +1,7 @@
 # 새 시안 기반 프로토타입 API 계약
 
+> **2026-11-06 기존 구현의 호환·역사 기록.** 새 1:N 사업 건·신청 API 계약은 [starter-api.md](starter-api.md)다. 아래 `kr.boan` 식별자는 당시 이름이며 현재 소스는 `kr.securityadvisor`로 이동했다. 기존 `/api/procedures`의 상태·가변 검토 순서를 새 업무 규칙으로 사용하지 않는다. 실제 인증·AI 신규 연결의 현재 범위는 README와 [이번 검증 기록](verification-starter.md)을 확인한다.
+
 2026-11-06. 최신 제공 규칙과 지정 GitHub 시안을 기준으로 새로 구현한다. 앞선 생성물의 소스·화면·검증 결과는 재사용하지 않는다.
 
 ## 공통
