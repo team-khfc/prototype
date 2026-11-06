@@ -1,6 +1,6 @@
 # AGENTS.md — SecurityAdvisor(보안길잡이)
 
-v1.7 · 2026-11-07 · 9장에 작업 전 문서 버전 확인 의무 추가 · v1.6: 사업 건(BusinessCase) 1 : N 신청(SecurityRequest) 구조 반영 · v1.5: 차수 반환 시 값 보존+보완 필요 항목 강조 표시, 할당/검토(협의) 분리, 종결(반려)·철회, 1차 범위 INFRA 선행 고정 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
+v1.9 · 2026-11-07 · 최종 확정안 반영(인증·회원가입·테스트 계정, 시연 필수 경로, 신청 단계×상태) · v1.8: 업무 도메인 6종 · v1.7: 9장 작업 전 문서 버전 확인 의무 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
 
 사람과 AI 에이전트(Claude Code, Codex, Cursor, Copilot 등)가 함께 지키는 규칙이다. 작업을 시작하기 전에 이 파일을 끝까지 읽는다.
 
@@ -65,7 +65,7 @@ frontend/            # Next.js App Router 구조: app/(라우트), features/<기
 docs/                # 설계 문서, ADR(결정 기록), glossary.md(용어 대응표)
 ```
 
-컨텍스트 분할과 기능 매핑은 FUNCTIONAL_SPEC.md 1장을 따른다(request, review, document, configuration, knowledge, llm, auth, common). 새 기능은 기존 기능 패키지를 복사해서 시작한다. 백엔드·프론트 모두 같은 이름의 기능 폴더를 쓴다. 기능별 공개 진입점(index.ts)과 features 단위 구성 원칙은 프레임워크와 무관하게 유지한다.
+컨텍스트 분할과 기능 매핑은 FUNCTIONAL_SPEC.md 1장을 따른다(request, review, document, configuration, knowledge, llm, auth, assignment, audit, policy, insight, notification, common — 처리 기한은 configuration의 정책 + common의 BusinessCalendar). 새 기능은 기존 기능 패키지를 복사해서 시작한다. 백엔드·프론트 모두 같은 이름의 기능 폴더를 쓴다. 기능별 공개 진입점(index.ts)과 features 단위 구성 원칙은 프레임워크와 무관하게 유지한다.
 
 ## 4. 공통 규칙
 
@@ -82,7 +82,7 @@ docs/                # 설계 문서, ADR(결정 기록), glossary.md(용어 대
 ### 도메인 주도 설계(DDD) — 팀 방법론
 
 - **바운디드 컨텍스트:** 기능 패키지 하나가 컨텍스트 하나다(FUNCTIONAL_SPEC.md 1장 도메인 맵 기준). 컨텍스트 간 참조는 ID와 공개 서비스 인터페이스로만 하고, 다른 컨텍스트의 엔티티를 직접 조회·수정하지 않는다.
-- **유비쿼터스 언어:** 코드 식별자는 기획의 업무 용어에 대응하는 영어를 쓴다(사업 건 BusinessCase, 신청 SecurityRequest, 답변 범위 AnswerScope, 협의 Review, 보완 Supplement, 제출본 Submission, 게시본 Publication, 출처 ValueSource 등 — FUNCTIONAL_SPEC.md 2장). 대응표는 docs/glossary.md로 관리하고, 새 용어는 기획(안대웅)·팀장과 합의 후 추가한다. 같은 개념에 두 이름을 쓰지 않는다.
+- **유비쿼터스 언어:** 코드 식별자는 기획의 업무 용어에 대응하는 영어를 쓴다(사업 건 BusinessCase, 신청 SecurityRequest, 답변 범위 AnswerScope, 협의 Review, 보완 Supplement, 제출본 Submission, 게시본 Publication, 출처 ValueSource, 배정 Assignment, 처리 기한 Deadline, 감사 이력 AuditEvent, 방화벽 규칙 FirewallRule, 알림 Notification 등 — FUNCTIONAL_SPEC.md 2장). 대응표는 docs/glossary.md로 관리하고, 새 용어는 기획(안대웅)·팀장과 합의 후 추가한다. 같은 개념에 두 이름을 쓰지 않는다.
 - **도메인 불변식:** 업무 규칙은 domain 계층이 지킨다. 상태 전이는 setter가 아니라 의미 있는 도메인 메서드(`complete()`, `submit()`, `publish()`)로 표현하고, 불변식 위반(미확정 값이 있는 제출, 협의 미완료 제출, 사유 없는 차수 반환·종결·철회, 할당 완료를 협의 완료로 취급 등 — FUNCTIONAL_SPEC.md 5장)은 도메인 예외로 막는다. **11장 업무 불변 원칙은 곧 도메인 불변식이다.**
 - **애그리거트:** 리포지토리는 애그리거트 루트 단위로만 둔다. 다른 애그리거트는 ID로 참조한다. 예: BusinessCase와 SecurityRequest는 같은 `request` 컨텍스트에 있지만 별개 애그리거트이며, 신청은 caseId만 가진다. 사업 건의 진행 상태는 저장하지 않고 하위 신청에서 계산한다. 한 트랜잭션은 한 애그리거트 변경을 원칙으로 하고, 여러 애그리거트에 걸친 변화는 애플리케이션 서비스가 조율하거나 도메인 이벤트를 쓴다.
 - **프레임워크 비의존:** domain 계층은 Spring Web·Spring AI 타입에 의존하지 않는다(JPA 애너테이션은 허용). ArchUnit 규칙으로 검사한다.
@@ -234,6 +234,8 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 | 할당/검토 분리 | 할당 완료와 협의 완료는 별도 상태. INFRA는 할당만 하고 검토 보류 가능, SECURITY는 할당 완료 후 검토 | 확정 (2026-11-06) |
 | 검토 순서 | 1차 범위는 INFRA 선행 고정, 기관 설정 변경은 P3 | 확정 (2026-11-06) |
 | 종결·철회 | 담당자 종결(반려)·사용자 철회 — 사유 필수, 이력 보존, 이후 수정 불가. 1차 범위는 상태·전이·목록까지 | 확정 (2026-11-06) |
+| 인증·회원가입·시연 범위 | 로그인·회원가입(가입 계정은 APPLICANT만, 역할 부여는 관리자), 역할별 테스트 계정 seed(비밀번호는 환경변수 주입), 시연 필수 경로 우선·P2는 리허설 통과 후 착수, 신청 단계×상태 표·4단계 확정 주체 — FUNCTIONAL_SPEC.md 4장·6장·F-11 | 확정 (2026-11-07) |
+| 운영 업무 도메인 | 담당자 배정(2단계 진입 시 기본 담당자 자동 배정·관리자 재배정)·처리 기한(영업일, 경과해도 상태 불변)·감사 이력(추가 전용·업무와 같은 트랜잭션)·정책 수명주기(방화벽 확정 시 규칙 생성, 적용은 사람이 기록)·업무 지표(읽기 전용)·알림(화면 안, 업무 상태 불변) — FUNCTIONAL_SPEC.md 3-3장 | 확정 (2026-11-07) |
 | 다중 서류 신청 | 사업 건(BusinessCase) 1 : N 신청(SecurityRequest). 상태 단위는 신청, 사업 건 상태는 계산값, 공통 답변(scope=CASE) 1회 수집, 사업 건당 서류 유형 1건 — FUNCTIONAL_SPEC.md 3-2장 | 확정 (2026-11-07) |
 | 저장소 정책 | 본 저장소는 Security-Advisor, 모든 개발자·디자이너의 작업 시작점은 prototype | 확정 (2026-11-06) |
 | Java | Java 25 (LTS) — Gradle toolchain 고정 | 확정 (2026-11-06) |
@@ -260,3 +262,9 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 - [x] 반환 항목 하이라이트·강조 표시의 시각 규칙을 design.md에 반영 — 디자이너(박소영), design.md v3.1 10.2.1
 - [ ] Flyway: `business_cases` 테이블, `security_requests.business_case_id` FK + `UNIQUE(business_case_id, doc_type)`, 답변 범위(CASE/REQUEST) 저장 구조 — 11.07 스키마 확정에 포함
 - [ ] 다중 서류 화면(서류 유형 복수 선택, 사업 건 화면, 공통 정보 변경 알림)을 design.md에 반영 — 디자이너(박소영)
+- [ ] FUNCTIONAL_SPEC.md 8-1 스키마 확정 체크리스트대로 Flyway 마이그레이션 작성(P2·P3 기능 테이블 포함), `audit_events`는 운영 계정 INSERT·SELECT 권한만 — 개발자
+- [ ] 감사 이력 기록을 업무 변경과 같은 트랜잭션에서 남기는 공통 구조(애플리케이션 서비스 또는 도메인 이벤트 핸들러) — 개발자
+- [ ] 배정·기한·처리 이력·감사 이력·업무 지표 화면을 design.md·시안에 반영 — 디자이너(박소영)
+- [ ] 테스트 계정 seed: 비밀번호는 `DEMO_ACCOUNT_PASSWORD` 등 환경변수에서 읽어 bcrypt로 저장(평문을 코드·마이그레이션에 넣지 않음), `.env.example`에 시연 기본값 표기 — 개발자
+- [ ] 회원가입 API가 요청의 역할 값을 무시하고 APPLICANT로만 생성하는지 테스트(불변식 32) — 개발자
+- [ ] 신청 단계×상태 CHECK 제약과 도메인 전이 테스트(불변식 33~35) — 개발자
