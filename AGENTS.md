@@ -1,6 +1,6 @@
 # AGENTS.md — SecurityAdvisor(보안길잡이)
 
-v1.9 · 2026-11-07 · 최종 확정안 반영(인증·회원가입·테스트 계정, 시연 필수 경로, 신청 단계×상태) · v1.8: 업무 도메인 6종 · v1.7: 9장 작업 전 문서 버전 확인 의무 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
+v1.10 · 2026-11-07 · 디자인 시안 참조를 prototype-soo로 변경, 시안 수시 변경 원칙(6장) · v1.9: 최종 확정안 반영(인증·회원가입·테스트 계정, 시연 필수 경로, 신청 단계×상태) · v1.8: 업무 도메인 6종 · v1.7: 9장 작업 전 문서 버전 확인 의무 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1~10장) + 업무·대회 규칙(11~14장) + 확정 결정(15장) · 채택·수정은 이 파일을 고치는 PR로
 
 사람과 AI 에이전트(Claude Code, Codex, Cursor, Copilot 등)가 함께 지키는 규칙이다. 작업을 시작하기 전에 이 파일을 끝까지 읽는다.
 
@@ -9,7 +9,8 @@ v1.9 · 2026-11-07 · 최종 확정안 반영(인증·회원가입·테스트 �
 | 저장소 | 역할 |
 |---|---|
 | **team-khfc/Security-Advisor** | **본 저장소.** 모든 개발·운영의 결과가 모인다 |
-| **team-khfc/prototype** | **작업 시작점.** 모든 개발자·디자이너가 여기서 시작한다: 선행 Next.js 화면·도메인 검사 15종(프론트 기반), `보안길잡이 디자인시안 프로토타입/`(디자이너 참고 원본), 초기 백엔드 예제(참고). 산출물은 본 저장소로 가져온다 |
+| **team-khfc/prototype** | **개발 작업 시작점.** 선행 Next.js 화면·도메인 검사 15종(프론트 기반), 초기 백엔드 예제(참고). 산출물은 본 저장소로 가져온다. 이 저장소의 `보안길잡이 디자인시안 프로토타입/`은 이전 시안이라 참고하지 않는다 |
+| **team-khfc/prototype-soo** | **디자인 시안 원본(디자인 담당 작업 영역).** 화면 시안·공통 스타일·`docs/design.md` 원본. 미리보기 https://team-khfc.github.io/prototype-soo/ . **디자이너가 언제든 고칠 수 있으므로** 화면 구현 직전에 기본 브랜치 최신본과 `MERGE_NOTES.md`를 확인한다. 디자이너만 수정 |
 
 ## 1. 프로젝트
 
@@ -147,7 +148,13 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 - any 금지. 백엔드 DTO와 같은 모양의 타입을 기능의 types.ts에 둔다.
 - 화면 디자인은 KRDS를 따른다. 임의의 색상·글꼴을 만들지 않는다. 토큰값·타이포·상태 표현·접근성·세션 만료 등 상세 기준은 design.md.
 - **차수 반환을 받은 화면은 기존 작성 내용을 그대로 보여주고, "보완 필요/재작성 필요" 지정 항목을 하이라이트·강조 표시한다**(색상만으로 구분하지 않고 아이콘·라벨 병행, 항목별 반환 사유 노출 — design.md 기준).
-- **디자인 시안:** 화면의 참고 원본은 prototype 저장소의 `보안길잡이 디자인시안 프로토타입/` 폴더다 — 대표 화면 15종 + 컴포넌트 가이드(16-components.html) + design-tokens.json + docs/HANDOFF.md. 디자이너는 시안 작업 시 이 패키지에서 시작하고, 개발자는 화면 구현 시 해당 화면 HTML과 토큰을 대조한다. 시안의 저장·게시·AI 버튼은 디자인 상태 표시용이며 실제 동작 기준이 아니다(동작 기준은 11장과 design.md).
+- **디자인 시안(디자이너 작업 영역 — 수시 변경):** 화면의 참고 원본은 **team-khfc/prototype-soo의 기본 브랜치 최신본**이다(화면별 파일 목록은 그 저장소 README). 시안은 디자이너가 언제든 고칠 수 있으므로 다음을 지킨다.
+  - 화면을 구현하기 직전에 시안 최신 커밋과 `MERGE_NOTES.md`(팀 문서와 다르게 유지하는 결정)를 확인하고, 해당 화면의 마크업·스타일과 `assets/css/tokens.css`를 대조한다. PR 설명에 참고한 시안 커밋을 적는다.
+  - 구현 뒤 시안이 바뀌면 자동으로 따라가지 않는다. 이슈로 등록하고 우선순위를 정한다. 11.08 기능 동결 이후에는 오류·접근성 수정만 팀장 승인으로 반영한다.
+  - 우선순위: 업무 의미(단계·상태 이름·전이·권한)는 FUNCTIONAL_SPEC.md, 시각 규칙·컴포넌트 계약은 design.md, 개별 화면 모양은 최신 시안. 시안이 FUNCTIONAL_SPEC과 다르면 시안대로 구현하지 않고 디자이너·기획에 알린다. 시안이 design.md와 다르면 `MERGE_NOTES.md`에 기록된 결정인지 확인하고, 아니면 디자이너에게 묻는다.
+  - 시안의 동작(브라우저 저장소 시연 데이터, 사용자 전환, CDN 라이브러리, 저장·게시·AI 버튼)은 시연용이며 구현 기준이 아니다. 구현은 11장·SECURE_CODING.md를 따른다.
+  - 시안 저장소는 디자이너만 수정한다. 개발자·AI 에이전트는 시안 파일을 고치지 않고 이슈·코멘트로 의견을 전한다.
+  - 이 문서와 다른 규칙 문서에는 시안의 화면 수·파일명·커밋을 고정하지 않는다. 시안 변경만으로 규칙 문서를 개정하지 않으며, 시각 규칙이 바뀌면 디자이너가 design.md를 개정한다.
 - 테스트: Vitest + Testing Library. 사용자가 보는 글자·역할(role)로 찾는다(getByText, getByRole).
 
 ## 7. 주석 규칙
@@ -189,7 +196,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 - docs/adr/: 기술 결정 기록. 큰 결정은 NNNN-english-title.md 파일로 남기고 내용은 한국어로 쓴다.
 - docs/glossary.md: 유비쿼터스 언어 대응표(업무 용어 ↔ 코드 식별자)
 - 운영 규칙(팀·범위·일정·제출 책임): PROJECT_RULES.md · 시큐어코딩: SECURE_CODING.md · 코딩 스타일: CODING_STYLE.md · 협업 절차: CONTRIBUTING.md · 화면 기준: design.md
-- 디자인 시안: prototype 저장소 `보안길잡이 디자인시안 프로토타입/` (index.html에서 화면 목록)
+- 디자인 시안: team-khfc/prototype-soo 최신본(README에 화면 목록, 미리보기 https://team-khfc.github.io/prototype-soo/) — 디자이너 작업 영역, 수시 변경(6장)
 - 전체 그림·확정 결정의 이력과 **문서별 기준 버전 표(5장)** 는 팀 Claude 프로젝트의 PROJECT_CONTEXT.md에 관리한다. 문서 개정 절차는 PROJECT_RULES.md 7-1.
 
 ## 11. 업무 불변 원칙 — 모든 기능에 적용 (= 도메인 불변식)
@@ -237,7 +244,7 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 | 인증·회원가입·시연 범위 | 로그인·회원가입(가입 계정은 APPLICANT만, 역할 부여는 관리자), 역할별 테스트 계정 seed(비밀번호는 환경변수 주입), 시연 필수 경로 우선·P2는 리허설 통과 후 착수, 신청 단계×상태 표·4단계 확정 주체 — FUNCTIONAL_SPEC.md 4장·6장·F-11 | 확정 (2026-11-07) |
 | 운영 업무 도메인 | 담당자 배정(2단계 진입 시 기본 담당자 자동 배정·관리자 재배정)·처리 기한(영업일, 경과해도 상태 불변)·감사 이력(추가 전용·업무와 같은 트랜잭션)·정책 수명주기(방화벽 확정 시 규칙 생성, 적용은 사람이 기록)·업무 지표(읽기 전용)·알림(화면 안, 업무 상태 불변) — FUNCTIONAL_SPEC.md 3-3장 | 확정 (2026-11-07) |
 | 다중 서류 신청 | 사업 건(BusinessCase) 1 : N 신청(SecurityRequest). 상태 단위는 신청, 사업 건 상태는 계산값, 공통 답변(scope=CASE) 1회 수집, 사업 건당 서류 유형 1건 — FUNCTIONAL_SPEC.md 3-2장 | 확정 (2026-11-07) |
-| 저장소 정책 | 본 저장소는 Security-Advisor, 모든 개발자·디자이너의 작업 시작점은 prototype | 확정 (2026-11-06) |
+| 저장소 정책 | 본 저장소는 Security-Advisor, 개발 작업 시작점은 prototype, 디자인 시안은 prototype-soo | 확정 (2026-11-07) |
 | Java | Java 25 (LTS) — Gradle toolchain 고정 | 확정 (2026-11-06) |
 | 방법론 | DDD — 전술 패턴 범위. 이벤트 소싱·CQRS 미도입 | 확정 (2026-11-06) |
 | DB | PostgreSQL 17 + Flyway + Testcontainers. 접근은 Spring Data JPA | 확정 (2026-11-05) |
@@ -245,11 +252,12 @@ controller → service → repository / domain 한 방향만 허용한다. Archi
 | AI 프레임워크 | Spring AI 2.0 채택 — ChatClient+공급자 2종+PGVector의 최소 범위, 버전 고정, 공통 어댑터 유지 | 확정 — 개발자 협의 완료 (2026-11-06) |
 | 코딩 스타일 | Google 스타일 가이드 + KISA 시큐어코딩(SECURE_CODING.md) 준수 | 확정 (2026-11-05) |
 | 기획(역할·범위) | 역할 4종, 1차 범위 서류 2종 — 기획은 팀장 의견 기준 | 확정 (2026-11-05) |
-| 디자인 시안 | prototype 저장소 `보안길잡이 디자인시안 프로토타입/`이 디자이너 참고 원본 | 확정 (2026-11-05) |
+| 디자인 시안 | 참고 원본은 prototype-soo 최신본(디자이너 작업 영역, 수시 변경). 구현 직전 최신본 확인, PR에 참고 커밋 기록, 업무 의미는 FUNCTIONAL_SPEC 우선 — 6장 | 확정 (2026-11-07) |
 
 후속 작업(담당: 개발자, PR로):
 
-- [ ] prototype의 Next.js 화면·도메인 검사 15종을 기반으로 Security-Advisor에 프론트 구성
+- [ ] prototype의 Next.js 화면·도메인 검사 15종을 기반으로 Security-Advisor에 프론트 구성(화면 모양은 prototype-soo 최신 시안과 대조)
+- [ ] PR 템플릿에 "참고한 디자인 시안 커밋(prototype-soo)" 항목 추가
 - [ ] 백엔드를 확정 스택(Java 25·Boot 4.1·Gradle Kotlin DSL·PostgreSQL·Flyway)으로 kr.securityadvisor 패키지에 구축
 - [ ] docs/adr/0001-tech-stack.md(Java 25·DDD·패키지명 포함)·0002-spring-ai.md 작성
 - [ ] docs/glossary.md 초안: FUNCTIONAL_SPEC.md 2장 용어표 기반(기획 합의)

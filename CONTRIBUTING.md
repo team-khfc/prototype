@@ -1,6 +1,6 @@
 # 보안길잡이 팀 공통 개발 규칙 (CONTRIBUTING)
 
-v0.10 · 2026-11-07 · 인증·회원가입·신청 상태·확정 수용 기준 추가 · v0.9: 운영 업무 도메인 수용 기준 · 채택·수정은 PR로
+v0.11 · 2026-11-07 · 디자인 시안 저장소(prototype-soo)와 화면 PR의 시안 커밋 기록 · v0.10: 인증·회원가입·신청 상태·확정 수용 기준 추가 · v0.9: 운영 업무 도메인 수용 기준 · 채택·수정은 PR로
 
 이 문서는 사람과 AI가 함께 개발할 때의 협업 기준이다. 일상 작업 규칙(명령·계층·이름·DDD·Git)은 AGENTS.md가 기준이고, 이 문서는 절차·계약·수용 기준·CI처럼 협업의 뼈대를 담는다. 둘이 다르면 모순을 수정하는 PR을 올린다.
 
@@ -23,12 +23,13 @@ v0.10 · 2026-11-07 · 인증·회원가입·신청 상태·확정 수용 기준
 
 ## 2. 저장소와 시작점
 
-**본 저장소는 Security-Advisor이고, 모든 개발자·디자이너의 작업 시작점은 prototype이다**(2026-11-06 확정).
+**본 저장소는 Security-Advisor이고, 개발 작업 시작점은 prototype, 디자인 시안은 prototype-soo다**(2026-11-07 확정).
 
 | 저장소 | 역할 |
 |---|---|
 | team-khfc/Security-Advisor | 본 저장소 — 모든 개발·운영의 결과가 모인다 |
-| team-khfc/prototype | 작업 시작점 — 선행 Next.js 화면·도메인 검사 15종(프론트 기반), `보안길잡이 디자인시안 프로토타입/`(디자이너 참고 원본), 초기 백엔드 예제(참고) |
+| team-khfc/prototype | 개발 작업 시작점 — 선행 Next.js 화면·도메인 검사 15종(프론트 기반), 초기 백엔드 예제(참고). 이전 시안 폴더는 참고하지 않음 |
+| team-khfc/prototype-soo | 디자인 시안 원본 — 디자이너 작업 영역, 수시 변경. 화면 PR은 구현 직전 최신본·`MERGE_NOTES.md`를 확인하고 **PR 설명에 참고한 시안 커밋을 적는다**. 시안이 FUNCTIONAL_SPEC과 다르면 업무 규칙을 따르고 디자이너에게 알린다. 시안 파일은 디자이너만 수정(AGENTS.md 6장) |
 
 확정 스택: Next.js(App Router)+React 19+TS 5.9+TanStack Query / **Java 25(LTS)**+Spring Boot 4.1+Gradle(Kotlin DSL)+Spring Data JPA+**Spring AI 2.0**(ChatClient·PGVector, ADR 0002) / PostgreSQL 17+Flyway+pgvector / Docker Compose. **개발 방법론은 DDD**(전술 패턴 범위 — AGENTS.md 5장). 프론트는 prototype 산출물을 기반으로 발전시키고, 백엔드는 확정 스택으로 Security-Advisor에 구축한다. 문서에 적힌 구성이 실제 저장소와 다르면 코드가 기준이고 문서를 고친다. 검토 문서만 있는 기능을 완료로 표시하지 않는다.
 

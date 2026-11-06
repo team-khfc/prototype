@@ -1,6 +1,6 @@
 # 보안길잡이 코딩 스타일
 
-v0.3 · 2026-11-05 · Security-Advisor 저장소 기준(Next.js + Spring Boot/Gradle Kotlin DSL/PostgreSQL) · 채택·수정은 PR로
+v0.4 · 2026-11-07 · 화면 참고 원본을 prototype-soo 최신 시안으로 변경 · v0.3: Security-Advisor 저장소 기준(Next.js + Spring Boot/Gradle Kotlin DSL/PostgreSQL) · 채택·수정은 PR로
 
 팀 기준은 **Google 공식 스타일 가이드 준수**다(팀장 확정, 2026-11-05). Google 원문에서 필요한 규칙을 채택하고 React·Next.js·Spring Boot에 맞춰 보완한다. 아래 `[G]`는 Google 원문 기반, `[P]`는 프로젝트 선택·예외, `[F]`는 프레임워크 요구다. Google 문서의 후속 변경을 개발 중인 코드에 자동 적용하지 않는다. 보안 관련 작성 규칙은 SECURE_CODING.md가 같은 비중의 기준이다.
 
@@ -57,7 +57,7 @@ v0.3 · 2026-11-05 · Security-Advisor 저장소 기준(Next.js + Spring Boot/Gr
 - `[F/P]` use client는 브라우저 기능이 필요한 경계에만. 클라이언트 번들에 서버 비밀값 금지.
 - `[P]` 권한 표시와 실제 권한 검사를 구분한다. UI에서 버튼을 숨기는 것으로 서버 보호를 대체하지 않는다.
 - `[P]` hooks의 조건부 호출·누락된 의존성을 임의 suppression으로 숨기지 않는다. 예외는 이유와 검증 근거를 남긴다.
-- `[P]` KRDS 원본 토큰을 수정하지 않고 프로젝트 별칭과 공통 UI를 사용한다. 시각 규칙은 design.md, 화면 참고 원본은 prototype 저장소의 디자인 시안 패키지.
+- `[P]` KRDS 원본 토큰을 수정하지 않고 프로젝트 별칭과 공통 UI를 사용한다. 시각 규칙은 design.md, 화면 참고 원본은 prototype-soo의 최신 디자인 시안(디자이너 작업 영역, 수시 변경 — 구현 직전 확인, AGENTS.md 6장). 시안의 시연용 코드(브라우저 저장소, CDN 로딩)를 그대로 옮기지 않는다.
 
 ## 4. 자동화 도구
 
