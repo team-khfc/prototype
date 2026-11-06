@@ -207,6 +207,7 @@ export interface AnalysisInput {
   expectedRevision: number;
   text: string;
   file?: File;
+  configurationId?: string;
 }
 export interface RequestCommand {
   endpoint: string;

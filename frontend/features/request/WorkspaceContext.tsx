@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from 'react';
 import type { Actor } from '@/features/auth';
+import type { LlmOption } from '@/features/llm';
 import type { Role } from '@/lib/sharedTypes';
 import type {
   AnswerInput,
@@ -22,6 +23,9 @@ export interface WorkspaceContextValue {
   cases: BusinessCase[];
   requests: SecurityRequest[];
   pools: ReviewerPool[];
+  modelOptions: LlmOption[];
+  modelsLoading?: boolean;
+  modelsError?: unknown;
   auditEvents: AuditEvent[];
   pending: boolean;
   error: unknown;

@@ -88,7 +88,7 @@ public class SecurityConfiguration {
                 logout
                     .logoutUrl("/api/auth/logout")
                     .invalidateHttpSession(true)
-                    .deleteCookies("BOAN_SESSION")
+                    .deleteCookies("SA_SESSION")
                     .logoutSuccessHandler(
                         (request, response, authentication) -> response.setStatus(204)))
         .exceptionHandling(

@@ -95,7 +95,7 @@ public class BusinessCaseService {
             command.title(),
             command.department(),
             command.description(),
-            policies.current(actor.institutionId()).version());
+            policies.currentVersion(actor.institutionId()));
     value = cases.saveAndFlush(value);
     for (DocType type : types) {
       var request =

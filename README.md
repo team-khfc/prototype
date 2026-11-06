@@ -1,12 +1,14 @@
-# 보안길잡이 — 팀 개발 시작점
+# 보안길잡이 — 새 개발 프로토타입
 
-**SecurityAdvisor**는 공공기관 사업 담당자가 사업 내용을 설명하면 AI와 정보보안·ICT인프라 담당자가 전문 정보를 보완하여 방화벽신청서·보안성검토 신청서 초안을 완성하는 서비스다. AI의 제안, 사람의 확인, 서류 제출·확정, 실제 방화벽 적용을 구분한다.
+**SecurityAdvisor(보안길잡이)**는 보안을 모르는 공공기관 담당자와 정보보안·ICT인프라 담당자 사이의 지식 중계를 돕는다. 사업 내용을 한 번 설명하고, AI의 미확정 제안과 담당자의 확인을 거쳐 **방화벽신청서·보안성검토 신청서**를 각각 작성·제출·확정한다.
 
-이 저장소는 팀원이 같은 화면·업무 용어·API에서 개발을 시작하도록 기존 Next.js/Spring Boot 자산을 발전시킨 시작점이다. **공개 시연 화면과 실제 세션·DB를 사용하는 업무 화면을 함께 제공한다.** 전체 대회 기능의 완료·배포·리뷰 승인을 뜻하지 않는다. 실제 실행한 검사와 남은 제한은 [이번 검증 기록](docs/verification-starter.md), 팀별 다음 작업은 [개발 인계](docs/development-handoff.md)를 확인한다.
+이번 시작점은 **최신 규칙과 prototype-soo 시안을 기준으로 실행 구조를 하나로 구성**했다. 이전 `/workspace`, `/requests`, `/admin`, `/design-preview` 화면과 `procedure/analysis/institution` 예제 API·샘플은 제거했다. 현재 업무 불변식과 검증된 보안 유틸리티는 새 컨텍스트에 배치했다. 과거 구현·검증 기록은 Git 이력에서 찾는다. 이미 병합된 Flyway SQL과 기존 DB 자료는 삭제하거나 변경하지 않는다([결정 기록](docs/adr/0003-fresh-baseline.md)).
 
-## 1. 먼저 화면 보기
+이 저장소는 팀원이 개발을 시작하는 프로토타입이다. 구현 범위·실행한 검사·남은 작업은 [검증 기록](docs/verification-fresh.md)과 [팀 인계](docs/development-handoff.md)에 구분한다. 최종 개발 결과는 [team-khfc/Security-Advisor](https://github.com/team-khfc/Security-Advisor)에 모은다.
 
-필요 환경: Node.js 24, npm. 백엔드 없이 시작할 수 있다.
+## 1. 화면부터 실행하기
+
+Node.js 24 환경에서 저장소 루트 기준으로 실행한다.
 
 ```bash
 cd frontend
@@ -14,138 +16,126 @@ npm ci
 npm run dev
 ```
 
-`http://localhost:3000/starter`를 연다. 사업 건의 두 서류, 신청별 독립 진행, INFRA 할당·검토 분리, 차수 반환, 사용자 제출, 최종 확인·확정의 화면 흐름을 확인한다. 합성 자료는 브라우저 메모리에서만 바뀌며 새로고침하면 초기화된다. **이 화면의 역할별 보기와 버튼 실행은 실제 로그인·서버 권한 검증이 아니다.**
+`http://localhost:3000`을 열면 `/starter`로 이동한다. **백엔드 없이도** 합성 사업 건·서류 2종·역할 4종의 흐름을 살펴볼 수 있다. 역할별 보기는 브라우저 메모리 시연이며 실제 로그인이나 서버 권한 검증이 아니다. 새로고침하면 시연 자료가 초기화된다.
 
-| 경로 | 용도 | 데이터·인증 경계 |
+| 경로 | 용도 | 데이터 경계 |
 |---|---|---|
-| `/starter` | 최신 업무 흐름을 설명하는 공개 상호작용 시연 | 합성 fixture, 메모리 상태, 업무 API 호출 없음 |
-| `/login`, `/signup` | 실제 로그인·신청자 회원가입 | 서버 세션, CSRF, DB 계정 |
-| `/business-cases` | 사업 건 목록·생성·공통 정보 | 실제 세션 + `/api/business-cases` |
-| `/security-requests` | 서류별 신청·협의·제출·확정 | 실제 세션 + `/api/security-requests` |
-| `/operations` | 담당자 후보군·기한·감사 조회, P1 고정 규칙 안내 | 실제 조회 API. LLM·계정 관리 편집 UI는 신규 화면에 미연결 |
-| `/design-preview/workspace` | 이전 표시 컴포넌트의 공개 읽기 전용 시안 | 합성 fixture, 저장·제출 비활성 |
-| `/workspace`, `/requests`, `/admin/*` | 기존 구현을 보존한 호환·참고 경로 | 기존 `/api/procedures` 등 사용. 새 1:N 업무의 기준 경로는 위 두 자원 |
+| `/`, `/starter` | 공통 정보, 두 서류, 역할별 협의·반환·확정 시연 | 합성 메모리 자료 |
+| `/login`, `/signup` | 실제 계정 로그인·신청자 가입 | 서버 세션·CSRF·DB |
+| `/business-cases` | 사업 건 생성·공통 인터뷰·문서 분석 | `/api/business-cases` |
+| `/security-requests` | 신청별 독립 상태·협의·반환·제출·확정 | `/api/security-requests` |
+| `/operations` | 담당자 후보·감사 조회, 계정 역할·LLM 연결 구성 | 같은 기관 관리자 API |
 
-화면 이동만으로 신청의 업무 상태를 바꾸지 않는다. 서버 화면은 로그인한 사용자의 실제 역할과 서버 응답의 허용 행동을 표시한다.
+시안의 배치·토큰·출처 표시를 참고하면서 단계·상태·권한은 FUNCTIONAL_SPEC을 따른다. 최신 시안의 `제출 준비`, `처리 완료/불가` 표현은 현행 명세의 `최종 검토 중`, `확정/종결(반려)`로 표시한다. **design.md와 디자이너 저장소는 수정하지 않았다.** 참고 커밋과 차이는 [출처 기록](docs/SOURCE_REFERENCES.md)에 있다.
 
-## 2. 실제 세션·DB와 함께 실행
+## 2. 실제 서버·DB까지 실행하기
 
-필요 환경: Docker Engine, Compose v2, Python 3. Dockerfile이 Java 25와 Node.js 24 빌드 환경을 준비한다. 프로젝트 루트에서 실행한다.
+필요 환경은 Docker Engine, Compose v2, Python 3이다. 프로젝트 루트에서 실행한다.
 
 ```bash
 python3 scripts/init-demo.py
 docker compose --profile app up -d --build
 ```
 
+`init-demo.py`는 DB 암호·역할별 합성 계정 암호·기관 컨텍스트 암호화 키를 로컬 `.env`에 생성한다. 실제 값은 해당 파일에서 확인하며 코드·Git·영상에 넣지 않는다. 기존 `.env`는 덮어쓰지 않는다. 이전 checkout의 `.env`가 있다면 새 checkout에서 새 파일을 만들거나 `.env.example`의 **SA_*** 이름으로 직접 맞춘다. 구형 환경변수는 읽지 않는다.
+
 | 주소 | 용도 |
 |---|---|
-| `http://localhost:3000/login` | 역할별 계정 로그인 |
-| `http://localhost:3000/signup` | 합성 시연 기관의 신청자 회원가입 |
-| `http://localhost:3000/business-cases` | 새 사업 건 1:N 신청 흐름 |
+| `http://localhost:3000/login` | 실제 역할별 로그인 |
+| `http://localhost:3000/signup` | 합성 시연 기관의 신청자 가입 |
+| `http://localhost:3000/business-cases` | 새 사업 건·서류 2종 시작 |
 | `http://localhost:8080/api/health` | 서버 준비 상태 |
-| `http://localhost:8080/swagger-ui.html` | 실행 서버의 API 설명 |
-| `http://localhost:8080/v3/api-docs` | 실행 서버의 OpenAPI JSON |
+| `http://localhost:8080/swagger-ui.html` | OpenAPI 설명 |
+| `http://localhost:8080/v3/api-docs` | OpenAPI JSON |
 
-`init-demo.py`는 DB 암호·역할별 시연 암호·기관 컨텍스트 암호화 키를 로컬 `.env`에 생성한다. 기존 파일은 덮어쓰지 않는다. 암호는 해당 파일에서 확인하고 커밋하지 않는다. `BOAN_*` 환경변수 이름은 기존 실행 환경과의 호환을 위해 유지한다. Java 패키지는 `kr.securityadvisor`다.
+| 역할 | 아이디 | 암호 환경변수 |
+|---|---|---|
+| 신청자 | `applicant.demo` | `SA_DEMO_APPLICANT_PASSWORD` |
+| 두 번째 신청자 | `second.demo` | `SA_DEMO_APPLICANT_PASSWORD` |
+| ICT인프라 담당자 | `infra.demo` | `SA_DEMO_INFRA_PASSWORD` |
+| 정보보안 담당자 | `security.demo` | `SA_DEMO_SECURITY_PASSWORD` |
+| 기관 관리자 | `admin.demo` | `SA_DEMO_ADMIN_PASSWORD` |
 
-Compose의 새 DB 볼륨은 `scripts/db/02-pgvector.sql`로 vector 확장을 준비한다. 기존 볼륨에는 초기화 스크립트가 다시 실행되지 않으므로 확장 설치 상태를 DB 담당자가 확인해야 한다. 이는 실제 RAG 색인·검색이나 Docker 전체 구동 검증이 완료됐다는 뜻이 아니다.
+`outside.demo`는 다른 합성 기관의 격리 검사 계정이며 신청자 암호를 쓴다. 회원가입은 APPLICANT만 생성한다. 사업 건은 사용자가 새로 만들며 이전 예제 업무를 자동 생성하지 않는다. 실제 역할 변경은 로그아웃 후 해당 계정으로 로그인해서 확인한다.
 
-| 역할 | 아이디 | 암호 환경변수 | 새 업무에서의 책임 |
-|---|---|---|---|
-| 신청자 | `applicant.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 사업·신청 작성, 보완, 최종 제출 |
-| 두 번째 신청자 | `second.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 신청만 조회하는지 확인 |
-| ICT인프라 | `infra.demo` | `BOAN_DEMO_INFRA_PASSWORD` | 배정받은 신청의 할당·검토·최종 확인 |
-| 정보보안 | `security.demo` | `BOAN_DEMO_SECURITY_PASSWORD` | 배정받은 신청의 검토·최종 확인·확정 |
-| 기관 관리자 | `admin.demo` | `BOAN_DEMO_ADMIN_PASSWORD` | 기관 운영·배정·계정 역할 관리 범위 |
+Compose 프로젝트명은 `securityadvisor-prototype`, 새 기본 DB명은 `securityadvisor`다. 기존 Compose 프로젝트의 볼륨과 분리되며 예전 자료를 자동 이관하거나 삭제하지 않는다. SQL 계정 이름 `boan_app/boan_migrator`는 이미 병합된 Flyway의 권한 설정을 지키기 위해 남겨 둔다. 서비스·환경변수·API가 과거 예제에 의존한다는 뜻은 아니다.
 
-`outside.demo`는 다른 합성 기관의 격리 검사용 신청자이며 신청자 암호를 사용한다. 회원가입은 APPLICANT만 생성하고 역할·기관을 사용자가 지정하지 않는다. 역할을 바꾸려면 로그아웃 후 다른 실제 계정으로 로그인한다. 관리자 역할이 검토자 권한을 자동으로 갖지는 않는다.
+새 DB 초기화는 pgvector 확장을 준비한다. 공개자료 색인·검색은 별도 구현 범위다. 종료할 때는 `docker compose --profile app down`을 사용한다. **이 프로토타입의 합성 자료를 전부 지우려는 경우에만** `docker compose --profile app down -v` 후 다시 기동한다. 보존할 암호화 자료가 있으면 볼륨과 `.env` 키를 함께 보관한다.
 
-기존 합성 예제 자료는 `BOAN_DEMO_SCENARIOS`로 제어한다. 해당 예제의 이전 상태를 새 신청의 현재 업무 규칙으로 해석하지 않는다. 새 흐름은 [시나리오](docs/starter-scenarios.md)에 따라 사업 건을 생성해 진행한다.
+## 3. 개발과 검사
 
-종료는 `docker compose --profile app down`이다. DB·업로드 볼륨은 유지된다. 합성 시연 자료를 모두 지우고 새로 시작할 때만 `docker compose --profile app down -v` 후 다시 기동한다. 이 초기화는 로컬 시연 전용이며 저장 자료를 삭제한다. 기존 암호화 자료를 보존할 때는 `.env`의 키와 볼륨을 함께 유지한다.
-
-## 3. 개발·검사 명령
-
-작업 전 기준 문서 버전을 검사한다. 기준표는 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) 5장이다.
+작업 전에 PROJECT_CONTEXT → FUNCTIONAL_SPEC → AGENTS → 프로젝트 운영·스타일·보안·협업 규칙을 읽는다. 요약 지침은 중복 없이 `claude/INSTRUCTIONS.md`에 있다.
 
 ```bash
 python3 tools/check_doc_versions.py
+python3 tools/check_fresh_structure.py
 ```
 
-백엔드는 JDK 25와 Docker(Testcontainers)가 필요하다. Gradle은 저장소 wrapper를 사용한다.
+각 블록은 저장소 루트에서 시작한다. 백엔드 검사는 JDK 25와 Docker(Testcontainers)가 필요하다.
 
 ```bash
 cd backend
-./gradlew spotlessCheck check bootJar
+./gradlew spotlessApply check bootJar
 ```
-
-프런트엔드는 Node.js 24를 사용한다. `check`에는 포맷 확인·타입·린트·테스트가 포함되고 production 빌드는 별도다.
 
 ```bash
 cd frontend
 npm ci
+npm run format
 npm run check
 npm run build
 ```
 
-위 두 블록의 시작 경로는 각각 저장소 루트다. 포맷 수정이 필요하면 해당 폴더에서 `./gradlew spotlessApply` 또는 `npm run format` 후 검사를 다시 실행한다. 프런트엔드 코드를 수정하기 전 [frontend/AGENTS.md](frontend/AGENTS.md)에 따라 설치된 Next.js 문서를 읽는다.
-
-[개발 시작점 CI](.github/workflows/development-starter.yml)는 `main` 대상 PR·`main` push·수동 실행에서 문서 버전, 프런트엔드 검사·빌드, 백엔드 검사·빌드를 독립 job으로 실행하도록 구성했다. Ubuntu 24.04, Node.js 24.22.1, Temurin 25.0.5+8을 지정하고 백엔드 통합 검사는 runner의 Docker에서 Testcontainers PostgreSQL을 사용한다. 저장소·환경 비밀값을 요구하지 않으며 합성 계정 암호와 암호화 키는 테스트가 생성한다.
-
-Actions는 공식 릴리스의 commit SHA로 고정했다([checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [setup-java v6.2.0](https://github.com/actions/setup-java/releases/tag/v6.2.0)). 토큰 권한은 `contents: read`이며 checkout 자격 증명을 남기지 않는다. **워크플로우 파일 추가는 CI 통과나 branch protection 적용을 뜻하지 않는다.** PR의 실제 실행 결과를 확인한 뒤 [이번 검증 기록](docs/verification-starter.md)에 기록한다.
-
-Docker로 DB만 실행하며 개발할 때는 루트에서 다음 명령을 사용하고, 별도 터미널에서 프런트엔드를 실행한다. JDK 25가 현재 Java 실행 환경이어야 한다.
+DB만 Docker로 사용하려면 루트에서 다음을 실행한다. 별도 터미널에서 프런트엔드 개발 서버를 시작한다.
 
 ```bash
 docker compose up -d db
 python3 scripts/run-backend.py
 ```
 
-프런트엔드 `API_ORIGIN` 기본값은 `http://localhost:8080`이다. 통합 테스트에 별도 PostgreSQL 17 검증 DB를 사용할 때만 `BOAN_TEST_JDBC_URL`, `BOAN_TEST_DB_USER`, `BOAN_TEST_DB_PASSWORD`를 명시한다. 외부 DB 테스트 성공은 Docker/Testcontainers 기동 성공과 별도로 기록한다. 테스트 DB는 합성 자료 전용이어야 한다.
+프런트엔드 서버 프록시 설정은 `SA_API_ORIGIN`이며 기본값은 `http://localhost:8080`이다. 전용 PostgreSQL 17에서 통합 검사를 실행할 때만 `SA_TEST_JDBC_URL`, `SA_TEST_DB_USER`, `SA_TEST_DB_PASSWORD`를 지정한다. 테스트 DB는 합성 자료 전용이어야 한다. 기본 검사는 Testcontainers를 사용한다.
 
-프런트엔드·백엔드·DB를 기동한 뒤, 별도 터미널의 저장소 루트에서 새 1:N 업무의 실제 HTTP 검사를 실행한다.
+실제 프런트엔드·백엔드·DB를 모두 기동한 뒤 루트에서 실행한다.
 
 ```bash
 python3 scripts/smoke-starter.py
 ```
 
-기본 접속 주소는 `http://127.0.0.1:3000`이며 `BOAN_TEST_BASE_URL`로 변경할 수 있다. 역할별 시연 암호는 루트 `.env` 또는 환경변수에서 읽는다. 검사는 실제 세션·CSRF, 사업 건과 두 서류, 기관·소유자 격리, EXAMPLE 분석·미확정 후보, 배정·할당·반환·보완, 제출·최종 확인·확정·감사를 확인하며 **새 합성 사업 건과 이력을 생성한다.** 합성 시연 DB에서 실행하고 결과는 실행 환경과 함께 남긴다.
+실제 HTTP·세션·CSRF로 새 사업 건과 이력을 생성하는 검사다. 주소는 `SA_TEST_BASE_URL`(기본 `http://127.0.0.1:3000`), 역할별 암호는 환경변수 또는 `.env`에서 읽는다. 운영 DB에서 실행하지 않는다. 실행 범위와 결과는 [검증 기록](docs/verification-fresh.md)을 따른다.
 
-`python3 scripts/smoke.py`는 기존 `/api/procedures` 호환 흐름을 검사하며 합성 신청·게시 이력을 생성한다. 이 결과만으로 새 1:N 신청 흐름을 검증했다고 표시하지 않는다. 새 API의 검사는 [API 계약](docs/starter-api.md), 테스트 소스, [이번 검증 기록](docs/verification-starter.md)을 함께 본다.
+[CI](.github/workflows/development-starter.yml)는 PR에서 문서·구조, 프런트엔드, 백엔드 검사를 실행한다. Node.js 24.22.1, Temurin 25.0.5+8, PostgreSQL Testcontainers를 사용하고 계정 암호·암호화 키는 테스트 실행마다 생성한다. 실제 CI 통과 여부는 PR의 check를 확인한다. 워크플로우 파일만으로 브랜치 보호가 설정되지는 않는다.
 
-## 4. 이번 시작점의 경계
+## 4. 현재 구현 범위
 
-| 영역 | 시작점과 남은 인수 범위 |
+| 영역 | 현재 출발점 | 다음 인수·구현 |
+|---|---|---|
+| 업무 모델 | 사업 건 1:N 신청, CASE/REQUEST 답변, 두 서류, 독립 단계·상태 | 명세별 세부 질문·서류 양식 확장 |
+| 협의·확정 | 자동 배정, INFRA 할당·검토 분리, 보완·반환, 불변 제출본, INFRA→SECURITY 최종 확인·SECURITY 확정 | 실제 사용자 인수와 운영 데이터 조건 검토 |
+| P1 운영 | 배정자 권한·재배정, 저장형 영업일 기한, 추가 전용 감사 | 기관별 기본 담당자·공휴일·기한 게시 계약 확장 |
+| 설정 | 기관별 v1 게시본, 코드에 고정한 질문·양식·기한 | 설정 편집·게시 UI는 P2 |
+| 인증 | 세션·CSRF·요청별 신원 확인, 신청자 가입, 관리자 역할 관리 | 기관 온보딩·운영 계정 정책 |
+| AI | TXT/MD 분석, 근거 있는 미확정 후보, EXAMPLE/LIVE 구분, 모델 구성 선택, Spring AI 어댑터 | 실제 공급자 2종 호출·품질 평가, 대화형 인터뷰·AI 최종 초안 생성, PDF/DOCX/HWP |
+| 지식 | 공개자료 메타데이터와 암호화 비공개 사실 분리 | PGVector 색인·검색·근거 품질 검증 |
+| 문서 | 현재 또는 고정 스냅샷의 출처·확인·근거를 포함한 HTML 다운로드 | 제출 양식 정밀화·파일 형식 확장 |
+| F-15~F-17 | 정책 수명주기·지표·알림은 설계 및 일부 테이블 준비 | 필수 경로 리허설 뒤 착수. 적용·회수·알림 생성은 미구현 |
+
+AI 후보는 근거가 있는 **미확정 제안**이다. 확인 없이 제출할 수 없다. 기한 경과로 업무 상태를 바꾸지 않으며, 서류 확정은 방화벽 적용 완료가 아니다. 실제 기관 내부 정보·실존 개인정보는 시연·모의자료에 사용하지 않는다.
+
+기본 EXAMPLE은 정해진 이름의 원문 행을 발췌하는 합성 시연이며 외부 LLM 호출이 아니다. LIVE 연결 구성 저장이나 프로토콜 테스트만으로 두 모델의 실제 구동을 입증하지 않는다. 현재 기한 seed는 각 5영업일·빈 공휴일 목록이다. 확정 시 방화벽 규칙 생성·적용 기록은 후속 구현 범위다.
+
+## 5. 팀별 출발 문서
+
+| 목적 | 문서 |
 |---|---|
-| 업무 모델 | `BusinessCase` 1:N `SecurityRequest`, CASE/REQUEST 답변, 신청별 독립 단계·상태, 서버 revision 계약 |
-| 협의·확정 | 배정자 권한, INFRA 할당과 검토 분리, 보완·반환, 불변 제출본, INFRA→SECURITY 최종 확인·SECURITY 확정 |
-| 운영 P1 | 배정·저장형 영업일 기한·추가 전용 감사의 서버 경계. 시작점은 단계별 5영업일·공휴일 빈 목록이며 기관 설정과의 연결은 후속 작업 |
-| 인증 | DB 세션·CSRF·요청별 계정 확인, 신청자 회원가입, 합성 역할별 계정 |
-| AI | 사업 건 분석 API, TXT/MD 입력, 기본 EXAMPLE 추출과 Spring AI 공통 어댑터 경계. 실제 외부 모델 2종 구동은 별도 증거 필요 |
-| 지식 | 공개 자료 참조와 기관 비공개 사실을 분리. 의존성·pgvector 준비만으로 RAG 색인·검색이 완료된 것은 아님 |
-| 기존 자산 | 이전 procedure/analysis/institution API·마이그레이션·테스트를 보존. 새 업무 모델과 자동 동기화하지 않음 |
-| F-15~F-17 | 정책 수명주기·업무 지표·화면 안 알림은 **설계 완료·구현 예정**. 11.09 필수 경로 리허설 통과 후 착수 |
+| 개발자·팀원별 코드 진입점과 인수 조건 | [development-handoff.md](docs/development-handoff.md) |
+| 정상·반환·권한 거부·AI 실패 시나리오 | [starter-scenarios.md](docs/starter-scenarios.md) |
+| 신청 API·DTO·상태·질문 키 | [starter-api.md](docs/starter-api.md) |
+| 인증·회원·분석·모델·비공개 컨텍스트 API | [auth-ai-api.md](docs/auth-ai-api.md) |
+| 업무 용어와 코드의 대응 | [glossary.md](docs/glossary.md) |
+| 이번 시안·규칙 참조와 남은 차이 | [SOURCE_REFERENCES.md](docs/SOURCE_REFERENCES.md) |
+| 기술 스택 | [ADR 0001](docs/adr/0001-tech-stack.md) |
+| Spring AI 경계 | [ADR 0002](docs/adr/0002-spring-ai.md) |
+| 새 단일 실행 구조와 기존 DB 이력 보존 | [ADR 0003](docs/adr/0003-fresh-baseline.md) |
+| 이번 코드에서 실제 실행한 결과 | [verification-fresh.md](docs/verification-fresh.md) |
 
-실제 내부망·기관 시스템·실존 개인정보는 입력·커밋·스크린샷에 사용하지 않는다. AI 후보는 출처·근거와 함께 미확정으로 남으며 확인 없이 제출할 수 없다. 서류 확정은 방화벽 장비 적용 완료를 의미하지 않는다.
-
-외부 AI는 DB 연결 구성의 허용된 엔드포인트·모델·키 참조를 사용한다. 키 원문은 환경변수에만 둔다. 키가 없는 기본 시연의 EXAMPLE 추출은 실제 외부 LLM 호출이 아니다. PDF/DOCX/HWP 입력, 공개자료 RAG, 모델 2종의 실제 호출·품질 평가, 운영 SSO·장비 자동 적용은 완료 범위에 포함하지 않는다. **어떤 항목이 검증됐는지는 문서 존재나 화면 버튼이 아니라 이번 검증 기록과 실제 코드로 판단한다.**
-
-신규 화면의 분석 입력·후보 적용은 사업 건 분석 API에 연결한다. LLM 연결 구성과 계정 역할 관리의 새 편집 화면은 아직 연결하지 않았다. 기존 `/admin/*`은 이전 기관 설정 예제이며 새 사업 건의 LLM 구성·고정 절차와 같은 설정 저장소로 간주하지 않는다.
-
-## 5. 팀원이 시작할 문서와 코드
-
-| 목적 | 진입점 |
-|---|---|
-| 팀별 첫 작업·인수 조건 | [docs/development-handoff.md](docs/development-handoff.md) |
-| 정상·반환·거부 시나리오 | [docs/starter-scenarios.md](docs/starter-scenarios.md) |
-| 새 API·DTO·상태·질문 키 | [docs/starter-api.md](docs/starter-api.md) |
-| 회원가입·계정·AI·모델 구성 연결 | [docs/auth-ai-api.md](docs/auth-ai-api.md) |
-| 업무 용어와 코드 식별자 | [docs/glossary.md](docs/glossary.md) |
-| 최신 시안과 기준 문서 참조 | [docs/SOURCE_REFERENCES.md](docs/SOURCE_REFERENCES.md) |
-| 문서·시안·코드의 차이와 담당 | [docs/alignment-notes.md](docs/alignment-notes.md) |
-| 기존 자산 보존·새 업무 경계 결정 | [ADR 0004](docs/adr/0004-team-development-starter.md) |
-| 실제 검사 결과 | [docs/verification-starter.md](docs/verification-starter.md) |
-
-기능 구현의 기준은 FUNCTIONAL_SPEC, 시각 규칙은 design.md, 개별 화면 모양은 [prototype-soo](https://github.com/team-khfc/prototype-soo)의 구현 직전 최신본이다. 이번 참고 SHA는 [출처 기록](docs/SOURCE_REFERENCES.md)에 남겼다. `design.md`와 시안 원본은 디자이너가 후속 작업한다.
-
-개발 결과는 [Security-Advisor](https://github.com/team-khfc/Security-Advisor)에 모인다. `prototype`에서도 기능 브랜치와 PR을 사용하고, 작성자 외 사람 1명 이상의 승인 뒤 Squash merge한다. 기존 [2026-11-06 검증 기록](docs/VERIFICATION.md)은 당시 소스의 역사 기록이며 이번 변경의 통과 증거로 재사용하지 않는다.
+이 저장소도 기능 브랜치와 PR을 사용한다. AGENTS.md 8장에 따라 작성자 외 사람 1명 이상이 승인한 뒤 Squash merge한다. 디자인 원본은 [prototype-soo](https://github.com/team-khfc/prototype-soo)에서 디자이너가 관리하며, 다음 화면 변경 직전에 최신 커밋과 `MERGE_NOTES.md`를 다시 확인한다.

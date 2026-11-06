@@ -32,7 +32,10 @@ import kr.securityadvisor.request.dto.WorkflowResponses.AnswerResponse;
 import kr.securityadvisor.request.dto.WorkflowResponses.BusinessCaseResponse;
 import kr.securityadvisor.request.dto.WorkflowResponses.SecurityRequestResponse;
 import kr.securityadvisor.request.service.BusinessCaseService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
@@ -259,6 +262,84 @@ class WorkflowIntegrationTest extends IntegrationTestSupport {
             "supplements/" + supplementId + "/resolve",
             new Revision(answered.revision()));
     assertThat(resolved.supplements().getFirst().status()).isEqualTo("RESOLVED");
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  @DisplayName("3단계의 두 반환 경로는 지정 항목·이전 값·기한 이력을 보존하고 형제 신청을 바꾸지 않는다")
+  void ownerCanReturnFinalReviewWithoutChangingSibling(int targetStage) throws Exception {
+    Sessions users = sessions();
+    Prepared prepared = prepareFinalReview(users);
+    SecurityRequestResponse before = current(users.applicant(), prepared.requestId());
+    SecurityRequestResponse siblingBefore = current(users.applicant(), prepared.siblingId());
+    SecurityRequestResponse returned =
+        command(
+            users.applicant(),
+            prepared.requestId(),
+            "returns",
+            new StageReturn(
+                before.revision(), targetStage, List.of("connectionPurpose"), "합성 사용자 재검토 요청"));
+    assertThat(returned.stage()).isEqualTo(targetStage);
+    assertThat(returned.status()).isEqualTo(targetStage == 1 ? "DRAFT" : "CONSULTING");
+    assertThat(returned.answers()).containsExactlyElementsOf(before.answers());
+    assertThat(returned.commonAnswers()).containsExactlyElementsOf(before.commonAnswers());
+    assertThat(returned.highlightedFields()).containsExactly("connectionPurpose");
+    assertThat(returned.returns()).hasSize(1);
+    assertThat(returned.reviews()).allMatch(review -> review.status().equals("RECHECK"));
+    assertThat(returned.deadlines().stream().filter(deadline -> deadline.active()).count())
+        .isEqualTo(targetStage == 1 ? 1 : 2);
+    List<UUID> previousDeadlineIds =
+        before.deadlines().stream().map(deadline -> deadline.id()).toList();
+    assertThat(
+            returned.deadlines().stream()
+                .filter(deadline -> previousDeadlineIds.contains(deadline.id()))
+                .toList())
+        .hasSize(before.deadlines().size())
+        .allMatch(deadline -> !deadline.active());
+    SecurityRequestResponse siblingAfter = current(users.applicant(), prepared.siblingId());
+    assertThat(siblingAfter.revision()).isEqualTo(siblingBefore.revision());
+    assertThat(siblingAfter.stage()).isEqualTo(siblingBefore.stage());
+    assertThat(siblingAfter.returns()).isEmpty();
+  }
+
+  @Test
+  @DisplayName("IP 초안은 저장하되 잘못된 형식으로 할당을 완료하거나 완료 감사를 남길 수 없다")
+  void allocationValidatesFactsAtCompletionAndLeavesRejectedCommandUnchanged() throws Exception {
+    Sessions users = sessions();
+    BusinessCaseResponse businessCase = create(users.applicant());
+    fillApplicant(users.applicant(), businessCase.id());
+    UUID id = document(businessCase, "FIREWALL");
+    requestAnswer(users.applicant(), id, "connectionPurpose", "합성 형식 검증 연결");
+    command(users.applicant(), id, "consult", revision(users.applicant(), id));
+    caseAnswer(users.infra(), businessCase.id(), infrastructure());
+    caseAnswer(
+        users.infra(),
+        businessCase.id(),
+        List.of(new AnswerInput("sourceIp", "합성 할당 대기", true, false)));
+    SecurityRequestResponse draft = current(users.infra(), id);
+    assertThat(answer(draft.commonAnswers(), "sourceIp").value()).isEqualTo("합성 할당 대기");
+    mvc.perform(json(post(path(id, "allocation")), users.infra(), new Revision(draft.revision())))
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("$.code").value("INVALID_ALLOCATION_VALUE"))
+        .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("출발지 IP")));
+    SecurityRequestResponse rejected = current(users.infra(), id);
+    assertThat(rejected.revision()).isEqualTo(draft.revision());
+    assertThat(rejected.reviews()).noneMatch(review -> review.allocationCompleted());
+    assertThat(
+            jdbc.queryForObject(
+                "SELECT count(*) FROM audit_events WHERE target_id = ? AND action = ?",
+                Integer.class,
+                id,
+                "ALLOCATION_COMPLETED"))
+        .isZero();
+    caseAnswer(
+        users.infra(),
+        businessCase.id(),
+        List.of(new AnswerInput("sourceIp", "192.0.2.10", true, false)));
+    SecurityRequestResponse allocated =
+        command(users.infra(), id, "allocation", revision(users.infra(), id));
+    assertThat(allocated.reviews())
+        .anyMatch(review -> review.field().equals("INFRA") && review.allocationCompleted());
   }
 
   @Test

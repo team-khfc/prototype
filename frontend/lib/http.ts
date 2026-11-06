@@ -8,6 +8,7 @@ const problemSchema = z.object({
   latestRevision: z.number().optional(),
 });
 const csrfSchema = z.object({ token: z.string(), headerName: z.string() });
+export const SESSION_EXPIRED_EVENT = 'security-advisor:session-expired';
 let csrf: z.infer<typeof csrfSchema> | undefined;
 let identityGeneration = 0;
 
@@ -43,6 +44,8 @@ async function checkedResponse(path: string, init: RequestInit = {}): Promise<Re
     if (!csrf) csrf = await requestJson('/auth/csrf', csrfSchema);
     headers.set(csrf.headerName, csrf.token);
   }
+  if (generation !== identityGeneration)
+    throw new DOMException('변경된 계정의 요청을 전송하지 않았습니다.', 'AbortError');
   if (typeof init.body === 'string' && !headers.has('Content-Type'))
     headers.set('Content-Type', 'application/json');
   let response: Response;
@@ -66,8 +69,8 @@ async function checkedResponse(path: string, init: RequestInit = {}): Promise<Re
     const unknownBody: unknown = await response.json().catch(() => null);
     const parsed = problemSchema.safeParse(unknownBody);
     const details = parsed.success ? parsed.data : undefined;
-    if (response.status === 401 && !path.startsWith('/auth/'))
-      window.dispatchEvent(new Event('boan:session-expired'));
+    if (response.status === 401 && !path.startsWith('/auth/') && typeof window !== 'undefined')
+      window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
     if (response.status === 403) csrf = undefined;
     throw new ApiError(
       response.status,
@@ -88,8 +91,11 @@ export async function requestJson<T>(
   schema: z.ZodType<T>,
   init?: RequestInit,
 ): Promise<T> {
+  const generation = identityGeneration;
   const response = await checkedResponse(path, init);
   const value: unknown = response.status === 204 ? undefined : await response.json();
+  if (generation !== identityGeneration)
+    throw new DOMException('변경된 계정의 이전 응답을 폐기했습니다.', 'AbortError');
   const result = schema.safeParse(value);
   if (!result.success)
     throw new ApiError(
@@ -98,17 +104,4 @@ export async function requestJson<T>(
       'INVALID_RESPONSE',
     );
   return result.data;
-}
-
-/** 권한이 확인된 서버 문서를 파일로 내려받고 화면 HTML에 직접 삽입하지 않는다.
- * @throws ApiError 서버 권한 검사 또는 다운로드가 실패했을 때 */
-export async function downloadDocument(id: string): Promise<void> {
-  const response = await checkedResponse(`/procedures/${encodeURIComponent(id)}/document`);
-  const file = await response.blob();
-  const url = URL.createObjectURL(file);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = `보안길잡이-${id}.html`;
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

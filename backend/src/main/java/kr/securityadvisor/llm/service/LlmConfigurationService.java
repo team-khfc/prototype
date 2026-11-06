@@ -2,15 +2,16 @@ package kr.securityadvisor.llm.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 import kr.securityadvisor.audit.service.AuditTrail;
 import kr.securityadvisor.common.error.DomainException;
 import kr.securityadvisor.common.model.ModelConnection;
 import kr.securityadvisor.common.security.Actor;
 import kr.securityadvisor.common.security.Role;
-import kr.securityadvisor.institution.service.ModelConfigurationValidator;
 import kr.securityadvisor.llm.domain.LlmConfiguration;
 import kr.securityadvisor.llm.dto.LlmConfigurationRequest;
 import kr.securityadvisor.llm.dto.LlmConfigurationResponse;
+import kr.securityadvisor.llm.dto.LlmOptionResponse;
 import kr.securityadvisor.llm.repository.LlmConfigurationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,15 @@ public class LlmConfigurationService {
     admin(actor);
     return configurations.findByInstitutionIdOrderByCreatedAtDesc(actor.institutionId()).stream()
         .map(LlmConfigurationResponse::from)
+        .toList();
+  }
+
+  /** 인증한 기관의 선택 목록만 반환하며 연결 주소와 키 참조는 제거한다. */
+  public List<LlmOptionResponse> options(Actor actor) {
+    return Stream.concat(
+            Stream.of(LlmOptionResponse.example()),
+            configurations.findByInstitutionIdOrderByCreatedAtDesc(actor.institutionId()).stream()
+                .map(LlmOptionResponse::from))
         .toList();
   }
 

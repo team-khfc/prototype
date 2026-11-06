@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon, ErrorNotice, Loading, Empty } from '@/components/ui';
+import { MODEL_PURPOSE_LABELS } from '@/features/llm';
 import { useWorkspace, workspacePath } from './WorkspaceContext';
 import { AnswerEditor } from './AnswerEditor';
 import { AnswerReadout, PageHeading, StatusBadge } from './RequestComponents';
@@ -201,6 +202,10 @@ export function CaseAnalysisPanel({
   const workspace = useWorkspace();
   const [text, setText] = useState('');
   const [file, setFile] = useState<File>();
+  const [configurationId, setConfigurationId] = useState('');
+  const selectedModel = workspace.modelOptions.find(
+    (option) => (option.id ?? '') === configurationId,
+  );
   const [analysis, setAnalysis] = useState<CaseAnalysis>();
   const [error, setError] = useState<unknown>();
   const [pending, setPending] = useState(false);
@@ -225,6 +230,7 @@ export function CaseAnalysisPanel({
           setError(undefined);
           setPending(true);
           setApplied(false);
+          setAnalysis(undefined);
           try {
             setAnalysis(
               await workspace.analyse({
@@ -232,6 +238,7 @@ export function CaseAnalysisPanel({
                 expectedRevision: businessCase.revision,
                 text,
                 file,
+                ...(configurationId ? { configurationId } : {}),
               }),
             );
           } catch (failure) {
@@ -241,6 +248,43 @@ export function CaseAnalysisPanel({
           }
         }}
       >
+        <div className="sa-model-selector">
+          <div className="sa-field">
+            <label htmlFor="analysis-model">분석 모델</label>
+            <select
+              id="analysis-model"
+              value={configurationId}
+              disabled={disabled || pending || workspace.modelsLoading || !!workspace.modelsError}
+              aria-describedby="analysis-model-help"
+              onChange={(event) => setConfigurationId(event.target.value)}
+            >
+              {!workspace.modelOptions.length && (
+                <option value="">
+                  {workspace.modelsLoading ? '모델 불러오는 중…' : '사용 가능한 모델 없음'}
+                </option>
+              )}
+              {workspace.modelOptions.map((option) => (
+                <option key={option.id ?? 'example'} value={option.id ?? ''}>
+                  {option.mode === 'EXAMPLE'
+                    ? '예시 추출기 · 실제 AI 호출 없음'
+                    : `${option.provider} · ${option.model} · ${MODEL_PURPOSE_LABELS[option.purpose]}`}
+                </option>
+              ))}
+            </select>
+            <small id="analysis-model-help">
+              {workspace.modelsLoading
+                ? '사용 가능한 모델을 확인하고 있습니다.'
+                : !selectedModel
+                  ? '사용 가능한 모델을 확인할 수 없습니다. 목록을 다시 불러오거나 기관 관리자에게 문의해 주세요.'
+                  : selectedModel.mode === 'LIVE'
+                    ? '분석 요청을 누르면 선택한 모델로 자료를 전송합니다.'
+                    : '예시 추출기는 정해진 형식의 값을 발췌합니다. 실제 AI 모델을 호출하지 않습니다.'}
+            </small>
+          </div>
+          {workspace.modelsError ? (
+            <ErrorNotice error={workspace.modelsError} retry={workspace.refresh} />
+          ) : null}
+        </div>
         <div className="sa-upload-zone">
           <Icon name="upload" width={30} height={30} />
           <strong>합성 사업 자료를 선택해 주세요</strong>
@@ -305,7 +349,14 @@ export function CaseAnalysisPanel({
           </span>
           <button
             className="sa-button sa-primary"
-            disabled={disabled || pending || (!text.trim() && !file)}
+            disabled={
+              disabled ||
+              pending ||
+              (!text.trim() && !file) ||
+              !selectedModel ||
+              workspace.modelsLoading ||
+              !!workspace.modelsError
+            }
             type="submit"
           >
             <Icon name="sparkle" width={18} height={18} />

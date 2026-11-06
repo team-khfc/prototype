@@ -9,8 +9,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
-import kr.securityadvisor.analysis.service.BoundedModelHttpClient;
-import kr.securityadvisor.analysis.service.ProviderSecretResolver;
 import kr.securityadvisor.common.error.DomainException;
 import kr.securityadvisor.common.model.ModelConnection;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +19,7 @@ class SpringAiLlmGatewayTest {
   private final BoundedModelHttpClient http = mock(BoundedModelHttpClient.class);
   private final ProviderSecretResolver secrets = mock(ProviderSecretResolver.class);
   private final SpringAiLlmGateway gateway =
-      new SpringAiLlmGateway(http, secrets, JsonMapper.builder().build());
+      new SpringAiLlmGateway(http, secrets, JsonMapper.builder().build(), new CandidateValidator());
 
   @Test
   @DisplayName("예시 추출은 명시된 원문 행만 반환하고 외부 LLM을 호출하지 않는다")

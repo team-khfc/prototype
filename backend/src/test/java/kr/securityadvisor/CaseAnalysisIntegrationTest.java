@@ -16,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import kr.securityadvisor.analysis.service.BoundedModelHttpClient;
-import kr.securityadvisor.analysis.service.ProviderSecretResolver;
 import kr.securityadvisor.common.error.DomainException;
+import kr.securityadvisor.llm.service.BoundedModelHttpClient;
+import kr.securityadvisor.llm.service.ProviderSecretResolver;
 import kr.securityadvisor.request.dto.AiAnswerProposal;
 import kr.securityadvisor.request.dto.CaseAnalysisResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -296,7 +296,7 @@ class CaseAnalysisIntegrationTest extends IntegrationTestSupport {
                                     "provider", "OPENAI",
                                     "endpoint", "https://api.openai.com/v1/chat/completions",
                                     "model", "synthetic-contract-model",
-                                    "keyReference", "BOAN_OPENAI_API_KEY",
+                                    "keyReference", "SA_OPENAI_API_KEY",
                                     "temperature", 0,
                                     "maxTokens", 1024,
                                     "timeoutSeconds", 15),

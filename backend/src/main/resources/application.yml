@@ -8,7 +8,7 @@ server:
     session:
       timeout: 20m
       cookie:
-        name: BOAN_SESSION
+        name: SA_SESSION
         http-only: true
         secure: true
         same-site: strict
@@ -19,12 +19,12 @@ spring:
     deserialization:
       fail-on-null-for-primitives: true
   datasource:
-    url: ${BOAN_DB_URL:jdbc:postgresql://localhost:5432/boan}
-    username: ${BOAN_DB_USER:boan_app}
-    password: ${BOAN_DB_PASSWORD}
+    url: ${SA_DB_URL:jdbc:postgresql://localhost:5432/securityadvisor}
+    username: ${SA_DB_USER:boan_app}
+    password: ${SA_DB_PASSWORD}
   flyway:
-    user: ${BOAN_MIGRATION_USER:boan_migrator}
-    password: ${BOAN_MIGRATION_PASSWORD}
+    user: ${SA_MIGRATION_USER:boan_migrator}
+    password: ${SA_MIGRATION_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:
@@ -40,13 +40,12 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-boan:
+securityadvisor:
   demo:
-    enabled: ${BOAN_DEMO_ENABLED:false}
-    scenarios: ${BOAN_DEMO_SCENARIOS:false}
-  context-key: ${BOAN_CONTEXT_KEY}
-  upload-directory: ${BOAN_UPLOAD_DIRECTORY:/var/lib/boan/uploads}
-  allowed-llm-endpoints: ${BOAN_ALLOWED_LLM_ENDPOINTS:https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
+    enabled: ${SA_DEMO_ENABLED:false}
+  context-key: ${SA_CONTEXT_KEY}
+  upload-directory: ${SA_UPLOAD_DIRECTORY:/var/lib/securityadvisor/uploads}
+  allowed-llm-endpoints: ${SA_ALLOWED_LLM_ENDPOINTS:https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
 logging:
   level:
     org.hibernate.SQL: OFF

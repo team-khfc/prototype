@@ -1,0 +1,8 @@
+-- 실제 암호 없이 애플리케이션 role의 테이블 권한을 검사한다.
+-- Flyway 소유자와 다른 role이며 테스트 연결에는 사용하지 않는다.
+CREATE ROLE boan_app NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE;
+GRANT USAGE ON SCHEMA public TO boan_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO boan_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT USAGE, SELECT ON SEQUENCES TO boan_app;

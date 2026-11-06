@@ -16,3 +16,20 @@ export const sessionSchema = z.object({
 });
 export type Actor = z.infer<typeof actorSchema>;
 export type Session = z.infer<typeof sessionSchema>;
+
+export const memberSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  displayName: z.string(),
+  department: z.string(),
+  role: roleSchema,
+  active: z.boolean(),
+  revision: z.number().int().nonnegative(),
+});
+export type Member = z.infer<typeof memberSchema>;
+export interface ChangeMemberRoleInput {
+  id: string;
+  role: Member['role'];
+  expectedRevision: number;
+  reason: string;
+}

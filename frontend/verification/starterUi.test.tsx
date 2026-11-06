@@ -3,6 +3,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { activateDraftScope, clearDrafts } from '@/lib/draft';
+import { EXAMPLE_MODEL_OPTION } from '@/features/llm';
 import {
   AnswerEditor,
   CaseAnalysisPanel,
@@ -90,6 +91,7 @@ test('파일은 선택만으로 전송하지 않고 분석 후 적용 요청도 
     cases: state.cases,
     requests: state.requests,
     pools: [],
+    modelOptions: [EXAMPLE_MODEL_OPTION],
     auditEvents: [],
     pending: false,
     error: undefined,
@@ -185,6 +187,7 @@ test('종료된 미제출 신청의 공통값 변경을 재작성 지시가 아�
     cases: state.cases,
     requests: state.requests,
     pools: [],
+    modelOptions: [EXAMPLE_MODEL_OPTION],
     auditEvents: [],
     pending: false,
     error: undefined,
@@ -208,4 +211,162 @@ test('종료된 미제출 신청의 공통값 변경을 재작성 지시가 아�
   expect(screen.queryByRole('button', { name: '서류 제출' })).toBeNull();
   expect(screen.queryByRole('button', { name: '입력 내용 저장' })).toBeNull();
   expect(screen.queryByText('보완 필요')).toBeNull();
+});
+
+test('실서버 분석에서 선택한 모델 식별자를 요청에 포함한다', async () => {
+  const state = createDemoState();
+  const businessCase = state.cases[0];
+  const analyse = vi.fn(async () => {
+    throw new Error('합성 모델 연결 실패');
+  });
+  const value: WorkspaceContextValue = {
+    mode: 'live',
+    actor: DEMO_ACTORS.APPLICANT,
+    institutionName: '합성 기관',
+    cases: state.cases,
+    requests: state.requests,
+    pools: [],
+    auditEvents: [],
+    modelOptions: [
+      EXAMPLE_MODEL_OPTION,
+      {
+        id: 'synthetic-configuration',
+        purpose: 'INTERVIEW',
+        provider: 'GEMMA',
+        model: 'synthetic-gemma',
+        mode: 'LIVE',
+      },
+    ],
+    pending: false,
+    loading: false,
+    error: undefined,
+    refresh: () => undefined,
+    createCase: async () => '',
+    saveCase: async () => undefined,
+    command: async () => undefined,
+    analyse,
+    applyAnalysis: async () => undefined,
+  };
+  render(
+    <WorkspaceProvider value={value}>
+      <CaseAnalysisPanel businessCase={businessCase} />
+    </WorkspaceProvider>,
+  );
+  const user = userEvent.setup();
+  await user.selectOptions(screen.getByLabelText('분석 모델'), 'synthetic-configuration');
+  await user.type(
+    screen.getByRole('textbox', { name: /자료 없이 설명으로 시작/ }),
+    '합성 서비스 설명',
+  );
+  await user.click(screen.getByRole('button', { name: '자료 분석 요청' }));
+  expect(analyse).toHaveBeenCalledWith({
+    caseId: businessCase.id,
+    expectedRevision: businessCase.revision,
+    text: '합성 서비스 설명',
+    file: undefined,
+    configurationId: 'synthetic-configuration',
+  });
+  expect(screen.getByRole('alert').textContent).toContain('합성 모델 연결 실패');
+  expect(screen.queryByText('예시 추출 결과 · 실제 AI 호출 아님')).toBeNull();
+  expect(screen.queryByRole('button', { name: '초안에 미확정으로 반영' })).toBeNull();
+});
+
+test('모델 목록 조회 실패 시 임의의 예시 모델로 바꾸어 분석하지 않는다', async () => {
+  const state = createDemoState();
+  const analyse = vi.fn();
+  const value: WorkspaceContextValue = {
+    mode: 'live',
+    actor: DEMO_ACTORS.APPLICANT,
+    institutionName: '합성 기관',
+    cases: state.cases,
+    requests: state.requests,
+    pools: [],
+    auditEvents: [],
+    modelOptions: [],
+    modelsError: new Error('모델 목록 조회 실패'),
+    pending: false,
+    loading: false,
+    error: undefined,
+    refresh: () => undefined,
+    createCase: async () => '',
+    saveCase: async () => undefined,
+    command: async () => undefined,
+    analyse,
+    applyAnalysis: async () => undefined,
+  };
+  render(
+    <WorkspaceProvider value={value}>
+      <CaseAnalysisPanel businessCase={state.cases[0]} />
+    </WorkspaceProvider>,
+  );
+  const user = userEvent.setup();
+  await user.type(
+    screen.getByRole('textbox', { name: /자료 없이 설명으로 시작/ }),
+    '합성 서비스 설명',
+  );
+  expect(screen.getByRole<HTMLButtonElement>('button', { name: '자료 분석 요청' }).disabled).toBe(
+    true,
+  );
+  expect(screen.getByRole('alert').textContent).toContain('모델 목록 조회 실패');
+  expect(analyse).not.toHaveBeenCalled();
+});
+
+test('새 분석이 실패하면 이전 후보의 적용 버튼을 남기지 않는다', async () => {
+  const state = createDemoState();
+  state.cases[0].answers[0].confirmed = false;
+  state.cases[0].answers[0].confirmation = null;
+  const businessCase = state.cases[0];
+  const result: CaseAnalysis = {
+    id: 'synthetic-analysis',
+    caseId: businessCase.id,
+    revision: businessCase.revision,
+    status: 'SUCCEEDED',
+    mode: 'EXAMPLE',
+    provider: 'EXAMPLE',
+    model: 'labelled-lines-v1',
+    error: null,
+    suggestions: [
+      { key: 'purpose', value: '이전 합성 목적', evidence: '이전 합성 자료 직접 발췌' },
+    ],
+    createdAt: '2026-11-07T09:00:00Z',
+  };
+  const analyse = vi
+    .fn<WorkspaceContextValue['analyse']>()
+    .mockResolvedValueOnce(result)
+    .mockRejectedValueOnce(new Error('두 번째 분석 실패'));
+  const value: WorkspaceContextValue = {
+    mode: 'preview',
+    actor: DEMO_ACTORS.APPLICANT,
+    institutionName: '합성 기관',
+    cases: state.cases,
+    requests: state.requests,
+    pools: [],
+    auditEvents: [],
+    modelOptions: [EXAMPLE_MODEL_OPTION],
+    pending: false,
+    loading: false,
+    error: undefined,
+    refresh: () => undefined,
+    createCase: async () => '',
+    saveCase: async () => undefined,
+    command: async () => undefined,
+    analyse,
+    applyAnalysis: async () => undefined,
+  };
+  render(
+    <WorkspaceProvider value={value}>
+      <CaseAnalysisPanel businessCase={businessCase} />
+    </WorkspaceProvider>,
+  );
+  const user = userEvent.setup();
+  await user.type(
+    screen.getByRole('textbox', { name: /자료 없이 설명으로 시작/ }),
+    '합성 서비스 설명',
+  );
+  await user.click(screen.getByRole('button', { name: '자료 분석 요청' }));
+  expect(screen.getByRole('button', { name: '초안에 미확정으로 반영' })).toBeTruthy();
+  await user.click(screen.getByRole('button', { name: '자료 분석 요청' }));
+  expect(screen.getByRole('alert').textContent).toContain('두 번째 분석 실패');
+  expect(screen.queryByRole('button', { name: '초안에 미확정으로 반영' })).toBeNull();
+  expect(screen.queryByText('이전 합성 목적')).toBeNull();
 });

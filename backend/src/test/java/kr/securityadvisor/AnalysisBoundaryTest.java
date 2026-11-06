@@ -17,16 +17,15 @@ class AnalysisBoundaryTest {
             .importPackages("kr.securityadvisor");
     noClasses()
         .that()
-        .resideInAPackage("kr.securityadvisor.analysis..")
+        .resideInAnyPackage("kr.securityadvisor.llm..", "kr.securityadvisor.request..")
         .should()
         .dependOnClassesThat()
         .resideInAnyPackage(
-            "kr.securityadvisor.institution.repository..",
-            "kr.securityadvisor.institution.domain..")
+            "kr.securityadvisor.knowledge.repository..", "kr.securityadvisor.knowledge.domain..")
         .check(classes);
     noClasses()
         .that()
-        .resideInAPackage("kr.securityadvisor.analysis..")
+        .resideInAnyPackage("kr.securityadvisor.llm..", "kr.securityadvisor.request..")
         .should()
         .dependOnClassesThat()
         .haveSimpleName("PrivateContextService")

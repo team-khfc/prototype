@@ -95,7 +95,7 @@ public class AuthService {
   private Actor seed(UUID id, UUID institution, String username, String name, Role role) {
     var existing = accounts.findByUsername(username);
     if (existing.isPresent()) return existing.get().toActor();
-    String secret = environment.getRequiredProperty("BOAN_DEMO_" + role.name() + "_PASSWORD");
+    String secret = environment.getRequiredProperty("SA_DEMO_" + role.name() + "_PASSWORD");
     if (secret.length() < 16
         || secret.getBytes(StandardCharsets.UTF_8).length > 72
         || secret.chars().noneMatch(Character::isUpperCase)

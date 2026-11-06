@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Icon, Loading, ErrorNotice } from '@/components/ui';
+import { Icon, Loading, ErrorNotice, Empty } from '@/components/ui';
+import { MemberManagement } from '@/features/auth';
+import { LlmConfigurationPanel } from '@/features/llm';
 import { useWorkspace, workspacePath } from './WorkspaceContext';
 import { PageHeading, DeadlineBadge, StageProgress } from './RequestComponents';
 import { AuditTimeline } from './RequestDetail';
@@ -10,6 +12,55 @@ import { DOCUMENT_LABELS, FIELD_LABELS } from './types';
 /** P1 운영 조회와 후속 기능을 구분하고 구현되지 않은 편집을 완료처럼 표시하지 않는다. */
 export function OperationsPage({ section = 'overview' }: { section?: string }) {
   const workspace = useWorkspace();
+  if (section === 'members' || section === 'models') {
+    const members = section === 'members';
+    return (
+      <>
+        <PageHeading
+          title={members ? '회원·역할 관리' : 'AI 모델 구성'}
+          description={
+            members
+              ? '같은 기관의 회원에게 업무 역할을 부여하고 변경 사유를 남깁니다.'
+              : '사용할 모델 연결을 등록하고 자료 분석에서 선택할 수 있습니다.'
+          }
+        />
+        {workspace.actor.role !== 'ADMIN' ? (
+          <Empty
+            title="기관 관리자에게 제공되는 화면입니다"
+            description="계정 역할과 모델 구성은 기관 관리자에게 문의해 주세요."
+          />
+        ) : workspace.mode === 'preview' ? (
+          <section className="sa-card">
+            <div className="sa-section-heading">
+              <h2>{members ? '실제 회원 역할 관리' : '실제 모델 연결 관리'}</h2>
+              <span className="sa-badge sa-neutral">서버 로그인 필요</span>
+            </div>
+            <p>
+              {members
+                ? '공개 시연의 역할 선택은 화면 탐색용입니다. 실제 계정의 역할을 바꾸려면 기관 관리자 계정으로 로그인해 주세요.'
+                : '공개 시연은 예시 추출기만 사용합니다. 기관 관리자 계정으로 로그인하면 OpenAI·Gemma 연결을 등록할 수 있습니다.'}
+            </p>
+            <div className="sa-callout">
+              <Icon name="shield" />
+              <p>
+                {members
+                  ? '역할 변경에는 사유와 기준 수정본을 함께 보내며 서버가 기관·권한을 다시 확인합니다.'
+                  : 'API 키 값은 입력하지 않습니다. 서버 환경변수 참조와 허용된 HTTPS 연결 주소만 저장합니다.'}
+              </p>
+            </div>
+            <Link href="/login" className="sa-button sa-primary">
+              기관 관리자 계정으로 로그인
+              <Icon name="arrow" width={18} height={18} />
+            </Link>
+          </section>
+        ) : members ? (
+          <MemberManagement />
+        ) : (
+          <LlmConfigurationPanel />
+        )}
+      </>
+    );
+  }
   if (section === 'roadmap')
     return (
       <>
@@ -105,8 +156,8 @@ export function OperationsPage({ section = 'overview' }: { section?: string }) {
           <div className="sa-callout">
             <Icon name="info" />
             <p>
-              현재 P1은 seed 게시본을 사용합니다. 설정 게시·LLM 구성 편집 UI는 이 신규 흐름에서
-              제공하지 않습니다.
+              현재 신청은 기본 게시본을 사용합니다. 기관 설정의 편집·게시 기능은 후속 범위이며, 모델
+              연결은 기관 관리자의 AI 모델 구성 화면에서 등록할 수 있습니다.
             </p>
           </div>
         </section>

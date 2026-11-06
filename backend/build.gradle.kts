@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "kr.securityadvisor"
-version = "0.2.0-design"
+version = "1.0.0-prototype"
 java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 repositories { mavenCentral() }
 val mockitoAgent = configurations.create("mockitoAgent")

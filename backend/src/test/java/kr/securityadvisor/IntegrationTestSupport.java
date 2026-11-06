@@ -36,8 +36,9 @@ public abstract class IntegrationTestSupport {
   }
 
   private static PostgreSQLContainer database() {
-    if (System.getenv("BOAN_TEST_JDBC_URL") != null) return null;
-    PostgreSQLContainer container = new PostgreSQLContainer("postgres:17.11-alpine");
+    if (System.getenv("SA_TEST_JDBC_URL") != null) return null;
+    PostgreSQLContainer container =
+        new PostgreSQLContainer("postgres:17.11-alpine").withInitScript("test-database.sql");
     container.start();
     return container;
   }
@@ -51,27 +52,26 @@ public abstract class IntegrationTestSupport {
   /** 검사 전용 암호는 실행마다 생성하고 코드·로그에 남기지 않는다. */
   @DynamicPropertySource
   static void configure(DynamicPropertyRegistry properties) {
-    String url = POSTGRES == null ? System.getenv("BOAN_TEST_JDBC_URL") : POSTGRES.getJdbcUrl();
-    String user = POSTGRES == null ? System.getenv("BOAN_TEST_DB_USER") : POSTGRES.getUsername();
+    String url = POSTGRES == null ? System.getenv("SA_TEST_JDBC_URL") : POSTGRES.getJdbcUrl();
+    String user = POSTGRES == null ? System.getenv("SA_TEST_DB_USER") : POSTGRES.getUsername();
     String password =
-        POSTGRES == null ? System.getenv("BOAN_TEST_DB_PASSWORD") : POSTGRES.getPassword();
+        POSTGRES == null ? System.getenv("SA_TEST_DB_PASSWORD") : POSTGRES.getPassword();
     properties.add("spring.datasource.url", () -> url);
     properties.add("spring.datasource.username", () -> user);
     properties.add("spring.datasource.password", () -> password);
     properties.add("spring.flyway.user", () -> user);
     properties.add("spring.flyway.password", () -> password);
-    properties.add("boan.context-key", () -> CONTEXT_KEY);
+    properties.add("securityadvisor.context-key", () -> CONTEXT_KEY);
     properties.add(
-        "boan.upload-directory",
+        "securityadvisor.upload-directory",
         () ->
             System.getProperty("java.io.tmpdir")
-                + "/boan-design-test-"
+                + "/securityadvisor-test-"
                 + ProcessHandle.current().pid());
-    properties.add("boan.demo.enabled", () -> true);
-    properties.add("boan.demo.scenarios", () -> false);
+    properties.add("securityadvisor.demo.enabled", () -> true);
     properties.add("server.servlet.session.cookie.secure", () -> false);
     for (String role : new String[] {"APPLICANT", "SECURITY", "INFRA", "ADMIN"}) {
-      properties.add("BOAN_DEMO_" + role + "_PASSWORD", () -> PASSWORD);
+      properties.add("SA_DEMO_" + role + "_PASSWORD", () -> PASSWORD);
     }
   }
 

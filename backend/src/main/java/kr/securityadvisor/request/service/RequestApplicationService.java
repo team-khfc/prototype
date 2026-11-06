@@ -15,7 +15,12 @@ import kr.securityadvisor.common.error.DomainException;
 import kr.securityadvisor.common.security.Actor;
 import kr.securityadvisor.common.security.Role;
 import kr.securityadvisor.common.service.DeadlineOperations;
+import kr.securityadvisor.document.dto.DocumentRenderRequest;
+import kr.securityadvisor.document.dto.DocumentRenderRequest.CopyType;
+import kr.securityadvisor.document.dto.DocumentRenderRequest.FieldResponse;
+import kr.securityadvisor.document.service.DocumentRenderer;
 import kr.securityadvisor.request.domain.BusinessCase;
+import kr.securityadvisor.request.domain.NetworkAllocation;
 import kr.securityadvisor.request.domain.RequestStatus;
 import kr.securityadvisor.request.domain.SecurityRequest;
 import kr.securityadvisor.request.domain.SecuritySubmission;
@@ -53,6 +58,7 @@ public class RequestApplicationService {
   private final DeadlineOperations deadlines;
   private final AuditTrail audit;
   private final WorkflowAccess access;
+  private final DocumentRenderer documentRenderer;
 
   public RequestApplicationService(
       BusinessCaseRepository cases,
@@ -62,7 +68,8 @@ public class RequestApplicationService {
       ReviewOperations reviews,
       DeadlineOperations deadlines,
       AuditTrail audit,
-      WorkflowAccess access) {
+      WorkflowAccess access,
+      DocumentRenderer documentRenderer) {
     this.cases = cases;
     this.requests = requests;
     this.submissions = submissions;
@@ -71,6 +78,7 @@ public class RequestApplicationService {
     this.deadlines = deadlines;
     this.audit = audit;
     this.access = access;
+    this.documentRenderer = documentRenderer;
   }
 
   public List<SecurityRequestResponse> list(Actor actor) {
@@ -140,6 +148,7 @@ public class RequestApplicationService {
     if (!fieldsReady(locked, Role.INFRA))
       throw new DomainException(
           422, "INFRA_FACTS_REQUIRED", "시스템·IP·프로토콜·포트·기간을 담당자가 입력하고 확인해 주세요.");
+    NetworkAllocation.validate(locked.businessCase().getAnswers());
     reviews.allocate(actor.institutionId(), id);
     locked.request().recordProgress();
     return finish(actor, locked, "ALLOCATION_COMPLETED", "할당 완료이며 협의 완료는 아님", List.of(), requestId);
@@ -423,53 +432,55 @@ public class RequestApplicationService {
     boolean submitted = request.getCurrentSubmissionId() != null;
     SubmissionSnapshot content =
         stored != null ? stored : snapshot(new Locked(businessCase, request));
-    String label =
-        request.getStatus() == RequestStatus.FINALIZED
-            ? "확정본"
-            : submitted
-                ? "제출본"
-                : request.getStatus() == RequestStatus.CLOSED
-                    ? "종결(반려) 당시 초안 · 미제출"
-                    : request.getStatus() == RequestStatus.WITHDRAWN
-                        ? "철회 당시 초안 · 미제출"
-                        : "초안 · 미확정";
-    StringBuilder html =
-        new StringBuilder(
-            "<!doctype html><html lang=\"ko\"><head><meta charset=\"utf-8\"><title>보안길잡이 서류</title></head><body>");
-    html.append("<h1>")
-        .append(escape(content.caseTitle()))
-        .append("</h1><p>")
-        .append(label)
-        .append(" · ")
-        .append(escape(content.docType()))
-        .append("</p><p>서류 확정은 방화벽 적용 완료를 뜻하지 않습니다.</p>")
-        .append(
-            "<table><thead><tr><th>항목</th><th>값</th><th>출처</th><th>사람 확인</th></tr></thead><tbody>");
-    Stream.concat(content.commonAnswers().stream(), content.answers().stream())
-        .forEach(
-            answer ->
-                html.append("<tr><th>")
-                    .append(escape(answer.label()))
-                    .append("</th><td>")
-                    .append(escape(answer.value()))
-                    .append("</td><td>")
-                    .append(answer.source() == null ? "담당자 확인 필요" : answer.source().name())
-                    .append("</td><td>")
-                    .append(answer.confirmed() ? "확인됨" : "미확정")
-                    .append("</td></tr>"));
-    html.append("</tbody></table></body></html>");
+    CopyType copyType = documentCopyType(request.getStatus(), submitted);
+    var rendered =
+        documentRenderer.render(
+            new DocumentRenderRequest(
+                id,
+                content.caseTitle(),
+                content.docType(),
+                content.department(),
+                content.ownerName(),
+                content.publicationVersion(),
+                content.caseRevision(),
+                content.requestRevision(),
+                copyType,
+                Stream.concat(content.commonAnswers().stream(), content.answers().stream())
+                    .map(RequestApplicationService::documentField)
+                    .toList()));
     audit.record(
         actor,
         "SECURITY_REQUEST",
         id,
         request.getRevision(),
         "DOCUMENT_DOWNLOADED",
-        label,
+        copyType.label(),
         List.of(),
         requestId);
-    return new DocumentResponse(
-        "security-request-" + id + (submitted ? "-submission.html" : "-draft.html"),
-        html.toString());
+    return new DocumentResponse(rendered.filename(), rendered.html());
+  }
+
+  private CopyType documentCopyType(RequestStatus status, boolean submitted) {
+    return switch (status) {
+      case FINALIZED -> CopyType.FINALIZED;
+      case CLOSED -> submitted ? CopyType.CLOSED_SUBMISSION : CopyType.CLOSED_DRAFT;
+      case WITHDRAWN -> submitted ? CopyType.WITHDRAWN_SUBMISSION : CopyType.WITHDRAWN_DRAFT;
+      default -> submitted ? CopyType.SUBMISSION : CopyType.DRAFT;
+    };
+  }
+
+  private static FieldResponse documentField(AnswerValue answer) {
+    var confirmation = answer.confirmation();
+    return new FieldResponse(
+        answer.label(),
+        answer.value(),
+        answer.source() == null ? null : answer.source().name(),
+        answer.evidence(),
+        answer.confirmed(),
+        answer.notApplicable(),
+        confirmation == null ? null : confirmation.actorName(),
+        confirmation == null ? null : confirmation.role().name(),
+        confirmation == null ? null : confirmation.at());
   }
 
   private Locked lock(Actor actor, UUID id, Long expectedRevision) {
@@ -771,15 +782,6 @@ public class RequestApplicationService {
             || !reviews.list(actor.institutionId(), request.getId()).isEmpty()))
       actions.add("REASSIGN");
     return List.copyOf(actions);
-  }
-
-  private static String escape(String value) {
-    return value
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\"", "&quot;")
-        .replace("'", "&#39;");
   }
 
   private record Locked(BusinessCase businessCase, SecurityRequest request) {}

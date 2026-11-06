@@ -35,8 +35,8 @@ export function SignupForm() {
   });
   if (signup.isSuccess)
     return (
-      <div className="login-form">
-        <div className="login-mark">
+      <div className="sa-login-form">
+        <div className="sa-login-mark">
           <Icon name="check" width={32} height={32} />
         </div>
         <h1>회원가입을 완료했습니다</h1>
@@ -44,7 +44,7 @@ export function SignupForm() {
           합성 시연 기관의 일반 사용자 계정이 만들어졌습니다. 입력한 아이디와 비밀번호로 로그인해
           주세요.
         </p>
-        <Link href="/login" className="button primary full">
+        <Link href="/login" className="sa-button sa-primary sa-full">
           로그인으로 이동
           <Icon name="arrow" />
         </Link>
@@ -52,7 +52,7 @@ export function SignupForm() {
     );
   return (
     <form
-      className="login-form"
+      className="sa-login-form"
       onSubmit={async (event) => {
         event.preventDefault();
         setError(undefined);
@@ -78,7 +78,7 @@ export function SignupForm() {
         }
       }}
     >
-      <div className="login-mark">
+      <div className="sa-login-mark">
         <Icon name="shield" width={32} height={32} />
       </div>
       <h1>일반 사용자 회원가입</h1>
@@ -87,9 +87,9 @@ export function SignupForm() {
         않습니다.
       </p>
       <ErrorNotice error={error} />
-      <div className="sf-field">
+      <div className="sa-field">
         <label htmlFor="signup-username">
-          아이디 <span className="required">필수</span>
+          아이디 <span className="sa-required">필수</span>
         </label>
         <input
           id="signup-username"
@@ -106,9 +106,9 @@ export function SignupForm() {
           영문·숫자로 시작하는 영문·숫자·점·밑줄·하이픈 4~40자
         </small>
       </div>
-      <div className="sf-field">
+      <div className="sa-field">
         <label htmlFor="signup-display-name">
-          표시 이름 <span className="required">필수</span>
+          표시 이름 <span className="sa-required">필수</span>
         </label>
         <input
           id="signup-display-name"
@@ -119,22 +119,21 @@ export function SignupForm() {
           disabled={signup.isPending}
         />
       </div>
-      <div className="sf-field">
+      <div className="sa-field">
         <label htmlFor="signup-department">
-          부서 <span className="required">필수</span>
+          부서 <span className="sa-meta">선택</span>
         </label>
         <input
           id="signup-department"
           name="department"
-          required
           maxLength={100}
           placeholder="예: 합성 사업팀"
           disabled={signup.isPending}
         />
       </div>
-      <div className="sf-field">
+      <div className="sa-field">
         <label htmlFor="signup-password">
-          비밀번호 <span className="required">필수</span>
+          비밀번호 <span className="sa-required">필수</span>
         </label>
         <input
           id="signup-password"
@@ -152,9 +151,9 @@ export function SignupForm() {
           12자 이상 · 영문 대문자·소문자·숫자 포함 · UTF-8 72바이트 이하
         </small>
       </div>
-      <div className="sf-field">
+      <div className="sa-field">
         <label htmlFor="signup-password-confirm">
-          비밀번호 확인 <span className="required">필수</span>
+          비밀번호 확인 <span className="sa-required">필수</span>
         </label>
         <input
           id="signup-password-confirm"
@@ -167,13 +166,13 @@ export function SignupForm() {
           disabled={signup.isPending}
         />
       </div>
-      <button className="button primary full" type="submit" disabled={signup.isPending}>
+      <button className="sa-button sa-primary sa-full" type="submit" disabled={signup.isPending}>
         {signup.isPending ? '가입 처리 중…' : '회원가입'}
       </button>
       <p className="login-hint">
         정보보안·ICT인프라·관리자 역할은 가입 후 기관 관리자가 부여합니다.
       </p>
-      <Link className="text-button" href="/login">
+      <Link className="sa-text-button" href="/login">
         로그인으로 돌아가기
       </Link>
     </form>

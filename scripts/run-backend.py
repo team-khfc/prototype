@@ -13,10 +13,12 @@ for line in configuration.read_text(encoding='utf-8').splitlines():
     if not line or line.startswith('#'):
         continue
     name, separator, value = line.partition('=')
-    if not separator or not name.startswith('BOAN_'):
-        raise SystemExit('.env의 BOAN_* 설정 형식을 확인해 주세요.')
+    if not separator or not name.startswith('SA_'):
+        raise SystemExit('.env의 SA_* 설정 형식을 확인해 주세요.')
     environment[name] = value
 environment['SPRING_PROFILES_ACTIVE'] = 'local'
+# 개발자 계정은 /var/lib에 쓸 수 없으므로 로컬 실행의 업로드만 별도 경로를 쓴다.
+environment.setdefault('SA_UPLOAD_DIRECTORY', str(root / 'local-uploads'))
 wrapper = 'gradlew.bat' if os.name == 'nt' else './gradlew'
 try:
     result = subprocess.run([wrapper, 'bootRun'], cwd=root/'backend', env=environment)

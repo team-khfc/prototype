@@ -1,4 +1,4 @@
-name: Development starter checks
+name: Fresh prototype checks
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   documents:
-    name: Document versions
+    name: Document versions and clean structure
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -25,7 +25,9 @@ jobs:
         with:
           persist-credentials: false
       - name: Check root document versions
-        run: python3 tools/check_doc_versions.py
+        run: |
+          python3 tools/check_doc_versions.py
+          python3 tools/check_fresh_structure.py
 
   frontend:
     name: Frontend checks and build

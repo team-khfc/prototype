@@ -6,8 +6,8 @@ RUN npm ci
 FROM dependencies AS builder
 WORKDIR /app
 COPY . .
-ARG API_ORIGIN=http://backend:8080
-ENV API_ORIGIN=$API_ORIGIN
+ARG SA_API_ORIGIN=http://backend:8080
+ENV SA_API_ORIGIN=$SA_API_ORIGIN
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 

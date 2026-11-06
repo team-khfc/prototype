@@ -14,13 +14,13 @@ import urllib.request
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = os.environ.get('BOAN_TEST_BASE_URL', 'http://127.0.0.1:3000').rstrip('/')
+BASE = os.environ.get('SA_TEST_BASE_URL', 'http://127.0.0.1:3000').rstrip('/')
 ENVIRONMENT = {}
 if (ROOT / '.env').exists():
     for line in (ROOT / '.env').read_text(encoding='utf-8').splitlines():
         if line and not line.startswith('#'):
             name, separator, value = line.partition('=')
-            if separator and name.startswith('BOAN_'):
+            if separator and name.startswith('SA_'):
                 ENVIRONMENT[name] = value
 ENVIRONMENT.update(os.environ)
 RESULTS = []
@@ -67,9 +67,9 @@ class Client:
 
     def login(self, username, role):
         self.token = self.request('GET', '/api/auth/csrf')
-        password = ENVIRONMENT.get(f'BOAN_DEMO_{role}_PASSWORD')
+        password = ENVIRONMENT.get(f'SA_DEMO_{role}_PASSWORD')
         if not password:
-            raise SystemExit(f'BOAN_DEMO_{role}_PASSWORD 환경변수가 필요합니다.')
+            raise SystemExit(f'SA_DEMO_{role}_PASSWORD 환경변수가 필요합니다.')
         form = urllib.parse.urlencode({'username': username, 'password': password}).encode()
         session = self.request('POST', '/api/auth/login', form,
             headers={'Content-Type': 'application/x-www-form-urlencoded'})
@@ -129,6 +129,62 @@ def run():
     app.request('GET', '/api/members', expected=403)
     passed('역할별 실제 세션·CSRF·관리자 권한 경계')
 
+    for path in ['/workspace', '/requests', '/admin/models', '/design-preview/workspace']:
+        anonymous.request('GET', path, expected=404)
+    for path in ['/api/procedures', '/api/institution-settings']:
+        admin.request('GET', path, expected=404)
+    passed('이전 화면·예제 API의 실행 경로 제거')
+
+    anonymous.token = anonymous.request('GET', '/api/auth/csrf')
+    username = 'fresh.' + uuid.uuid4().hex[:12]
+    signed_up = anonymous.request('POST', '/api/auth/signup', {
+        'username': username, 'password': ENVIRONMENT['SA_DEMO_APPLICANT_PASSWORD'],
+        'displayName': '합성 가입 검증자', 'department': '합성 검증팀',
+        'role': 'ADMIN', 'institutionId': str(uuid.uuid4())}, expected=201,
+        schema='actorSchema')
+    assert signed_up['role'] == 'APPLICANT'
+    members = admin.request('GET', '/api/members', schema='memberSchema[]')
+    member = next(value for value in members if value['username'] == username)
+    changed = admin.request('PATCH', '/api/members/' + member['id'] + '/role', {
+        'role': 'INFRA', 'expectedRevision': member['revision'],
+        'reason': '합성 역할 관리 HTTP 검증'}, schema='memberSchema')
+    assert changed['role'] == 'INFRA' and changed['revision'] > member['revision']
+    admin.request('PATCH', '/api/members/' + member['id'] + '/role', {
+        'role': 'SECURITY', 'expectedRevision': member['revision'],
+        'reason': '오래된 수정본 거부 확인'}, expected=409)
+    admin.request('PATCH', '/api/members/' + member['id'] + '/role', {
+        'role': 'APPLICANT', 'expectedRevision': changed['revision'],
+        'reason': '검사 후 합성 시연의 배정 후보군 복원'}, schema='memberSchema')
+    passed('신청자 가입·역할 주입 방지·관리자 역할 변경·revision 경계')
+
+    example = admin.request('POST', '/api/llm-configurations', {
+        'connection': {'provider': 'EXAMPLE', 'endpoint': '', 'model': 'labelled-lines-v1',
+                       'keyReference': '', 'temperature': 0, 'maxTokens': 1024,
+                       'timeoutSeconds': 15},
+        'purpose': 'SUMMARY', 'reason': '합성 분석 구성 선택 검증'},
+        schema='llmConfigurationSchema')
+    connection = {'provider': 'OPENAI',
+                  'endpoint': 'https://api.openai.com/v1/chat/completions',
+                  'model': 'gpt-4.1-mini', 'keyReference': 'SA_OPENAI_API_KEY',
+                  'temperature': 0, 'maxTokens': 1024, 'timeoutSeconds': 15}
+    live = admin.request('POST', '/api/llm-configurations', {
+        'connection': connection, 'purpose': 'INTERVIEW',
+        'reason': '연결 구성 저장만 확인하며 외부 모델은 호출하지 않음'},
+        schema='llmConfigurationSchema')
+    admin.request('POST', '/api/llm-configurations', {
+        'connection': {**connection, 'endpoint': 'https://example.invalid/model'},
+        'purpose': 'INTERVIEW', 'reason': '허용하지 않은 주소 거부'}, expected=422)
+    options = app.request('GET', '/api/llm-options', schema='llmOptionSchema[]')
+    assert next(value for value in options if value['id'] == live['id'])['mode'] == 'LIVE'
+    assert all(set(value) == {'id', 'purpose', 'provider', 'model', 'mode'} for value in options)
+    app.request('GET', '/api/llm-configurations', expected=403)
+    admin.request('GET', '/api/llm-configurations', schema='llmConfigurationSchema[]')
+    other_institution = Client()
+    other_institution.login('outside.demo', 'APPLICANT')
+    assert all(value['id'] is None for value in
+               other_institution.request('GET', '/api/llm-options', schema='llmOptionSchema[]'))
+    passed('기관별 모델 구성·주소 검증·일반 선택 목록의 비밀 필드 제외')
+
     case = app.request('POST', '/api/business-cases', {
         'title': '[HTTP 합성 검증] 공공자료 안내 ' + uuid.uuid4().hex[:8],
         'department': '합성 검증팀', 'description': '공개 자료를 안내하는 가상 사업입니다.',
@@ -147,6 +203,7 @@ def run():
               'externalTransfer': '없음', 'dataFlow': '합성 화면에서 공개 자료 조회'}
     analysis = app.multipart(case_path + '/analyses', {
         'expectedRevision': case['revision'],
+        'configurationId': example['id'],
         'text': '\n'.join(key + ': ' + value for key, value in values.items())})
     assert analysis['mode'] == 'EXAMPLE' and analysis['status'] == 'SUCCEEDED'
     case = app.request('POST', case_path + '/analyses/' + analysis['id'] + '/apply',
@@ -235,7 +292,7 @@ def run():
     app.request('POST', '/api/auth/logout', expected=204)
     app.request('GET', '/api/auth/session', expected=401)
     passed('운영 조회·감사 응답·로그아웃 세션 폐기')
-    capture = ENVIRONMENT.get('BOAN_SMOKE_CAPTURE')
+    capture = ENVIRONMENT.get('SA_SMOKE_CAPTURE')
     if capture:
         Path(capture).write_text(json.dumps(RESPONSES, ensure_ascii=False), encoding='utf-8')
     print(json.dumps({'groups': len(RESULTS), 'passed': RESULTS,
