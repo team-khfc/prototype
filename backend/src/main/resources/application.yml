@@ -1,27 +1,60 @@
 server:
-  address: ${SERVER_ADDRESS:127.0.0.1}
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+  servlet:
+    session:
+      timeout: 20m
+      cookie:
+        name: BOAN_SESSION
+        http-only: true
+        secure: true
+        same-site: strict
 spring:
   application:
-    name: secureflow-api
-  profiles:
-    default: local
+    name: security-advisor
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: true
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:secureflow;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
-    driver-class-name: org.h2.Driver
+    url: ${BOAN_DB_URL:jdbc:postgresql://localhost:5432/boan}
+    username: ${BOAN_DB_USER:boan_app}
+    password: ${BOAN_DB_PASSWORD}
+  flyway:
+    user: ${BOAN_MIGRATION_USER:boan_migrator}
+    password: ${BOAN_MIGRATION_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
-  jackson:
-    default-property-inclusion: non_null
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: never
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 2MB
+  mvc:
+    problemdetails:
+      enabled: true
+boan:
+  demo:
+    enabled: ${BOAN_DEMO_ENABLED:false}
+    scenarios: ${BOAN_DEMO_SCENARIOS:false}
+  context-key: ${BOAN_CONTEXT_KEY}
+  upload-directory: ${BOAN_UPLOAD_DIRECTORY:/var/lib/boan/uploads}
+  allowed-llm-endpoints: ${BOAN_ALLOWED_LLM_ENDPOINTS:https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
+logging:
+  level:
+    org.hibernate.SQL: OFF
+    org.hibernate.orm.jdbc.bind: OFF
+    org.springframework.security: WARN
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    supported-submit-methods: []
+    disable-swagger-default-url: true
+

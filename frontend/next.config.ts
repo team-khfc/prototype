@@ -1,20 +1,29 @@
 import type { NextConfig } from 'next';
-import path from 'node:path';
-// Keep the hosted static export. Docker builds opt in to a Node.js server.
-const standalone = process.env.NEXT_OUTPUT === 'standalone';
-const backend = (process.env.BACKEND_INTERNAL_URL || 'http://127.0.0.1:8080').replace(/\/$/, '');
-const development = process.env.NODE_ENV === 'development';
+
 const nextConfig: NextConfig = {
-  output: standalone ? 'standalone' : development ? undefined : 'export',
-  devIndicators: false,
-  trailingSlash: !standalone,
-  images: { unoptimized: true },
-  outputFileTracingRoot: path.resolve(process.cwd(), '..'),
-  ...((standalone || development) ? {
-    // Rewrites are fixed at build time; this is an internal, server-only address.
-    async rewrites() {
-      return [{ source: '/api/:path*', destination: `${backend}/api/:path*` }];
-    },
-  } : {}),
+  output: 'standalone',
+  poweredByHeader: false,
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.API_ORIGIN ?? 'http://localhost:8080'}/api/:path*`,
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'same-origin' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ];
+  },
 };
+
 export default nextConfig;

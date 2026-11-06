@@ -1,0 +1,9 @@
+2026-11-06
+Docker Compose config --quiet: exit 0
+Docker Compose --profile app up -d --build: exit 1
+사유: Docker daemon socket 접근 시 socket: operation not permitted
+기본 Testcontainers 경로: ./gradlew test --tests kr.boan.AuthIntegrationTest, exit 1
+사유: DockerClientProviderStrategy에서 유효한 Docker 환경을 찾지 못함. 환경 초기화 단계에서 3개 테스트 실패.
+별도 PostgreSQL 17.11로 실행한 79개 통과 결과와 이 환경 제한을 구별함.
+외부 LLM 실호출: 실행하지 않음. 키 미제공.
+브라우저: 데스크톱 공개 읽기 전용 시안 확인. 좁은 뷰포트·모바일·스크린리더 전수검사는 수행하지 않음.

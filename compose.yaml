@@ -1,32 +1,74 @@
-name: secureflow-prototype
-
+name: security-advisor-design
 services:
+  db:
+    image: postgres:17.11-alpine
+    environment:
+      POSTGRES_DB: boan
+      POSTGRES_USER: boan_migrator
+      POSTGRES_PASSWORD: ${BOAN_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_DB_PASSWORD: ${BOAN_DB_PASSWORD:?Run python3 scripts/init-demo.py}
+    ports:
+      - "127.0.0.1:${BOAN_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/db/01-app-role.sh:/docker-entrypoint-initdb.d/01-app-role.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U boan_migrator -d boan"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  backend:
+    profiles: [app]
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      BOAN_BIND_ADDRESS: 0.0.0.0
+      BOAN_DB_URL: jdbc:postgresql://db:5432/boan
+      BOAN_DB_USER: boan_app
+      BOAN_DB_PASSWORD: ${BOAN_DB_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_MIGRATION_USER: boan_migrator
+      BOAN_MIGRATION_PASSWORD: ${BOAN_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_CONTEXT_KEY: ${BOAN_CONTEXT_KEY:?Run python3 scripts/init-demo.py}
+      BOAN_DEMO_ENABLED: "true"
+      BOAN_DEMO_SCENARIOS: ${BOAN_DEMO_SCENARIOS:-true}
+      BOAN_DEMO_APPLICANT_PASSWORD: ${BOAN_DEMO_APPLICANT_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_DEMO_SECURITY_PASSWORD: ${BOAN_DEMO_SECURITY_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_DEMO_INFRA_PASSWORD: ${BOAN_DEMO_INFRA_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_DEMO_ADMIN_PASSWORD: ${BOAN_DEMO_ADMIN_PASSWORD:?Run python3 scripts/init-demo.py}
+      BOAN_OPENAI_API_KEY: ${BOAN_OPENAI_API_KEY:-}
+      BOAN_GEMMA_API_KEY: ${BOAN_GEMMA_API_KEY:-}
+      BOAN_ALLOWED_LLM_ENDPOINTS: ${BOAN_ALLOWED_LLM_ENDPOINTS:-https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
+      BOAN_UPLOAD_DIRECTORY: /var/lib/boan/uploads
+    ports:
+      - "127.0.0.1:${BOAN_API_PORT:-8080}:8080"
+    volumes:
+      - uploaded_documents:/var/lib/boan/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 45s
+    security_opt: [no-new-privileges:true]
   frontend:
+    profiles: [app]
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ./frontend
       args:
-        BACKEND_INTERNAL_URL: http://backend:8080
+        API_ORIGIN: http://backend:8080
     environment:
       NODE_ENV: production
-      HOSTNAME: 0.0.0.0
-      PORT: "3000"
-      TZ: Asia/Seoul
+      API_ORIGIN: http://backend:8080
     ports:
-      - "127.0.0.1:${WEB_PORT:-3000}:3000"
-    init: true
-    restart: unless-stopped
+      - "127.0.0.1:${BOAN_WEB_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    security_opt: [no-new-privileges:true]
+volumes:
+  postgres_data:
+  uploaded_documents:
 
-  backend:
-    profiles: [full]
-    build:
-      context: ./backend
-    environment:
-      SPRING_PROFILES_ACTIVE: container
-      SERVER_ADDRESS: 0.0.0.0
-      SERVER_PORT: "8080"
-      TZ: Asia/Seoul
-    ports:
-      - "127.0.0.1:${API_PORT:-8080}:8080"
-    init: true
-    restart: unless-stopped

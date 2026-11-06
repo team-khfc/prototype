@@ -1,0 +1,38 @@
+
+> boan-design-prototype@1.0.0 build
+> next build
+
+▲ Next.js 16.4.5 (Turbopack)
+✓ Running next.config.ts took 29ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 901ms
+  Running TypeScript ...
+  Finished TypeScript in 3.8s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/11) ...
+  Generating static pages using 8 workers (2/11) 
+  Generating static pages using 8 workers (5/11) 
+  Generating static pages using 8 workers (8/11) 
+✓ Generating static pages using 8 workers (11/11) in 286ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /admin/[tab]
+├ ○ /components
+├ ƒ /design-preview/[screen]
+├ ○ /documents
+├ ○ /institution/context
+├ ○ /knowledge
+├ ○ /login
+├ ○ /requests
+├ ƒ /requests/[id]/[step]
+├ ○ /requests/new
+└ ○ /workspace
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

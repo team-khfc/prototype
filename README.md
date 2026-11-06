@@ -1,102 +1,142 @@
-# 보안길잡이 AI · 프론트엔드 우선 개발 프로토타입
+# 보안길잡이 — 지정 디자인 시안 기반 새 프로토타입
 
-React·Next.js 프론트엔드와 Spring Boot·Gradle·H2 백엔드를 분리한 개발 시작 프로젝트입니다. 기존 KRDS 기반 화면과 합성 데이터 시연을 유지합니다.
+2026-11-06. 수정된 개발·프로젝트 규칙과 사용자가 지정한 [디자인 시안](https://github.com/team-khfc/prototype/tree/main/%EB%B3%B4%EC%95%88%EA%B8%B8%EC%9E%A1%EC%9D%B4%20%EB%94%94%EC%9E%90%EC%9D%B8%EC%8B%9C%EC%95%88%20%ED%94%84%EB%A1%9C%ED%86%A0%ED%83%80%EC%9E%85)을 기준으로 새로 작성한 소스다. 직전 생성물의 애플리케이션 코드·화면·테스트 결과를 사용하지 않았다.
 
-## 먼저 프론트엔드 실행
+일반 사용자가 사업을 설명하고 정보보안·ICT인프라 담당자가 전문 정보를 보완하여 **방화벽 신청서와 보안성검토 신청서**의 초안을 완성한다. AI 제안, 사람의 확인, 담당자 검토, 사용자 제출, 서류 접수를 구별한다.
 
-Node.js 22 또는 24와 npm이 필요합니다. 저장소 루트에서 실행합니다.
+## 디자인부터 빠르게 보기
+
+Node.js 24 환경에서 프런트엔드만 실행할 수 있다.
 
 ```bash
+cd frontend
 npm ci
 npm run dev
 ```
 
-http://localhost:3000 에 접속합니다. **Java, DB, 백엔드 실행 없이 모든 시연 화면을 사용할 수 있습니다.** 프론트엔드만 수정할 때는 `cd frontend` 후 `npm run dev`도 가능합니다. 의존성은 루트 `package-lock.json` 하나로 관리합니다.
+브라우저에서 `http://localhost:3000/design-preview/workspace`를 연다. 업무 한눈에 보기, 협의 요청함, 정보보안 검토, ICT인프라 검토, 자료·AI 제안, 기관 설정을 탐색할 수 있다. 검색·필터·문서 미리보기·탭 전환은 동작한다.
 
-## 프로젝트 구조
+이 경로는 **합성 자료를 사용하는 읽기 전용 디자인 확인 화면**이다. 실제 업무 화면과 같은 React 표시 컴포넌트를 사용하지만 업무 API를 호출하지 않으며 저장·제출·게시 기능은 비활성화한다. 실제 입력과 협의 흐름은 아래 전체 실행을 사용한다.
+
+## 전체 실행
+
+필요한 환경은 Docker Engine과 Compose v2, Python 3이다. 소스 빌드에 필요한 Java와 Node는 Dockerfile 안에서 준비한다.
+
+프로젝트 루트에서 실행한다.
+
+```bash
+python3 scripts/init-demo.py
+docker compose --profile app up -d --build
+```
+
+- 웹: `http://localhost:3000`
+- 서버 준비 상태: `http://localhost:8080/api/health`
+- 조회용 API 문서: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+처음 실행할 때 서로 다른 역할 암호와 DB 암호, 256비트 컨텍스트 암호화 키가 로컬 `.env`에 생성된다. 암호는 코드에 고정하지 않았다. 기존 `.env`는 덮어쓰지 않는다. 해당 파일을 열어 역할별 암호를 확인한다.
+
+| 역할 | 아이디 | `.env`의 비밀번호 항목 | 업무 범위 |
+|---|---|---|---|
+| 일반 사용자 | `applicant.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 신청 작성·보완 답변·최종 제출 |
+| 정보보안 | `security.demo` | `BOAN_DEMO_SECURITY_PASSWORD` | 같은 기관의 협의 신청 검토·보완 요청·제출 서류 접수 |
+| ICT인프라 | `infra.demo` | `BOAN_DEMO_INFRA_PASSWORD` | 운영 환경·통신 규칙 확인·검토 |
+| 기관 관리자 | `admin.demo` | `BOAN_DEMO_ADMIN_PASSWORD` | 질문·검토 절차·게시 버전·AI 연결·기관 컨텍스트 |
+
+역할을 바꾸려면 로그아웃 후 해당 계정으로 로그인한다. 화면의 역할 선택값으로 인증을 대체하지 않는다. 관리자도 신청 본문을 자동으로 열람할 수 없다. 같은 기관의 다른 신청자 `second.demo`와 다른 기관 신청자 `outside.demo`는 격리 검사에 사용하는 합성 계정이며 신청자 암호를 사용한다.
+
+최초 기동 시 **합성 신청 12건**을 실제 업무 서비스로 생성한다. 이후 기동 시 기존 자료를 유지한다. 새 DB에 합성 신청 생성을 원하지 않으면 최초 실행 전에 `.env`의 `BOAN_DEMO_SCENARIOS=false`로 설정한다. 운영 계정을 만드는 기능은 이 시연 초기화에 포함하지 않는다.
+
+종료 시 `docker compose --profile app down`을 사용한다. DB와 업로드 볼륨은 유지된다. 생성한 암호화 키를 잃으면 기존 기관 컨텍스트를 복호화할 수 없으므로 `.env`와 볼륨을 함께 관리한다.
+
+## 권장 시연 순서
+
+1. 일반 사용자로 로그인하여 새 보안 신청을 만든다. 사업명·문서 종류·부서·사업 설명을 작성한다.
+2. TXT·MD 사업개요서를 선택하거나 설명을 입력한 뒤 **파일 전송 및 AI 분석 시작**을 누른다. 파일 선택만으로 전송하지 않는다. 기본 `EXAMPLE` 모드는 이름 붙인 원문 행을 발췌하며 실제 외부 LLM을 호출하지 않는다.
+3. 후보와 근거를 보고 답변 초안에 적용한다. 그 뒤 각 답변을 사람이 확인한다. 모르는 내용은 비워 두거나 ‘잘 모름’으로 남긴다.
+4. 기본 사업 설명을 확인한 뒤 담당자 협의를 요청한다. 정보보안·ICT인프라 계정에서 각각 맡은 항목을 입력하고 필요한 보완을 요청한다.
+5. 신청자가 보완 답변을 저장하면 요청한 담당 분야가 해결 여부를 확인한다. 내용이 달라졌으면 이전 검토가 무효화되어 재검토가 필요하다.
+6. 필요한 담당 검토가 끝나면 신청자가 최종 내용을 확인하여 제출한다. 서버가 미확정값·필수값·보완·검토 버전을 다시 검사하고 제출본을 보존한다.
+7. 정보보안 담당자가 제출 서류를 접수한다. 접수 상태는 실제 방화벽 장비 적용이나 서비스 운영 승인을 의미하지 않는다.
+
+기관 관리자는 추가 질문과 병렬/순차 절차를 초안에 저장하고 변경 사항을 확인한 뒤 게시한다. 지정 원본 시안에 따라 순차 검토는 **정보보안 → ICT인프라**다. 새 게시본은 이후 만든 신청에 적용되며 진행 중인 신청의 설정은 유지된다.
+
+## 구현한 경계
+
+| 영역 | 구현 |
+|---|---|
+| 디자인 | 원본 CSS·KRDS 토큰·Pretendard GOV 보존, 상단 헤더·240px 메뉴·표·단계 화면·2열 검토 패널 |
+| 권한 | DB 계정 세션, CSRF, 요청마다 계정 재확인, 기관·작성자·역할 검사 |
+| 출처 | 사용자 답변·AI 추론/근거·담당자 입력·담당자 확인 구분, 원출처와 사람 확인 분리 |
+| 업무 | 초안→협의→제출→접수, 보완·재검토, 버전 충돌, 제출·게시 멱등성 |
+| 저장 | PostgreSQL, Flyway, 런타임/마이그레이션 계정 분리, DB 트리거로 제출·게시 스냅샷 보호 |
+| AI | 예시 추출, OpenAI/Gemma 교체 어댑터, DB 연결 설정, 환경변수 키 참조, 실패 이력·오래된 결과 차단 |
+| 기관 정보 | 관리자가 등록하고 전문 담당자가 참고하는 암호화 컨텍스트, 외부 AI에 자동 전송하지 않음 |
+| 문서 | 출처와 확인 상태를 포함한 React 미리보기, 인쇄 가능한 HTML 초안·불변 제출본 다운로드 |
+
+목록은 최근 100건, 통신 규칙 50건, 추가 질문 30건을 대상으로 한다. 목록 검색·정렬·페이지 이동은 이 조회 범위 안에서 동작한다. 기관 질문은 텍스트형이며 문서 양식 커스터마이징은 안내 문구 범위다.
+
+통신 범위 제한은 이번 시연의 구현 가정이다. IPv4 또는 CIDR `/24~32`, TCP/UDP 포트 1~65535 중 연속 1,024개 이하, ICMP 포트 없음, 기간 366일 이하를 받는다. 이를 공식 보안 표준이나 특정 기관의 규정으로 사용하지 않는다. 모든 예시는 문서용 주소와 합성 이름만 사용한다.
+
+## 외부 AI 설정
+
+기본 게시 설정은 `EXAMPLE`이다. 이 모드는 자유 문장을 이해하거나 외부 생성형 모델을 실행했다고 표시하지 않는다.
+
+실제 모델을 사용하려면 승인된 환경에서 `.env`의 `BOAN_OPENAI_API_KEY` 또는 `BOAN_GEMMA_API_KEY`에 키를 넣고 서버를 다시 시작한다. 기관 관리자 화면에서 제공자, 모델, 정확한 엔드포인트, 해당 키의 **참조 이름**과 생성 옵션을 초안에 저장한 뒤 게시한다. 키 원문은 UI나 DB에 저장하지 않는다. 모델 설정을 바꾼 후에는 새 신청으로 분석한다.
+
+- OpenAI 어댑터: Chat Completions 규약.
+- Gemma 어댑터: Google Gemini API의 `generateContent` 규약. 별도 NIA 연결을 의미하지 않는다.
+- URL은 `BOAN_ALLOWED_LLM_ENDPOINTS`의 정확한 목록과 일치해야 한다. HTTP·리다이렉트·비공개 DNS 주소는 거절한다.
+- 실제 모델 결과도 원문 근거와 허용 필드 검사를 통과해야 하며 자동 확정하지 않는다.
+- 네트워크·키·모델 출력 오류는 실패 상태로 기록한다. 예시 성공으로 대체하지 않는다.
+
+## 검사와 개발 실행
+
+```bash
+# 백엔드: Java 21, Docker(Testcontainers)가 필요
+cd backend
+./gradlew spotlessApply check bootJar
+
+# 프런트엔드: Node.js 24
+cd ../frontend
+npm ci
+npm run format
+npm run check
+npm run build
+```
+
+표준 백엔드 통합 검사는 Testcontainers로 PostgreSQL 17을 실행한다. 별도 검증 DB를 명시할 때만 `BOAN_TEST_JDBC_URL`, `BOAN_TEST_DB_USER`, `BOAN_TEST_DB_PASSWORD` 환경변수를 사용할 수 있다. 외부 DB 검사를 Docker 검사의 통과로 간주하지 않는다.
+
+Docker에서 DB만 띄우고 개발할 때는 루트에서 `docker compose up -d db`, `python3 scripts/run-backend.py`를 실행하고 별도 터미널에서 프런트엔드를 실행한다. `API_ORIGIN`의 기본값은 `http://localhost:8080`이다.
+
+전체 서버를 띄운 뒤 루트에서 다음 검사를 실행할 수 있다. 이 명령은 **새 합성 신청과 기관 게시 이력**을 생성하므로 로컬 시연 환경에만 실행한다.
+
+```bash
+python3 scripts/smoke.py
+```
+
+이번에 실제 실행한 검사와 제한은 [검증 기록](docs/VERIFICATION.md)이 기준이다.
+
+## 현재 포함하지 않은 범위
+
+- 실제 OpenAI/Gemma 서비스 두 종의 실호출·품질 평가: 키가 없는 환경에서는 어댑터 계약만 검사했다.
+- 공개 문서 본문 기반 RAG, 임베딩·벡터 검색: 현재는 확인한 공개 게시물 목록만 제공한다.
+- PDF·DOCX·HWP 업로드 및 전용 HWP/PDF 양식 생성: TXT·MD 입력과 HTML 출력만 지원한다.
+- 기관 SSO, 운영 계정 발급/회수, 다중 서버 세션·분산 요청 제한, 중앙 감사·백업 운영.
+- 조건부 질문, 질문 유형별 편집기, 임의 결재선·양식 편집기, 실제 방화벽 장비 적용.
+- 자동 배포·저장소 병합·대회 제출: 이 산출물로 외부 저장소나 제출본을 변경하지 않았다.
+
+## 소스 안내
 
 | 경로 | 역할 |
 |---|---|
-| `frontend/app/` | Next.js App Router 진입점·전역 CSS |
-| `frontend/components/` | 화면 셸·공통 UI |
-| `frontend/features/` | 업무 요약·신청·검토·문서함·기관 설정 |
-| `frontend/lib/` | 시연 데이터·업무 상태 전이·저장 |
-| `frontend/public/` | KRDS 토큰·폰트·디자인 문서·소스 ZIP |
-| `frontend/scripts/` | 프론트 테스트·개발 서버·스모크 검사 |
-| `backend/src/` | Spring Boot API·JPA·H2 예제 및 테스트 |
-| `backend/gradle/`, `backend/gradlew*` | Gradle Wrapper 8.14.6 |
-| `backend/examples/legacy-v1/` | 기존 Maven·인메모리 코드 보관, 빌드 제외 |
-| `scripts/` | 정적 빌드 수집·소스 패키징 |
-| `specs/` | 제안 API 계약·검증 기록 |
+| `frontend/` | Next App Router, 공통 UI, 업무 기능, 공개 읽기 전용 시안 |
+| `backend/` | Java 기능 패키지, 서버 업무 검증, Flyway, 테스트 |
+| `compose.yaml` | DB와 전체 애플리케이션 실행 |
+| `scripts/` | 환경 생성, 개발 서버 실행, HTTP 검증 |
+| [docs/CONTRACT.md](docs/CONTRACT.md) | 경로·DTO·권한·버전 계약 |
+| [docs/DESIGN_MAPPING.md](docs/DESIGN_MAPPING.md) | 원본 16개 시안과 새 화면의 대응 |
+| [docs/SOURCE_REFERENCES.md](docs/SOURCE_REFERENCES.md) | 읽은 지침과 디자인 원본 식별 |
+| [docs/adr/](docs/adr/) | 이번 구현의 기술 선택과 한계 |
 
-현재 고정 버전은 Next.js 16.3.4, React 19.2.6, TypeScript 5.9.3, Java 21, Spring Boot 3.5.16입니다. 자세한 버전은 각 빌드 파일을 기준으로 합니다.
-
-## 프론트엔드 체험 순서
-
-1. 업무 요약에서 상태별 협의 요청을 확인하고 목록으로 이동합니다.
-2. 상단 역할을 신청자로 변경하고 새 신청의 4단계 흐름을 진행합니다.
-3. 파일 정보와 합성 AI 제안을 확인하고 사전 협의를 요청합니다.
-4. 정보보안·ICT인프라 담당자 역할에서 검토·보완 요청·의견 기록을 체험합니다.
-5. 신청자가 보완에 답변하고 담당자가 재검토합니다. 미확정 값을 확인하고 두 분야 협의를 마치면 최종 제출할 수 있습니다.
-6. 문서함에서 초안/제출본 검색·미리보기·다운로드를 체험합니다.
-7. 기관 관리자 역할에서 질문·절차 초안 저장과 게시를 체험합니다. 새 설정은 새 신청에 적용됩니다.
-
-## 백엔드 개발 시작
-
-JDK 21을 설치하고 `JAVA_HOME`을 설정합니다. 별도 Gradle 설치는 필요하지 않습니다.
-
-```bash
-cd backend
-./gradlew bootRun
-# Windows PowerShell: .\gradlew.bat bootRun
-```
-
-- 서버: http://localhost:8080
-- 상태: http://localhost:8080/actuator/health
-- 샘플 초안: `GET/POST /api/v1/drafts`, `GET /api/v1/drafts/{id}`
-- H2 Console: http://localhost:8080/h2-console
-- JDBC URL: `jdbc:h2:mem:secureflow`, 사용자 `sa`, 비밀번호 공란
-
-기본 H2는 메모리 DB로 서버 종료 시 초기화됩니다. 파일 저장 선택과 API 예제는 [backend/README.md](backend/README.md)를 참고하세요. **현재 UI의 신청·검토 데이터는 이 API와 연결되지 않습니다.** API는 DB 개발을 시작하기 위한 작은 저장·조회 예제입니다.
-
-## Docker
-
-```bash
-# 프론트엔드만 실행 (기본)
-docker compose up --build -d
-# 백엔드·H2도 함께 실행
-docker compose --profile full up --build -d
-```
-
-프론트엔드는 localhost:3000, 백엔드는 full 프로필에서 localhost:8080입니다. [DOCKER.md](DOCKER.md)에 검사·종료 명령을 정리했습니다.
-
-## 검증·빌드
-
-```bash
-npm run typecheck
-npm test
-npm run build
-# backend/에서
-./gradlew test bootJar
-```
-
-기본 빌드는 `frontend/out/`에 정적 HTML을 생성하고 루트 `out/`으로 복사합니다. Docker는 Next.js standalone 서버 모드를 사용합니다. npm workspace 설정으로 설치와 lockfile은 루트에서 관리하며 프론트 소스는 `frontend/`에 모읍니다.
-
-```bash
-# 소스 ZIP 갱신 후 정적 배포 결과에 반영
-npm run package:source
-npm run build
-```
-
-## 데이터·구현 범위
-
-- 현재 업무 화면은 sessionStorage 기반입니다. 같은 탭 새로고침에 유지되며 사용자 간 공유나 서버 저장은 없습니다.
-- AI는 고정 합성 결과입니다. 파일은 이름·형식·크기만 확인하며 서버로 전송하지 않습니다.
-- 역할 선택·세션 만료는 화면 시연입니다. 실제 로그인, 기관별 권한, AI 연동은 후속 개발입니다.
-- 기관 질문은 공통 텍스트 입력입니다. 조건식 엔진·파일 질문 등 전체 필드 타입은 아직 구현하지 않았습니다.
-- 백엔드는 인증 없는 로컬 개발용입니다. 실서비스 업무 상태·권한·동시성은 [제안 API 계약](specs/spring-v3-contract.md)을 기준으로 구현해야 합니다.
-- 예전 v1 코드·문서는 참고 자료입니다. 현재 구조와 실행법은 이 README와 폴더별 README를 우선합니다.
-
-## 팀 개발 문서
-
-[AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md), [CODING_STYLE.md](CODING_STYLE.md), [design.md](design.md)를 함께 읽으세요. Google Java·TS/JS 스타일을 참고한 팀 규칙은 유지하며, 신규 폴더별 지침을 추가했습니다. 검사 결과는 [분리 구성 검증 기록](specs/validation-frontend-backend.md)에 기록합니다.
+이 소스는 `Security-Advisor`의 검토용 브랜치로 통합하기 위한 별도 산출물이다. 팀의 원본 지침을 대체하거나 리뷰·승인·병합을 완료했다고 표시하지 않는다.

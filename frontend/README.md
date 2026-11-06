@@ -1,44 +1,40 @@
-# Frontend
+# 보안길잡이 — 지정 시안 기반 새 프런트엔드
 
-React 19 + Next.js 16 App Router + TypeScript 기반의 프론트엔드 우선 프로토타입입니다.
+사용자가 지정한 GitHub 디자인 시안을 React 공통 컴포넌트로 이식한 Next.js App Router 프로젝트입니다. 전체 화면 대응·원본 자산·변경 이유는 `../docs/DESIGN_MAPPING.md`, 업무 API는 `../docs/CONTRACT.md`를 확인하세요.
 
 ## 실행
 
-최초 설치는 저장소 루트에서 `npm ci`를 실행합니다. 이후 이 폴더에서:
-
-```bash
+```sh
+npm ci
 npm run dev
-npm run typecheck
-npm test
+```
+
+기본 API 프록시 목적지는 `http://localhost:8080`입니다. 다른 주소는 실행/빌드 환경의 `API_ORIGIN`으로 지정합니다. 브라우저는 같은 출처의 `/api`만 호출합니다. `API_ORIGIN`은 Next 빌드 시 프록시 구성에 반영되므로 Docker 빌드에는 알맞은 build arg를 설정합니다.
+
+- `/login`: 서버 발급 계정 로그인. 암호를 코드에 포함하지 않습니다.
+- `/workspace`: 인증된 업무 공간. 역할·기관은 서버 세션을 따릅니다.
+- `/design-preview/workspace`: 업무 API를 호출하지 않는 공개 읽기전용 디자인 시안.
+
+## 검사
+
+```sh
+npm run check
 npm run build
 ```
 
-localhost:3000에서 개발합니다. `npm run build`는 정적 export이며 결과는 이 폴더의 `out/`입니다. 루트 `npm run build`는 이를 루트 `out/`으로도 복사합니다.
+`check`는 Prettier, TypeScript strict, ESLint, Vitest + Testing Library를 순서대로 실행합니다. 검사는 실행 결과만 보고합니다. 최종 실제 LLM 연결·서버 권한·DB 제출본 불변성 검증은 백엔드 통합 검사 결과를 확인하세요.
 
-## 수정 위치
+## 구현 경계
 
-| 작업 | 파일/폴더 |
-|---|---|
-| 첫 화면·메타데이터 | `app/page.tsx`, `app/layout.tsx` |
-| 내비게이션·역할·세션·시연 안내 | `components/prototype-v3.tsx` |
-| 업무 요약 | `features/dashboard/workspace-overview.tsx` |
-| 신청 목록·검색·필터 | `features/request-list.tsx` |
-| 새 신청 4단계 | `features/request-create.tsx` |
-| 검토·보완·최종 제출 | `features/request-detail.tsx` |
-| 문서함 | `features/documents/document-center.tsx` |
-| 기관 질문·워크플로 설정 | `features/admin-v3.tsx` |
-| 업무 상태와 저장 | `lib/prototype.ts` |
-| 공통 스타일 | `app/globals.css`, `app/workspace.css` |
-| 공통 UI | `components/ui/v3.tsx` |
+- `app/`: Next 경로와 공급자, 인증 레이아웃.
+- `components/`: 지정 시안의 공통 셸·토큰·상태·입력·대화상자.
+- `features/auth`: 실제 세션, 60초 전 연장 안내, 계정별 휘발성 초안.
+- `features/procedure`: 단계별 신청, 명시적 분석·후보 적용, 담당자 검토, 보완·제출·접수, 문서함.
+- `features/institution`: 기관 질문·절차·버전·모델·기관 컨텍스트.
+- `features/knowledge`: 공개 참고 자료.
+- `features/preview`: API 연결 없는 합성 fixture와 공통 화면의 읽기전용 조합.
+- 각 기능의 `types.ts`: 서버 DTO와 같은 모양의 Zod 응답 스키마와 타입.
+- `lib/http.ts`: 공통 HTTP 경로, CSRF, 구조화 오류, Zod 응답 검증, 이전 신원 응답 폐기.
+- `public/assets/`: 수정하지 않은 지정 시안 CSS·KRDS 토큰·폰트와 라이선스.
 
-기존 파일명의 v3는 업무 시연 모델의 버전이며 Next.js 버전이 아닙니다. `components/workspace.tsx`, `lib/gateway.ts`는 사용하지 않는 이전 v1 참고 코드입니다. 새 기능은 현재 진입점에서 개발합니다.
-
-## API 연동 경계
-
-현재 `readState`·`commitState`는 브라우저 세션 저장소를 사용합니다. `BACKEND_INTERNAL_URL` 설정만으로 실제 업무 연동으로 바뀌지 않습니다.
-
-개발 서버와 standalone 서버는 `/api/*`를 Spring Boot로 전달합니다. `.env.example`을 `.env.local`로 복사하면 내부 주소를 변경할 수 있습니다. 기본값은 `http://127.0.0.1:8080`입니다. 정적 export에는 프록시가 없고 업무 화면은 동일한 시연 모드입니다.
-
-백엔드를 별도 실행한 뒤 `http://localhost:3000/api/v1/drafts`에서 빈 배열 또는 저장한 샘플을 확인할 수 있습니다. 실제 신청 연동 시 `specs/spring-v3-contract.md`의 계약과 `lib/prototype.ts`의 상태 모델을 먼저 합의하고 API 어댑터를 추가하세요. `NEXT_PUBLIC_API_BASE_URL`은 현재 화면의 전환 스위치가 아닙니다.
-
-샘플 데이터만 사용하세요. 파일 본문 업로드·AI·인증은 아직 없습니다.
+초안은 동일 탭의 메모리에만 임시 보관합니다. 새로고침·브라우저 종료 후 복구 기능을 제공하지 않습니다. 명시적 로그아웃 또는 다른 계정 로그인에서는 메모리 초안과 서버 캐시를 지웁니다. 세션 만료 후 같은 계정으로 재로그인하면 탭에 남은 입력을 다시 확인할 수 있습니다.
