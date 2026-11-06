@@ -9,8 +9,7 @@ v1.0 · 2026-11-05 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1
 | 저장소 | 역할 |
 |---|---|
 | **team-khfc/Security-Advisor** | **본 저장소.** 모든 개발·운영은 여기서 한다 |
-| team-khfc/prototype | 보관용(아카이브). 선행 Next.js 화면·도메인 검사 15종과 `보안길잡이 디자인시안 프로토타입/`(디자이너 참고 원본)을 보관한다. 새 개발을 하지 않는다 |
-| team-khfc/boan-platform | 초기 개발 시작 저장소. 규칙·코드를 본 저장소로 승계한 뒤 보관한다 |
+| team-khfc/prototype | 초기 개발 시작 저장소. 규칙·코드를 본 저장소로 승계한 뒤 보관한다. 선행 Next.js 화면·도메인 검사 15종과 `보안길잡이 디자인시안 프로토타입/`(디자이너 참고 원본)을 보관한다. 새 개발을 하지 않는다. |
 
 ## 1. 프로젝트
 
@@ -20,7 +19,7 @@ v1.0 · 2026-11-05 · 기반: 메인 개발자(정용석) 작성 개발 규칙(1
 
 | 영역 | 기술 |
 |---|---|
-| 백엔드 | Java 21, Spring Boot 4.1 (Spring MVC), Spring Data JPA, Flyway, Gradle (Kotlin DSL) |
+| 백엔드 | Java 25, Spring Boot 4.1 (Spring MVC), Spring Data JPA, Flyway, Gradle (Kotlin DSL) |
 | 프론트엔드 | Node 22/24, React 19, TypeScript 5.9, **Next.js (App Router)**, TanStack Query 5 — Vite 미사용(2026-11-05 협의 확정) |
 | DB | PostgreSQL 17 |
 | 실행 환경 | Docker Compose |

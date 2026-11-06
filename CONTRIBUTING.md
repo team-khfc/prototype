@@ -28,7 +28,7 @@ Security-Advisor는 2026-11-05 생성된 본 저장소다. 아래를 승계한�
 | boan-platform | 백엔드 구조(kr.boan 기능 패키지, ArchUnit, Flyway, Testcontainers), 개발 규칙, Docker Compose |
 | prototype | Next.js 화면·도메인 검사 15종(프론트 이관 원천), `보안길잡이 디자인시안 프로토타입/`(디자이너 참고 — prototype에 보관 유지) |
 
-확정 스택: Next.js(App Router)+React 19+TS 5.9+TanStack Query / Java 21+Spring Boot 4.1+Gradle(Kotlin DSL)+Spring Data JPA / PostgreSQL 17+Flyway / Docker Compose. 문서에 적힌 구성이 실제 저장소와 다르면 코드가 기준이고 문서를 고친다. 검토 문서만 있는 기능을 완료로 표시하지 않는다.
+확정 스택: Next.js(App Router)+React 19+TS 5.9+TanStack Query / Java 25+Spring Boot 4.1+Gradle(Kotlin DSL)+Spring Data JPA / PostgreSQL 17+Flyway / Docker Compose. 문서에 적힌 구성이 실제 저장소와 다르면 코드가 기준이고 문서를 고친다. 검토 문서만 있는 기능을 완료로 표시하지 않는다.
 
 개발 순서: ① 프론트 이관·시연 정리 → ② API 계약 확정 → ③ 백엔드 업무 구현 → ④ 통합 검증. 2026-11-11 대회 제출까지는 PROJECT_RULES.md의 일정(11-08 기능 동결)이 우선한다.
 
