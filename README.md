@@ -1,12 +1,12 @@
-# 보안길잡이 — 지정 디자인 시안 기반 새 프로토타입
+# 보안길잡이 — 팀 개발 시작점
 
-2026-11-06. 수정된 개발·프로젝트 규칙과 사용자가 지정한 [디자인 시안](https://github.com/team-khfc/prototype/tree/main/%EB%B3%B4%EC%95%88%EA%B8%B8%EC%9E%A1%EC%9D%B4%20%EB%94%94%EC%9E%90%EC%9D%B8%EC%8B%9C%EC%95%88%20%ED%94%84%EB%A1%9C%ED%86%A0%ED%83%80%EC%9E%85)을 기준으로 새로 작성한 소스다. 직전 생성물의 애플리케이션 코드·화면·테스트 결과를 사용하지 않았다.
+**SecurityAdvisor**는 공공기관 사업 담당자가 사업 내용을 설명하면 AI와 정보보안·ICT인프라 담당자가 전문 정보를 보완하여 방화벽신청서·보안성검토 신청서 초안을 완성하는 서비스다. AI의 제안, 사람의 확인, 서류 제출·확정, 실제 방화벽 적용을 구분한다.
 
-일반 사용자가 사업을 설명하고 정보보안·ICT인프라 담당자가 전문 정보를 보완하여 **방화벽 신청서와 보안성검토 신청서**의 초안을 완성한다. AI 제안, 사람의 확인, 담당자 검토, 사용자 제출, 서류 접수를 구별한다.
+이 저장소는 팀원이 같은 화면·업무 용어·API에서 개발을 시작하도록 기존 Next.js/Spring Boot 자산을 발전시킨 시작점이다. **공개 시연 화면과 실제 세션·DB를 사용하는 업무 화면을 함께 제공한다.** 전체 대회 기능의 완료·배포·리뷰 승인을 뜻하지 않는다. 실제 실행한 검사와 남은 제한은 [이번 검증 기록](docs/verification-starter.md), 팀별 다음 작업은 [개발 인계](docs/development-handoff.md)를 확인한다.
 
-## 디자인부터 빠르게 보기
+## 1. 먼저 화면 보기
 
-Node.js 24 환경에서 프런트엔드만 실행할 수 있다.
+필요 환경: Node.js 24, npm. 백엔드 없이 시작할 수 있다.
 
 ```bash
 cd frontend
@@ -14,129 +14,138 @@ npm ci
 npm run dev
 ```
 
-브라우저에서 `http://localhost:3000/design-preview/workspace`를 연다. 업무 한눈에 보기, 협의 요청함, 정보보안 검토, ICT인프라 검토, 자료·AI 제안, 기관 설정을 탐색할 수 있다. 검색·필터·문서 미리보기·탭 전환은 동작한다.
+`http://localhost:3000/starter`를 연다. 사업 건의 두 서류, 신청별 독립 진행, INFRA 할당·검토 분리, 차수 반환, 사용자 제출, 최종 확인·확정의 화면 흐름을 확인한다. 합성 자료는 브라우저 메모리에서만 바뀌며 새로고침하면 초기화된다. **이 화면의 역할별 보기와 버튼 실행은 실제 로그인·서버 권한 검증이 아니다.**
 
-이 경로는 **합성 자료를 사용하는 읽기 전용 디자인 확인 화면**이다. 실제 업무 화면과 같은 React 표시 컴포넌트를 사용하지만 업무 API를 호출하지 않으며 저장·제출·게시 기능은 비활성화한다. 실제 입력과 협의 흐름은 아래 전체 실행을 사용한다.
+| 경로 | 용도 | 데이터·인증 경계 |
+|---|---|---|
+| `/starter` | 최신 업무 흐름을 설명하는 공개 상호작용 시연 | 합성 fixture, 메모리 상태, 업무 API 호출 없음 |
+| `/login`, `/signup` | 실제 로그인·신청자 회원가입 | 서버 세션, CSRF, DB 계정 |
+| `/business-cases` | 사업 건 목록·생성·공통 정보 | 실제 세션 + `/api/business-cases` |
+| `/security-requests` | 서류별 신청·협의·제출·확정 | 실제 세션 + `/api/security-requests` |
+| `/operations` | 담당자 후보군·기한·감사 조회, P1 고정 규칙 안내 | 실제 조회 API. LLM·계정 관리 편집 UI는 신규 화면에 미연결 |
+| `/design-preview/workspace` | 이전 표시 컴포넌트의 공개 읽기 전용 시안 | 합성 fixture, 저장·제출 비활성 |
+| `/workspace`, `/requests`, `/admin/*` | 기존 구현을 보존한 호환·참고 경로 | 기존 `/api/procedures` 등 사용. 새 1:N 업무의 기준 경로는 위 두 자원 |
 
-## 전체 실행
+화면 이동만으로 신청의 업무 상태를 바꾸지 않는다. 서버 화면은 로그인한 사용자의 실제 역할과 서버 응답의 허용 행동을 표시한다.
 
-필요한 환경은 Docker Engine과 Compose v2, Python 3이다. 소스 빌드에 필요한 Java와 Node는 Dockerfile 안에서 준비한다.
+## 2. 실제 세션·DB와 함께 실행
 
-프로젝트 루트에서 실행한다.
+필요 환경: Docker Engine, Compose v2, Python 3. Dockerfile이 Java 25와 Node.js 24 빌드 환경을 준비한다. 프로젝트 루트에서 실행한다.
 
 ```bash
 python3 scripts/init-demo.py
 docker compose --profile app up -d --build
 ```
 
-- 웹: `http://localhost:3000`
-- 서버 준비 상태: `http://localhost:8080/api/health`
-- 조회용 API 문서: `http://localhost:8080/swagger-ui.html`
-- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
-
-처음 실행할 때 서로 다른 역할 암호와 DB 암호, 256비트 컨텍스트 암호화 키가 로컬 `.env`에 생성된다. 암호는 코드에 고정하지 않았다. 기존 `.env`는 덮어쓰지 않는다. 해당 파일을 열어 역할별 암호를 확인한다.
-
-| 역할 | 아이디 | `.env`의 비밀번호 항목 | 업무 범위 |
-|---|---|---|---|
-| 일반 사용자 | `applicant.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 신청 작성·보완 답변·최종 제출 |
-| 정보보안 | `security.demo` | `BOAN_DEMO_SECURITY_PASSWORD` | 같은 기관의 협의 신청 검토·보완 요청·제출 서류 접수 |
-| ICT인프라 | `infra.demo` | `BOAN_DEMO_INFRA_PASSWORD` | 운영 환경·통신 규칙 확인·검토 |
-| 기관 관리자 | `admin.demo` | `BOAN_DEMO_ADMIN_PASSWORD` | 질문·검토 절차·게시 버전·AI 연결·기관 컨텍스트 |
-
-역할을 바꾸려면 로그아웃 후 해당 계정으로 로그인한다. 화면의 역할 선택값으로 인증을 대체하지 않는다. 관리자도 신청 본문을 자동으로 열람할 수 없다. 같은 기관의 다른 신청자 `second.demo`와 다른 기관 신청자 `outside.demo`는 격리 검사에 사용하는 합성 계정이며 신청자 암호를 사용한다.
-
-최초 기동 시 **합성 신청 12건**을 실제 업무 서비스로 생성한다. 이후 기동 시 기존 자료를 유지한다. 새 DB에 합성 신청 생성을 원하지 않으면 최초 실행 전에 `.env`의 `BOAN_DEMO_SCENARIOS=false`로 설정한다. 운영 계정을 만드는 기능은 이 시연 초기화에 포함하지 않는다.
-
-종료 시 `docker compose --profile app down`을 사용한다. DB와 업로드 볼륨은 유지된다. 생성한 암호화 키를 잃으면 기존 기관 컨텍스트를 복호화할 수 없으므로 `.env`와 볼륨을 함께 관리한다.
-
-## 권장 시연 순서
-
-1. 일반 사용자로 로그인하여 새 보안 신청을 만든다. 사업명·문서 종류·부서·사업 설명을 작성한다.
-2. TXT·MD 사업개요서를 선택하거나 설명을 입력한 뒤 **파일 전송 및 AI 분석 시작**을 누른다. 파일 선택만으로 전송하지 않는다. 기본 `EXAMPLE` 모드는 이름 붙인 원문 행을 발췌하며 실제 외부 LLM을 호출하지 않는다.
-3. 후보와 근거를 보고 답변 초안에 적용한다. 그 뒤 각 답변을 사람이 확인한다. 모르는 내용은 비워 두거나 ‘잘 모름’으로 남긴다.
-4. 기본 사업 설명을 확인한 뒤 담당자 협의를 요청한다. 정보보안·ICT인프라 계정에서 각각 맡은 항목을 입력하고 필요한 보완을 요청한다.
-5. 신청자가 보완 답변을 저장하면 요청한 담당 분야가 해결 여부를 확인한다. 내용이 달라졌으면 이전 검토가 무효화되어 재검토가 필요하다.
-6. 필요한 담당 검토가 끝나면 신청자가 최종 내용을 확인하여 제출한다. 서버가 미확정값·필수값·보완·검토 버전을 다시 검사하고 제출본을 보존한다.
-7. 정보보안 담당자가 제출 서류를 접수한다. 접수 상태는 실제 방화벽 장비 적용이나 서비스 운영 승인을 의미하지 않는다.
-
-기관 관리자는 추가 질문과 병렬/순차 절차를 초안에 저장하고 변경 사항을 확인한 뒤 게시한다. 지정 원본 시안에 따라 순차 검토는 **정보보안 → ICT인프라**다. 새 게시본은 이후 만든 신청에 적용되며 진행 중인 신청의 설정은 유지된다.
-
-## 구현한 경계
-
-| 영역 | 구현 |
+| 주소 | 용도 |
 |---|---|
-| 디자인 | 원본 CSS·KRDS 토큰·Pretendard GOV 보존, 상단 헤더·240px 메뉴·표·단계 화면·2열 검토 패널 |
-| 권한 | DB 계정 세션, CSRF, 요청마다 계정 재확인, 기관·작성자·역할 검사 |
-| 출처 | 사용자 답변·AI 추론/근거·담당자 입력·담당자 확인 구분, 원출처와 사람 확인 분리 |
-| 업무 | 초안→협의→제출→접수, 보완·재검토, 버전 충돌, 제출·게시 멱등성 |
-| 저장 | PostgreSQL, Flyway, 런타임/마이그레이션 계정 분리, DB 트리거로 제출·게시 스냅샷 보호 |
-| AI | 예시 추출, OpenAI/Gemma 교체 어댑터, DB 연결 설정, 환경변수 키 참조, 실패 이력·오래된 결과 차단 |
-| 기관 정보 | 관리자가 등록하고 전문 담당자가 참고하는 암호화 컨텍스트, 외부 AI에 자동 전송하지 않음 |
-| 문서 | 출처와 확인 상태를 포함한 React 미리보기, 인쇄 가능한 HTML 초안·불변 제출본 다운로드 |
+| `http://localhost:3000/login` | 역할별 계정 로그인 |
+| `http://localhost:3000/signup` | 합성 시연 기관의 신청자 회원가입 |
+| `http://localhost:3000/business-cases` | 새 사업 건 1:N 신청 흐름 |
+| `http://localhost:8080/api/health` | 서버 준비 상태 |
+| `http://localhost:8080/swagger-ui.html` | 실행 서버의 API 설명 |
+| `http://localhost:8080/v3/api-docs` | 실행 서버의 OpenAPI JSON |
 
-목록은 최근 100건, 통신 규칙 50건, 추가 질문 30건을 대상으로 한다. 목록 검색·정렬·페이지 이동은 이 조회 범위 안에서 동작한다. 기관 질문은 텍스트형이며 문서 양식 커스터마이징은 안내 문구 범위다.
+`init-demo.py`는 DB 암호·역할별 시연 암호·기관 컨텍스트 암호화 키를 로컬 `.env`에 생성한다. 기존 파일은 덮어쓰지 않는다. 암호는 해당 파일에서 확인하고 커밋하지 않는다. `BOAN_*` 환경변수 이름은 기존 실행 환경과의 호환을 위해 유지한다. Java 패키지는 `kr.securityadvisor`다.
 
-통신 범위 제한은 이번 시연의 구현 가정이다. IPv4 또는 CIDR `/24~32`, TCP/UDP 포트 1~65535 중 연속 1,024개 이하, ICMP 포트 없음, 기간 366일 이하를 받는다. 이를 공식 보안 표준이나 특정 기관의 규정으로 사용하지 않는다. 모든 예시는 문서용 주소와 합성 이름만 사용한다.
+Compose의 새 DB 볼륨은 `scripts/db/02-pgvector.sql`로 vector 확장을 준비한다. 기존 볼륨에는 초기화 스크립트가 다시 실행되지 않으므로 확장 설치 상태를 DB 담당자가 확인해야 한다. 이는 실제 RAG 색인·검색이나 Docker 전체 구동 검증이 완료됐다는 뜻이 아니다.
 
-## 외부 AI 설정
+| 역할 | 아이디 | 암호 환경변수 | 새 업무에서의 책임 |
+|---|---|---|---|
+| 신청자 | `applicant.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 사업·신청 작성, 보완, 최종 제출 |
+| 두 번째 신청자 | `second.demo` | `BOAN_DEMO_APPLICANT_PASSWORD` | 본인 신청만 조회하는지 확인 |
+| ICT인프라 | `infra.demo` | `BOAN_DEMO_INFRA_PASSWORD` | 배정받은 신청의 할당·검토·최종 확인 |
+| 정보보안 | `security.demo` | `BOAN_DEMO_SECURITY_PASSWORD` | 배정받은 신청의 검토·최종 확인·확정 |
+| 기관 관리자 | `admin.demo` | `BOAN_DEMO_ADMIN_PASSWORD` | 기관 운영·배정·계정 역할 관리 범위 |
 
-기본 게시 설정은 `EXAMPLE`이다. 이 모드는 자유 문장을 이해하거나 외부 생성형 모델을 실행했다고 표시하지 않는다.
+`outside.demo`는 다른 합성 기관의 격리 검사용 신청자이며 신청자 암호를 사용한다. 회원가입은 APPLICANT만 생성하고 역할·기관을 사용자가 지정하지 않는다. 역할을 바꾸려면 로그아웃 후 다른 실제 계정으로 로그인한다. 관리자 역할이 검토자 권한을 자동으로 갖지는 않는다.
 
-실제 모델을 사용하려면 승인된 환경에서 `.env`의 `BOAN_OPENAI_API_KEY` 또는 `BOAN_GEMMA_API_KEY`에 키를 넣고 서버를 다시 시작한다. 기관 관리자 화면에서 제공자, 모델, 정확한 엔드포인트, 해당 키의 **참조 이름**과 생성 옵션을 초안에 저장한 뒤 게시한다. 키 원문은 UI나 DB에 저장하지 않는다. 모델 설정을 바꾼 후에는 새 신청으로 분석한다.
+기존 합성 예제 자료는 `BOAN_DEMO_SCENARIOS`로 제어한다. 해당 예제의 이전 상태를 새 신청의 현재 업무 규칙으로 해석하지 않는다. 새 흐름은 [시나리오](docs/starter-scenarios.md)에 따라 사업 건을 생성해 진행한다.
 
-- OpenAI 어댑터: Chat Completions 규약.
-- Gemma 어댑터: Google Gemini API의 `generateContent` 규약. 별도 NIA 연결을 의미하지 않는다.
-- URL은 `BOAN_ALLOWED_LLM_ENDPOINTS`의 정확한 목록과 일치해야 한다. HTTP·리다이렉트·비공개 DNS 주소는 거절한다.
-- 실제 모델 결과도 원문 근거와 허용 필드 검사를 통과해야 하며 자동 확정하지 않는다.
-- 네트워크·키·모델 출력 오류는 실패 상태로 기록한다. 예시 성공으로 대체하지 않는다.
+종료는 `docker compose --profile app down`이다. DB·업로드 볼륨은 유지된다. 합성 시연 자료를 모두 지우고 새로 시작할 때만 `docker compose --profile app down -v` 후 다시 기동한다. 이 초기화는 로컬 시연 전용이며 저장 자료를 삭제한다. 기존 암호화 자료를 보존할 때는 `.env`의 키와 볼륨을 함께 유지한다.
 
-## 검사와 개발 실행
+## 3. 개발·검사 명령
+
+작업 전 기준 문서 버전을 검사한다. 기준표는 [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) 5장이다.
 
 ```bash
-# 백엔드: Java 21, Docker(Testcontainers)가 필요
-cd backend
-./gradlew spotlessApply check bootJar
+python3 tools/check_doc_versions.py
+```
 
-# 프런트엔드: Node.js 24
-cd ../frontend
+백엔드는 JDK 25와 Docker(Testcontainers)가 필요하다. Gradle은 저장소 wrapper를 사용한다.
+
+```bash
+cd backend
+./gradlew spotlessCheck check bootJar
+```
+
+프런트엔드는 Node.js 24를 사용한다. `check`에는 포맷 확인·타입·린트·테스트가 포함되고 production 빌드는 별도다.
+
+```bash
+cd frontend
 npm ci
-npm run format
 npm run check
 npm run build
 ```
 
-표준 백엔드 통합 검사는 Testcontainers로 PostgreSQL 17을 실행한다. 별도 검증 DB를 명시할 때만 `BOAN_TEST_JDBC_URL`, `BOAN_TEST_DB_USER`, `BOAN_TEST_DB_PASSWORD` 환경변수를 사용할 수 있다. 외부 DB 검사를 Docker 검사의 통과로 간주하지 않는다.
+위 두 블록의 시작 경로는 각각 저장소 루트다. 포맷 수정이 필요하면 해당 폴더에서 `./gradlew spotlessApply` 또는 `npm run format` 후 검사를 다시 실행한다. 프런트엔드 코드를 수정하기 전 [frontend/AGENTS.md](frontend/AGENTS.md)에 따라 설치된 Next.js 문서를 읽는다.
 
-Docker에서 DB만 띄우고 개발할 때는 루트에서 `docker compose up -d db`, `python3 scripts/run-backend.py`를 실행하고 별도 터미널에서 프런트엔드를 실행한다. `API_ORIGIN`의 기본값은 `http://localhost:8080`이다.
+[개발 시작점 CI](.github/workflows/development-starter.yml)는 `main` 대상 PR·`main` push·수동 실행에서 문서 버전, 프런트엔드 검사·빌드, 백엔드 검사·빌드를 독립 job으로 실행하도록 구성했다. Ubuntu 24.04, Node.js 24.22.1, Temurin 25.0.5+8을 지정하고 백엔드 통합 검사는 runner의 Docker에서 Testcontainers PostgreSQL을 사용한다. 저장소·환경 비밀값을 요구하지 않으며 합성 계정 암호와 암호화 키는 테스트가 생성한다.
 
-전체 서버를 띄운 뒤 루트에서 다음 검사를 실행할 수 있다. 이 명령은 **새 합성 신청과 기관 게시 이력**을 생성하므로 로컬 시연 환경에만 실행한다.
+Actions는 공식 릴리스의 commit SHA로 고정했다([checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [setup-java v6.2.0](https://github.com/actions/setup-java/releases/tag/v6.2.0)). 토큰 권한은 `contents: read`이며 checkout 자격 증명을 남기지 않는다. **워크플로우 파일 추가는 CI 통과나 branch protection 적용을 뜻하지 않는다.** PR의 실제 실행 결과를 확인한 뒤 [이번 검증 기록](docs/verification-starter.md)에 기록한다.
+
+Docker로 DB만 실행하며 개발할 때는 루트에서 다음 명령을 사용하고, 별도 터미널에서 프런트엔드를 실행한다. JDK 25가 현재 Java 실행 환경이어야 한다.
 
 ```bash
-python3 scripts/smoke.py
+docker compose up -d db
+python3 scripts/run-backend.py
 ```
 
-이번에 실제 실행한 검사와 제한은 [검증 기록](docs/VERIFICATION.md)이 기준이다.
+프런트엔드 `API_ORIGIN` 기본값은 `http://localhost:8080`이다. 통합 테스트에 별도 PostgreSQL 17 검증 DB를 사용할 때만 `BOAN_TEST_JDBC_URL`, `BOAN_TEST_DB_USER`, `BOAN_TEST_DB_PASSWORD`를 명시한다. 외부 DB 테스트 성공은 Docker/Testcontainers 기동 성공과 별도로 기록한다. 테스트 DB는 합성 자료 전용이어야 한다.
 
-## 현재 포함하지 않은 범위
+프런트엔드·백엔드·DB를 기동한 뒤, 별도 터미널의 저장소 루트에서 새 1:N 업무의 실제 HTTP 검사를 실행한다.
 
-- 실제 OpenAI/Gemma 서비스 두 종의 실호출·품질 평가: 키가 없는 환경에서는 어댑터 계약만 검사했다.
-- 공개 문서 본문 기반 RAG, 임베딩·벡터 검색: 현재는 확인한 공개 게시물 목록만 제공한다.
-- PDF·DOCX·HWP 업로드 및 전용 HWP/PDF 양식 생성: TXT·MD 입력과 HTML 출력만 지원한다.
-- 기관 SSO, 운영 계정 발급/회수, 다중 서버 세션·분산 요청 제한, 중앙 감사·백업 운영.
-- 조건부 질문, 질문 유형별 편집기, 임의 결재선·양식 편집기, 실제 방화벽 장비 적용.
-- 자동 배포·저장소 병합·대회 제출: 이 산출물로 외부 저장소나 제출본을 변경하지 않았다.
+```bash
+python3 scripts/smoke-starter.py
+```
 
-## 소스 안내
+기본 접속 주소는 `http://127.0.0.1:3000`이며 `BOAN_TEST_BASE_URL`로 변경할 수 있다. 역할별 시연 암호는 루트 `.env` 또는 환경변수에서 읽는다. 검사는 실제 세션·CSRF, 사업 건과 두 서류, 기관·소유자 격리, EXAMPLE 분석·미확정 후보, 배정·할당·반환·보완, 제출·최종 확인·확정·감사를 확인하며 **새 합성 사업 건과 이력을 생성한다.** 합성 시연 DB에서 실행하고 결과는 실행 환경과 함께 남긴다.
 
-| 경로 | 역할 |
+`python3 scripts/smoke.py`는 기존 `/api/procedures` 호환 흐름을 검사하며 합성 신청·게시 이력을 생성한다. 이 결과만으로 새 1:N 신청 흐름을 검증했다고 표시하지 않는다. 새 API의 검사는 [API 계약](docs/starter-api.md), 테스트 소스, [이번 검증 기록](docs/verification-starter.md)을 함께 본다.
+
+## 4. 이번 시작점의 경계
+
+| 영역 | 시작점과 남은 인수 범위 |
 |---|---|
-| `frontend/` | Next App Router, 공통 UI, 업무 기능, 공개 읽기 전용 시안 |
-| `backend/` | Java 기능 패키지, 서버 업무 검증, Flyway, 테스트 |
-| `compose.yaml` | DB와 전체 애플리케이션 실행 |
-| `scripts/` | 환경 생성, 개발 서버 실행, HTTP 검증 |
-| [docs/CONTRACT.md](docs/CONTRACT.md) | 경로·DTO·권한·버전 계약 |
-| [docs/DESIGN_MAPPING.md](docs/DESIGN_MAPPING.md) | 원본 16개 시안과 새 화면의 대응 |
-| [docs/SOURCE_REFERENCES.md](docs/SOURCE_REFERENCES.md) | 읽은 지침과 디자인 원본 식별 |
-| [docs/adr/](docs/adr/) | 이번 구현의 기술 선택과 한계 |
+| 업무 모델 | `BusinessCase` 1:N `SecurityRequest`, CASE/REQUEST 답변, 신청별 독립 단계·상태, 서버 revision 계약 |
+| 협의·확정 | 배정자 권한, INFRA 할당과 검토 분리, 보완·반환, 불변 제출본, INFRA→SECURITY 최종 확인·SECURITY 확정 |
+| 운영 P1 | 배정·저장형 영업일 기한·추가 전용 감사의 서버 경계. 시작점은 단계별 5영업일·공휴일 빈 목록이며 기관 설정과의 연결은 후속 작업 |
+| 인증 | DB 세션·CSRF·요청별 계정 확인, 신청자 회원가입, 합성 역할별 계정 |
+| AI | 사업 건 분석 API, TXT/MD 입력, 기본 EXAMPLE 추출과 Spring AI 공통 어댑터 경계. 실제 외부 모델 2종 구동은 별도 증거 필요 |
+| 지식 | 공개 자료 참조와 기관 비공개 사실을 분리. 의존성·pgvector 준비만으로 RAG 색인·검색이 완료된 것은 아님 |
+| 기존 자산 | 이전 procedure/analysis/institution API·마이그레이션·테스트를 보존. 새 업무 모델과 자동 동기화하지 않음 |
+| F-15~F-17 | 정책 수명주기·업무 지표·화면 안 알림은 **설계 완료·구현 예정**. 11.09 필수 경로 리허설 통과 후 착수 |
 
-이 소스는 `Security-Advisor`의 검토용 브랜치로 통합하기 위한 별도 산출물이다. 팀의 원본 지침을 대체하거나 리뷰·승인·병합을 완료했다고 표시하지 않는다.
+실제 내부망·기관 시스템·실존 개인정보는 입력·커밋·스크린샷에 사용하지 않는다. AI 후보는 출처·근거와 함께 미확정으로 남으며 확인 없이 제출할 수 없다. 서류 확정은 방화벽 장비 적용 완료를 의미하지 않는다.
+
+외부 AI는 DB 연결 구성의 허용된 엔드포인트·모델·키 참조를 사용한다. 키 원문은 환경변수에만 둔다. 키가 없는 기본 시연의 EXAMPLE 추출은 실제 외부 LLM 호출이 아니다. PDF/DOCX/HWP 입력, 공개자료 RAG, 모델 2종의 실제 호출·품질 평가, 운영 SSO·장비 자동 적용은 완료 범위에 포함하지 않는다. **어떤 항목이 검증됐는지는 문서 존재나 화면 버튼이 아니라 이번 검증 기록과 실제 코드로 판단한다.**
+
+신규 화면의 분석 입력·후보 적용은 사업 건 분석 API에 연결한다. LLM 연결 구성과 계정 역할 관리의 새 편집 화면은 아직 연결하지 않았다. 기존 `/admin/*`은 이전 기관 설정 예제이며 새 사업 건의 LLM 구성·고정 절차와 같은 설정 저장소로 간주하지 않는다.
+
+## 5. 팀원이 시작할 문서와 코드
+
+| 목적 | 진입점 |
+|---|---|
+| 팀별 첫 작업·인수 조건 | [docs/development-handoff.md](docs/development-handoff.md) |
+| 정상·반환·거부 시나리오 | [docs/starter-scenarios.md](docs/starter-scenarios.md) |
+| 새 API·DTO·상태·질문 키 | [docs/starter-api.md](docs/starter-api.md) |
+| 회원가입·계정·AI·모델 구성 연결 | [docs/auth-ai-api.md](docs/auth-ai-api.md) |
+| 업무 용어와 코드 식별자 | [docs/glossary.md](docs/glossary.md) |
+| 최신 시안과 기준 문서 참조 | [docs/SOURCE_REFERENCES.md](docs/SOURCE_REFERENCES.md) |
+| 문서·시안·코드의 차이와 담당 | [docs/alignment-notes.md](docs/alignment-notes.md) |
+| 기존 자산 보존·새 업무 경계 결정 | [ADR 0004](docs/adr/0004-team-development-starter.md) |
+| 실제 검사 결과 | [docs/verification-starter.md](docs/verification-starter.md) |
+
+기능 구현의 기준은 FUNCTIONAL_SPEC, 시각 규칙은 design.md, 개별 화면 모양은 [prototype-soo](https://github.com/team-khfc/prototype-soo)의 구현 직전 최신본이다. 이번 참고 SHA는 [출처 기록](docs/SOURCE_REFERENCES.md)에 남겼다. `design.md`와 시안 원본은 디자이너가 후속 작업한다.
+
+개발 결과는 [Security-Advisor](https://github.com/team-khfc/Security-Advisor)에 모인다. `prototype`에서도 기능 브랜치와 PR을 사용하고, 작성자 외 사람 1명 이상의 승인 뒤 Squash merge한다. 기존 [2026-11-06 검증 기록](docs/VERIFICATION.md)은 당시 소스의 역사 기록이며 이번 변경의 통과 증거로 재사용하지 않는다.

@@ -4,14 +4,17 @@ plugins {
   id("com.diffplug.spotless") version "7.2.1"
 }
 
-group = "kr.boan"
+group = "kr.securityadvisor"
 version = "0.2.0-design"
-java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 repositories { mavenCentral() }
 val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
   implementation(platform("org.springframework.boot:spring-boot-dependencies:4.1.2"))
   testImplementation(platform("org.springframework.boot:spring-boot-dependencies:4.1.2"))
+  implementation(platform("org.springframework.ai:spring-ai-bom:2.0.0"))
+  implementation("org.springframework.ai:spring-ai-client-chat")
+  implementation("org.springframework.ai:spring-ai-pgvector-store")
   implementation("org.springframework.boot:spring-boot-starter-webmvc")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-validation")

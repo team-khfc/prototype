@@ -1,5 +1,7 @@
 # 지정 디자인 시안과 새 구현의 대응
 
+> **현재 참고 범위:** 이 파일의 기존 매핑은 2026-11-06 이전 prototype 시안과 당시 구현의 기록이다. 이번 신규 `/starter`·`/business-cases`·`/security-requests`는 [prototype-soo 참조 기록](SOURCE_REFERENCES.md)의 시안을 사용한다. 업무 의미와 원본 시안의 차이는 [alignment-notes.md](alignment-notes.md), 개발 경로는 [development-handoff.md](development-handoff.md)에 기록한다. 아래 매핑을 최신 시안 목록으로 사용하지 않는다.
+
 2026-11-06. 이번 구현은 사용자가 지정한 `team-khfc/prototype`의 **보안길잡이 디자인시안 프로토타입/** 디렉터리에서 이번 작업에 새로 취득한 HTML·CSS를 기준으로 작성했다. 이전에 생성한 애플리케이션의 코드나 화면은 참조하지 않았다.
 
 ## 보존한 원본 자산
