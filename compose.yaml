@@ -1,14 +1,14 @@
-name: security-advisor-design
+name: securityadvisor
 services:
   db:
-    image: postgres:17.11-alpine
+    image: pgvector/pgvector:0.8.0-pg17@sha256:40b404964359299eefdd5f8518facf1886c562848cf4de13b6eaf91cb70c2b87
     environment:
       POSTGRES_DB: boan
       POSTGRES_USER: boan_migrator
-      POSTGRES_PASSWORD: ${BOAN_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_DB_PASSWORD: ${BOAN_DB_PASSWORD:?Run python3 scripts/init-demo.py}
+      POSTGRES_PASSWORD: ${SECURITYADVISOR_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_DB_PASSWORD: ${SECURITYADVISOR_DB_PASSWORD:?Run python3 scripts/init-demo.py}
     ports:
-      - "127.0.0.1:${BOAN_DB_PORT:-5432}:5432"
+      - "127.0.0.1:${SECURITYADVISOR_DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/db/01-app-role.sh:/docker-entrypoint-initdb.d/01-app-role.sh:ro
@@ -20,27 +20,31 @@ services:
   backend:
     profiles: [app]
     build: ./backend
+    hostname: api.securityadvisor
+    networks:
+      default:
+        aliases: [api.securityadvisor]
     environment:
       SPRING_PROFILES_ACTIVE: local
-      BOAN_BIND_ADDRESS: 0.0.0.0
-      BOAN_DB_URL: jdbc:postgresql://db:5432/boan
-      BOAN_DB_USER: boan_app
-      BOAN_DB_PASSWORD: ${BOAN_DB_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_MIGRATION_USER: boan_migrator
-      BOAN_MIGRATION_PASSWORD: ${BOAN_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_CONTEXT_KEY: ${BOAN_CONTEXT_KEY:?Run python3 scripts/init-demo.py}
-      BOAN_DEMO_ENABLED: "true"
-      BOAN_DEMO_SCENARIOS: ${BOAN_DEMO_SCENARIOS:-true}
-      BOAN_DEMO_APPLICANT_PASSWORD: ${BOAN_DEMO_APPLICANT_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_DEMO_SECURITY_PASSWORD: ${BOAN_DEMO_SECURITY_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_DEMO_INFRA_PASSWORD: ${BOAN_DEMO_INFRA_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_DEMO_ADMIN_PASSWORD: ${BOAN_DEMO_ADMIN_PASSWORD:?Run python3 scripts/init-demo.py}
-      BOAN_OPENAI_API_KEY: ${BOAN_OPENAI_API_KEY:-}
-      BOAN_GEMMA_API_KEY: ${BOAN_GEMMA_API_KEY:-}
-      BOAN_ALLOWED_LLM_ENDPOINTS: ${BOAN_ALLOWED_LLM_ENDPOINTS:-https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
-      BOAN_UPLOAD_DIRECTORY: /var/lib/boan/uploads
+      SECURITYADVISOR_BIND_ADDRESS: 0.0.0.0
+      SECURITYADVISOR_DB_URL: jdbc:postgresql://db:5432/boan
+      SECURITYADVISOR_DB_USER: boan_app
+      SECURITYADVISOR_DB_PASSWORD: ${SECURITYADVISOR_DB_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_MIGRATION_USER: boan_migrator
+      SECURITYADVISOR_MIGRATION_PASSWORD: ${SECURITYADVISOR_MIGRATION_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_CONTEXT_KEY: ${SECURITYADVISOR_CONTEXT_KEY:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_DEMO_ENABLED: "true"
+      SECURITYADVISOR_DEMO_SCENARIOS: ${SECURITYADVISOR_DEMO_SCENARIOS:-true}
+      SECURITYADVISOR_DEMO_APPLICANT_PASSWORD: ${SECURITYADVISOR_DEMO_APPLICANT_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_DEMO_SECURITY_PASSWORD: ${SECURITYADVISOR_DEMO_SECURITY_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_DEMO_INFRA_PASSWORD: ${SECURITYADVISOR_DEMO_INFRA_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_DEMO_ADMIN_PASSWORD: ${SECURITYADVISOR_DEMO_ADMIN_PASSWORD:?Run python3 scripts/init-demo.py}
+      SECURITYADVISOR_OPENAI_API_KEY: ${SECURITYADVISOR_OPENAI_API_KEY:-}
+      SECURITYADVISOR_OPENAI_COMPATIBLE_API_KEY: ${SECURITYADVISOR_OPENAI_COMPATIBLE_API_KEY:-}
+      SECURITYADVISOR_ALLOWED_LLM_ENDPOINTS: ${SECURITYADVISOR_ALLOWED_LLM_ENDPOINTS:-https://api.openai.com/v1/chat/completions}
+      SECURITYADVISOR_UPLOAD_DIRECTORY: /var/lib/boan/uploads
     ports:
-      - "127.0.0.1:${BOAN_API_PORT:-8080}:8080"
+      - "127.0.0.1:${SECURITYADVISOR_API_PORT:-8080}:8080"
     volumes:
       - uploaded_documents:/var/lib/boan/uploads
     depends_on:
@@ -55,20 +59,26 @@ services:
     security_opt: [no-new-privileges:true]
   frontend:
     profiles: [app]
+    hostname: securityadvisor
+    networks:
+      default:
+        aliases: [securityadvisor]
     build:
       context: ./frontend
       args:
-        API_ORIGIN: http://backend:8080
+        API_ORIGIN: http://api.securityadvisor:8080
     environment:
       NODE_ENV: production
-      API_ORIGIN: http://backend:8080
+      API_ORIGIN: http://api.securityadvisor:8080
     ports:
-      - "127.0.0.1:${BOAN_WEB_PORT:-3000}:3000"
+      - "127.0.0.1:${SECURITYADVISOR_WEB_PORT:-3000}:3000"
     depends_on:
       backend:
         condition: service_healthy
     security_opt: [no-new-privileges:true]
 volumes:
   postgres_data:
+    name: ${SECURITYADVISOR_DB_VOLUME:-security-advisor-design_postgres_data}
   uploaded_documents:
+    name: ${SECURITYADVISOR_UPLOAD_VOLUME:-security-advisor-design_uploaded_documents}
 

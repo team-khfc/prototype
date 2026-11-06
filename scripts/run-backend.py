@@ -13,8 +13,8 @@ for line in configuration.read_text(encoding='utf-8').splitlines():
     if not line or line.startswith('#'):
         continue
     name, separator, value = line.partition('=')
-    if not separator or not name.startswith('BOAN_'):
-        raise SystemExit('.env의 BOAN_* 설정 형식을 확인해 주세요.')
+    if not separator or not (name.startswith('SECURITYADVISOR_') or name.startswith('BOAN_')):
+        raise SystemExit('.env의 SECURITYADVISOR_* 설정 형식을 확인해 주세요.')
     environment[name] = value
 environment['SPRING_PROFILES_ACTIVE'] = 'local'
 wrapper = 'gradlew.bat' if os.name == 'nt' else './gradlew'

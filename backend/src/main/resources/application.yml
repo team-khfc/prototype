@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8080}
+  port: ${SECURITYADVISOR_API_PORT:${PORT:8080}}
   error:
     include-message: never
     include-stacktrace: never
@@ -8,23 +8,23 @@ server:
     session:
       timeout: 20m
       cookie:
-        name: BOAN_SESSION
+        name: SECURITYADVISOR_SESSION
         http-only: true
         secure: true
         same-site: strict
 spring:
   application:
-    name: security-advisor
+    name: securityadvisor-backend
   jackson:
     deserialization:
       fail-on-null-for-primitives: true
   datasource:
-    url: ${BOAN_DB_URL:jdbc:postgresql://localhost:5432/boan}
-    username: ${BOAN_DB_USER:boan_app}
-    password: ${BOAN_DB_PASSWORD}
+    url: ${SECURITYADVISOR_DB_URL:${BOAN_DB_URL:jdbc:postgresql://localhost:5432/boan}}
+    username: ${SECURITYADVISOR_DB_USER:${BOAN_DB_USER:boan_app}}
+    password: ${SECURITYADVISOR_DB_PASSWORD:${BOAN_DB_PASSWORD}}
   flyway:
-    user: ${BOAN_MIGRATION_USER:boan_migrator}
-    password: ${BOAN_MIGRATION_PASSWORD}
+    user: ${SECURITYADVISOR_MIGRATION_USER:${BOAN_MIGRATION_USER:boan_migrator}}
+    password: ${SECURITYADVISOR_MIGRATION_PASSWORD:${BOAN_MIGRATION_PASSWORD}}
   jpa:
     open-in-view: false
     hibernate:
@@ -40,13 +40,13 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-boan:
+securityadvisor:
   demo:
-    enabled: ${BOAN_DEMO_ENABLED:false}
-    scenarios: ${BOAN_DEMO_SCENARIOS:false}
-  context-key: ${BOAN_CONTEXT_KEY}
-  upload-directory: ${BOAN_UPLOAD_DIRECTORY:/var/lib/boan/uploads}
-  allowed-llm-endpoints: ${BOAN_ALLOWED_LLM_ENDPOINTS:https://api.openai.com/v1/chat/completions,https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent}
+    enabled: ${SECURITYADVISOR_DEMO_ENABLED:${BOAN_DEMO_ENABLED:false}}
+    scenarios: ${SECURITYADVISOR_DEMO_SCENARIOS:${BOAN_DEMO_SCENARIOS:false}}
+  context-key: ${SECURITYADVISOR_CONTEXT_KEY:${BOAN_CONTEXT_KEY}}
+  upload-directory: ${SECURITYADVISOR_UPLOAD_DIRECTORY:${BOAN_UPLOAD_DIRECTORY:/var/lib/boan/uploads}}
+  allowed-llm-endpoints: ${SECURITYADVISOR_ALLOWED_LLM_ENDPOINTS:${BOAN_ALLOWED_LLM_ENDPOINTS:https://api.openai.com/v1/chat/completions}}
 logging:
   level:
     org.hibernate.SQL: OFF

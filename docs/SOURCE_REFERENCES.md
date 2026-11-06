@@ -1,28 +1,28 @@
-# 이번 구현의 원본 참조
+# 재생성본의 참조 출처
 
-확인일: 2026-11-06. 아래는 이번 작업에서 읽은 사용자 제공 파일의 바이트 식별자다. 파일명 앞 숫자는 제공 파일 구분용이다. 개인 연락처와 실존 팀원 정보를 산출물에 다시 넣지 않기 위해 원문 전체를 복제하지 않았다.
+확인일: 2026-11-06. 최신 사용자 제공 MD와 GitHub 디자인 시안을 기준으로 구현했다. 아래 해시는 수정 전 제공 파일의 식별자이며, 공유 사본에서는 실존 팀원 이름·연락처를 역할명으로 치환했다. 디자인 문서의 이전 브랜드·검토 순서와 낡은 경로는 최신 확정 명세에 맞춰 명시적으로 정리했다. 원본 파일을 동일 바이트로 복제했다는 의미가 아니다.
 
-| 사용한 제공 파일 | 프로젝트에서의 역할 | SHA-256 |
+| 원본 문서 | 구현에서 참조하는 사본 | 원본 SHA-256 |
 |---|---|---|
-| `06-AGENTS.md` | `AGENTS.md` | `43379a6a898015ca80307e39f50fb4c71d5bf657da6d32086692528a54e62622` |
-| `07-PROJECT_RULES.md` | `claude/PROJECT_RULES.md` | `b7c003109a2554b9665de4540051b7db1a5886885d8914869233ec0e9ba8a164` |
-| `03-CODING_STYLE.md` | `CODING_STYLE.md` | `56ec1c6b1a5611f3b686981522e63924c587c4a0bf27fa8e1ac3d827c6b753dc` |
-| `02-SECURE_CODING.md` | `claude/SECURE_CODING.md` | `9eb1038e5cc43001f423a643f8d89777c74661377563832e7e98a86cbc155136` |
-| `04-CONTRIBUTING.md` | `CONTRIBUTING.md` | `cd70b5444daaae68b3a399296462d7075cf194214007217e1edecc2ed50427f6` |
-| `01-design.md` | `design.md` | `3d47509f663d5b4dd28938601b8b00a8c09e3565b8e6d5f6edc841602f6229da` |
+| PROJECT_CONTEXT.md | claude/PROJECT_CONTEXT.md | `e90a4e90f75b5b2c20ea7213096c79893ff6774d4033868cd39e021792ee5a4f` |
+| FUNCTIONAL_SPEC.md | claude/FUNCTIONAL_SPEC.md | `5792f2cdfc466ae7e4593090075c897c5fe656176694b4a37ce4c79d343b514d` |
+| AGENTS.md | AGENTS.md | `370d8ea471bb76c039393bcfc1dfdd79c3a8f8a7bb5edf5050f5926b7bd1d10a` |
+| PROJECT_RULES.md | claude/PROJECT_RULES.md | `22a571f4b20534e22afab7d7fac231597d602f2e6cb7626c97c1a3d1c57d84b5` |
+| CODING_STYLE.md | CODING_STYLE.md | `56ec1c6b1a5611f3b686981522e63924c587c4a0bf27fa8e1ac3d827c6b753dc` |
+| SECURE_CODING.md | claude/SECURE_CODING.md | `9eb1038e5cc43001f423a643f8d89777c74661377563832e7e98a86cbc155136` |
+| CONTRIBUTING.md | CONTRIBUTING.md | `9652edfe3d51b9acbd161a5c5137fd511d00a8b7a8ff17f39f2ecc1c9750e175` |
+| design.md | design.md | `3d47509f663d5b4dd28938601b8b00a8c09e3565b8e6d5f6edc841602f6229da` |
 
-`claude/PROJECT_CONTEXT.md` 원문은 제공 파일과 확인 가능한 본 저장소에서 발견하지 못했다. 그 내용이나 새로운 확정 결정을 만들어 내지 않고 현재 대화의 프로젝트 범위와 제공 규칙을 사용했다. 구현 가정은 `docs/adr/`에 별도로 기록했다.
-
-## 디자인 원본
+## GitHub 디자인 원본
 
 - 저장소: https://github.com/team-khfc/prototype
+- 참조 커밋: `07c2b598d2da27fbbd5f8a694d3fdfddf42bb4e1` (디자인시안 업데이트)
 - 경로: `보안길잡이 디자인시안 프로토타입/`
-- 분기: `main`에서 이번 작업에 새로 가져온 파일. 보관 저장소에는 변경하지 않았다.
-- `01-workspace.html` Git blob: `494f23663e48aedb8c4d81105dd8296bddddbea5`
-- `02-requests.html` Git blob: `bc6304f74b643a335a4ecc5bcb560a49bf3fbc0f`
-- `assets/css/styles.css` Git blob: `cad39a2f48c992affac4eae8f79b4931ce671f86`
-- `assets/css/tokens.css` Git blob: `adf0a09d9099298661cc047dcd2706d071f3ddd4`
-- `assets/css/workspace.css` Git blob: `45829fffb7372ee540acfd17c8fcfe121a75bd08`
-- `assets/vendor/krds/css/token/krds_tokens.css` Git blob: `1dbf354b60dfe6808823b4878b3f15c05dae6b3f`
+- 주요 화면: requests, new-request, request-detail, submitted, supplements, documents, network, history, policies, settings.
+- 원본 HTML·CSS·로고·폰트·샘플 문서는 변경하지 않는다. 프론트의 실행용 복사본과 React 컴포넌트는 별도로 관리한다.
 
-화면 매핑·변경 이유·공급 라이선스는 `DESIGN_MAPPING.md`와 프런트엔드 자산에 보존했다. 직전 생성물의 애플리케이션 소스는 읽거나 복사하지 않았다.
+## 기준 충돌의 처리
+
+기능과 불변식은 최신 PROJECT_CONTEXT·FUNCTIONAL_SPEC을 따른다. 시안의 가짜 저장·역할 선택·AI 성공 문구는 실제 서버 동작으로 간주하지 않는다. 이전 디자인 문서의 SECURITY 선행·병렬 선택은 1차 범위의 INFRA 선행 고정으로 대체한다. 이전 Java 21·원본 16개 화면·두 외부 모델 실증 문구를 현재 구현의 근거로 사용하지 않는다.
+
+세부 해시와 수정 사유는 [source-manifest.json](source-manifest.json), 구현 결정은 [ADR 0004](adr/0004-securityadvisor-regeneration.md)·[ADR 0005](adr/0005-spring-ai-and-public-knowledge.md), 실제 검증은 [VERIFICATION.md](VERIFICATION.md)에 기록한다.

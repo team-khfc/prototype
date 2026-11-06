@@ -1,0 +1,67 @@
+{
+  "upstream_commit": "07c2b598d2da27fbbd5f8a694d3fdfddf42bb4e1",
+  "requirements_date": "2026-11-06",
+  "requirements": [
+    {
+      "uploaded_file": "PROJECT_CONTEXT.md",
+      "sha256": "e90a4e90f75b5b2c20ea7213096c79893ff6774d4033868cd39e021792ee5a4f",
+      "published_copy": "claude/PROJECT_CONTEXT.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "71115ae25adfdd7055f9193ee4c90566781cd6a3dff830978c655e867f10b9e6"
+    },
+    {
+      "uploaded_file": "FUNCTIONAL_SPEC.md",
+      "sha256": "5792f2cdfc466ae7e4593090075c897c5fe656176694b4a37ce4c79d343b514d",
+      "published_copy": "claude/FUNCTIONAL_SPEC.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "5792f2cdfc466ae7e4593090075c897c5fe656176694b4a37ce4c79d343b514d"
+    },
+    {
+      "uploaded_file": "AGENTS.md",
+      "sha256": "370d8ea471bb76c039393bcfc1dfdd79c3a8f8a7bb5edf5050f5926b7bd1d10a",
+      "published_copy": "AGENTS.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "b0285292dbd3afce022595e9c091e99718091f6f3a3f7e6f48901d8d5614a1b1"
+    },
+    {
+      "uploaded_file": "PROJECT_RULES.md",
+      "sha256": "22a571f4b20534e22afab7d7fac231597d602f2e6cb7626c97c1a3d1c57d84b5",
+      "published_copy": "claude/PROJECT_RULES.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "a0cd20961128360d60730b46f5ff1dd006e2daebf7854606f16c099e0dc0f09d"
+    },
+    {
+      "uploaded_file": "CODING_STYLE.md",
+      "sha256": "56ec1c6b1a5611f3b686981522e63924c587c4a0bf27fa8e1ac3d827c6b753dc",
+      "published_copy": "CODING_STYLE.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "56ec1c6b1a5611f3b686981522e63924c587c4a0bf27fa8e1ac3d827c6b753dc"
+    },
+    {
+      "uploaded_file": "SECURE_CODING.md",
+      "sha256": "9eb1038e5cc43001f423a643f8d89777c74661377563832e7e98a86cbc155136",
+      "published_copy": "claude/SECURE_CODING.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "9eb1038e5cc43001f423a643f8d89777c74661377563832e7e98a86cbc155136"
+    },
+    {
+      "uploaded_file": "CONTRIBUTING.md",
+      "sha256": "9652edfe3d51b9acbd161a5c5137fd511d00a8b7a8ff17f39f2ecc1c9750e175",
+      "published_copy": "CONTRIBUTING.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "2e2e0aedb6be9ff659d66c051615790f76f9ff0f858a4dfbf7a10594a5aac53e"
+    },
+    {
+      "uploaded_file": "design.md",
+      "sha256": "3d47509f663d5b4dd28938601b8b00a8c09e3565b8e6d5f6edc841602f6229da",
+      "published_copy": "design.md",
+      "personal_details": "역할명으로 치환·연락처 제외",
+      "published_sha256": "2a8dcd8d579a0fb2fcfa2d5032d5bbb7537e481a9222f9b11ac63d4328d49740"
+    }
+  ],
+  "reconciliation": [
+    "실존 인물 이름·연락처를 역할명으로 치환",
+    "이전 디자인 문서의 브랜드·검토 순서를 최신 FUNCTIONAL_SPEC과 동기화",
+    "AGENTS의 사라진 16개 시안 경로를 최신 10개 업무 화면으로 동기화"
+  ]
+}
