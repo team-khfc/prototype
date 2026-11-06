@@ -68,7 +68,11 @@ export function ServiceShell({ children }: { children: ReactNode }) {
         >
           <Icon name="menu" />
         </button>
-        <Link href={href('/security-requests')} className="sa-brand">
+        <Link
+          href={href('/security-requests')}
+          className="sa-brand"
+          aria-label="보안길잡이 AI 신청 현황으로"
+        >
           <Image
             src="/assets/starter/logo.png"
             alt="보안길잡이 AI"
@@ -198,6 +202,30 @@ export function ServiceShell({ children }: { children: ReactNode }) {
                     담당자·처리 이력
                   </Link>
                 </li>
+                {workspace.actor.role === 'ADMIN' && (
+                  <>
+                    <li>
+                      <Link
+                        href={href('/operations/members')}
+                        onClick={() => setMenuOpen(false)}
+                        aria-current={path === href('/operations/members') ? 'page' : undefined}
+                      >
+                        <Icon name="building" width={20} height={20} />
+                        회원·역할 관리
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href={href('/operations/models')}
+                        onClick={() => setMenuOpen(false)}
+                        aria-current={path === href('/operations/models') ? 'page' : undefined}
+                      >
+                        <Icon name="sparkle" width={20} height={20} />
+                        AI 모델 구성
+                      </Link>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Link href={href('/operations/configuration')} onClick={() => setMenuOpen(false)}>
                     <Icon name="book" width={20} height={20} />

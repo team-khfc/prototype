@@ -8,6 +8,14 @@ import { readDraft, removeDraft, writeDraft } from '@/lib/draft';
 import { AnswerReadout, SourceBadge } from './RequestComponents';
 import type { Answer, AnswerInput } from './types';
 
+const TECHNICAL_HELP: Record<string, string> = {
+  sourceIp: '단일 IPv4·IPv6 주소를 입력하세요. 합성 예: 192.0.2.10',
+  destinationIp: '단일 IPv4·IPv6 주소를 입력하세요. 합성 예: 198.51.100.20',
+  protocol: 'TCP, UDP, ICMP, ICMPV6 중 하나를 입력하세요.',
+  port: '1~65535 범위에서 단일 값·쉼표 목록·범위를 입력하세요. 예: 443 / 80,443 / 8000-8010',
+  period: '시작일과 종료일을 입력하세요. 예: 2026-11-07 ~ 2026-12-31',
+};
+
 /** 미저장 입력을 서버 revision과 묶어 충돌 때 자동으로 덮어쓰지 않는다. */
 export function AnswerEditor({
   answers,
@@ -161,8 +169,13 @@ export function AnswerEditor({
               disabled={pending || input.notApplicable}
               readOnly={answer.ownerRole !== actorRole}
               onChange={(event) => change(answer, { value: event.target.value, confirmed: false })}
-              aria-describedby={`${id}-confirmation`}
+              aria-describedby={`${id}-confirmation${TECHNICAL_HELP[answer.key] ? ` ${id}-format` : ''}`}
             />
+            {TECHNICAL_HELP[answer.key] && (
+              <p className="sa-field-help" id={`${id}-format`}>
+                {TECHNICAL_HELP[answer.key]} 임시 저장 후 할당 완료 시 서버가 형식을 확인합니다.
+              </p>
+            )}
             {answer.evidence && (
               <details className="sa-evidence">
                 <summary>AI 추론 근거</summary>

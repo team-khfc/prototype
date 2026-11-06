@@ -2,10 +2,10 @@ package kr.securityadvisor.request.service;
 
 import java.util.List;
 import java.util.UUID;
-import kr.securityadvisor.analysis.service.UploadStorage;
 import kr.securityadvisor.common.error.DomainException;
 import kr.securityadvisor.common.security.Actor;
 import kr.securityadvisor.common.security.Role;
+import kr.securityadvisor.document.service.UploadStorage;
 import kr.securityadvisor.llm.domain.LlmGateway;
 import kr.securityadvisor.llm.service.LlmConfigurationService;
 import kr.securityadvisor.request.domain.CaseAnalysisJob;

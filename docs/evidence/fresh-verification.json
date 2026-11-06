@@ -1,0 +1,288 @@
+{
+  "verifiedAt": "2026-11-07T03:42:19+09:00",
+  "baseCommit": "e5054c9f60ea12a5e79ba6f09aacf5cea802a576",
+  "designCommit": "1af32fb424ea79a1a4ce60484a83f9d1935fef25",
+  "backend": {
+    "classes": 24,
+    "totals": {
+      "tests": 95,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "results": [
+      {
+        "class": "kr.securityadvisor.AnalysisBoundaryTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.ApiInputIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.ArchitectureTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.AuthIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.CaseAnalysisIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.ConfigurationIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.DatabasePrivilegeIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.LlmConfigurationIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.MemberRegistrationIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.PrivateContextIntegrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.auth.service.LoginAttemptLimiterTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.common.HealthControllerTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.document.service.HtmlDocumentRendererTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.document.service.UploadStorageTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.knowledge.service.ContextCipherTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.knowledge.service.PrivateContextServiceTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.llm.service.BoundedModelHttpClientTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.llm.service.CandidateValidatorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.llm.service.ModelConfigurationValidatorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.llm.service.ProviderProtocolTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.llm.service.SpringAiLlmGatewayTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.request.WorkflowIntegrationTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.request.domain.NetworkAllocationTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "class": "kr.securityadvisor.request.domain.WorkflowDomainTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "java": "25.0.5+8",
+    "postgresql": "17.11",
+    "databaseMode": "explicit isolated PostgreSQL; local Docker unavailable",
+    "gradle": "9.1.0",
+    "tasks": [
+      "spotlessApply",
+      "check",
+      "bootJar"
+    ]
+  },
+  "frontend": {
+    "testFiles": 4,
+    "tests": 35,
+    "failed": 0,
+    "skipped": 0,
+    "node": "24.22.1",
+    "tasks": [
+      "npm run format",
+      "npm run check",
+      "npm run build"
+    ],
+    "productionSsrRoutes": 6,
+    "retiredRouteResponses": 404
+  },
+  "http": {
+    "groups": 10,
+    "passed": [
+      "역할별 실제 세션·CSRF·관리자 권한 경계",
+      "이전 화면·예제 API의 실행 경로 제거",
+      "신청자 가입·역할 주입 방지·관리자 역할 변경·revision 경계",
+      "기관별 모델 구성·주소 검증·일반 선택 목록의 비밀 필드 제외",
+      "사업 건 1:N 서류 생성·다른 신청자 및 기관 격리",
+      "EXAMPLE 분석·미확정 후보 적용·사람 확인·오래된 revision 거부",
+      "서버 자동 배정·저장 기한·INFRA 선행·할당과 협의 및 신청별 진행 분리",
+      "2→1 차수 반환·값/이력 보존·지정 항목 강조·보완 요청 분야 확인",
+      "두 서류 협의 완료·멱등 제출·INFRA→SECURITY 최종 확인·확정·다운로드 감사",
+      "운영 조회·감사 응답·로그아웃 세션 폐기"
+    ],
+    "syntheticResponseSamples": 56
+  },
+  "responseContracts": {
+    "validated": 56,
+    "schemas": {
+      "actorSchema": 1,
+      "memberSchema[]": 1,
+      "memberSchema": 2,
+      "llmConfigurationSchema": 2,
+      "llmOptionSchema[]": 2,
+      "llmConfigurationSchema[]": 1,
+      "businessCaseSchema": 5,
+      "caseAnalysisSchema": 1,
+      "securityRequestSchema": 37,
+      "auditEventSchema[]": 3,
+      "reviewerPoolSchema[]": 1
+    }
+  },
+  "migrations": [
+    {
+      "path": "backend/src/main/resources/db/migration/V202611061050__accounts.sql",
+      "sha256": "ba4024fecab274af222d87bfb31d11d7611f78f15bf7f66fa25bd3525c4c91b1",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611061100__procedures.sql",
+      "sha256": "065a67d8b665a1ec749b4d7c383248435087191d770f6cf837dcb4bf30fb43ed",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611061110__institution_analysis.sql",
+      "sha256": "eaf7ad3badc1886077987c409f532bddd89161eb07373c2e9a8051c50d9848d1",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611070300__business_case_workflow.sql",
+      "sha256": "af64c2f317bb608f024011a469f2aeff1417110aab7c21d732618b7ea0c0c74b",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611070301__member_registration.sql",
+      "sha256": "c3fd3f8d1071020c3a204ea6fd72a5633c06f35a3489af5ddee3e34922821b91",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611070302__case_analysis_and_llm.sql",
+      "sha256": "0f3ba75a711adb4889ad046ef76c6081a1a12988c83758288325fc9d155f0047",
+      "type": "unchanged"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611071030__fresh_configuration.sql",
+      "sha256": "6d6e0de2a2f382b00933feac935068d90331aafcf8f6d50ffe76345da8b3ef8d",
+      "type": "new"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V202611071040__restrict_history_privileges.sql",
+      "sha256": "9aafb8b2da35e9a378a71db486a4040b693a5a66480d08ff6e14c9c9e7f036c4",
+      "type": "new"
+    }
+  ],
+  "notVerified": [
+    "Docker Compose full startup locally",
+    "Browser visual/mobile/keyboard review",
+    "External LLM two-provider live calls",
+    "Public document RAG indexing and retrieval",
+    "Deployment and human PR approval"
+  ]
+}

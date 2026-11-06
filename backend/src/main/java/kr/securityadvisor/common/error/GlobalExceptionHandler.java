@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /** 클라이언트가 상태·충돌·입력 실패를 구분하면서 내부 정보는 숨기게 한다. */
 @RestControllerAdvice
@@ -58,6 +60,12 @@ public class GlobalExceptionHandler {
   public ProblemDetail conflict(HttpServletRequest request) {
     return ProblemFactory.create(
         request, 409, "CONCURRENT_CHANGE", "다른 사용자가 변경했습니다. 최신 내용을 비교한 후 다시 저장해 주세요.");
+  }
+
+  /** 폐기한 API와 없는 리소스는 서버 장애가 아닌 404로 응답한다. */
+  @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
+  public ProblemDetail missing(HttpServletRequest request) {
+    return ProblemFactory.create(request, 404, "NOT_FOUND", "요청한 경로를 찾을 수 없습니다.");
   }
 
   /** SQL·경로·스택은 응답에 포함하지 않는다. */

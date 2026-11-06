@@ -54,7 +54,7 @@ export function useReviewerPools() {
 export function useRequestAudit(id?: string) {
   const { user } = useSession();
   return useQuery({
-    queryKey: ['starter-audit', user.institutionId, user.userId, id],
+    queryKey: ['request-audit', user.institutionId, user.userId, id],
     queryFn: ({ signal }) =>
       requestJson(
         id ? `/security-requests/${encodeURIComponent(id)}/audit-events` : '/audit-events',
@@ -69,7 +69,7 @@ export function useWorkspaceMutations() {
   const client = useQueryClient();
   async function refresh() {
     await Promise.all(
-      ['business-cases', 'security-requests', 'security-request', 'starter-audit'].map((key) =>
+      ['business-cases', 'security-requests', 'security-request', 'request-audit'].map((key) =>
         client.invalidateQueries({ queryKey: [key] }),
       ),
     );
@@ -119,6 +119,7 @@ export function useWorkspaceMutations() {
       form.set('expectedRevision', String(input.expectedRevision));
       form.set('text', input.text);
       if (input.file) form.set('file', input.file);
+      if (input.configurationId) form.set('configurationId', input.configurationId);
       return requestJson(
         `/business-cases/${encodeURIComponent(input.caseId)}/analyses`,
         caseAnalysisSchema,

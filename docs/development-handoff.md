@@ -1,87 +1,78 @@
-# 팀 개발 인계 — 같은 시작점에서 다음 기능으로
+# 팀 개발 인계 — 새 프로토타입의 시작점
 
-작성일: 2026-11-07. 기준 문서는 PROJECT_CONTEXT v2.7의 표를 따른다. 이 문서는 이번 저장소의 코드 진입점과 다음 인수 조건을 연결하는 구현 안내이며 팀 규칙·역할 배치를 바꾸지 않는다.
+작성일: 2026-11-07. PROJECT_CONTEXT v2.7·FUNCTIONAL_SPEC v1.7을 따른다. 이 문서는 이번 실행 구조의 코드 진입점과 인수 조건이며 팀의 확정 역할·범위를 바꾸지 않는다. 기존 앱을 병행 운영하지 않는다.
 
-## 공통 시작 순서
+## 공통 첫 실행
 
-1. 루트 `python3 tools/check_doc_versions.py` 실행 후 PROJECT_CONTEXT → FUNCTIONAL_SPEC의 담당 F-xx → AGENTS → 관련 스타일·보안 규칙을 읽는다.
-2. `/starter`에서 업무 용어와 화면 흐름을 확인한다. 이 단계는 공개 합성 시연이며 서버 검증 증거로 쓰지 않는다.
-3. README대로 실제 서버를 실행하고 `/business-cases`, `/security-requests`에서 역할별 계정으로 같은 흐름을 확인한다.
-4. [starter-api.md](starter-api.md)의 요청·응답·권한·revision과 담당 코드의 현재 구현을 함께 읽는다. 차이는 이슈의 완료 조건으로 기록한다.
-5. 한 이슈에 구현 책임자와 검토자를 정하고 `<종류>/<이슈번호>-<짧은-설명>` 브랜치를 만든다. PR에는 시안 참고 SHA와 실제 검사 결과를 남긴다.
+1. 루트에서 `python3 tools/check_doc_versions.py`와 `python3 tools/check_fresh_structure.py`를 실행한다.
+2. PROJECT_CONTEXT → FUNCTIONAL_SPEC 담당 F-xx → AGENTS → PROJECT_RULES·CODING_STYLE·SECURE_CODING·CONTRIBUTING을 읽는다. 요약 지침은 `claude/INSTRUCTIONS.md`다.
+3. README대로 프런트엔드를 실행해 `/starter`의 합성 자료로 업무 용어와 두 서류의 독립 진행을 확인한다.
+4. 실제 서버·DB를 기동한 뒤 `/login`에서 역할별 계정으로 로그인한다. 공개 시연의 역할 전환을 권한 검증 증거로 사용하지 않는다.
+5. 새 사업 건을 만들고 [시나리오](starter-scenarios.md)를 실행한다. 실행 중인 합성 서버에는 `python3 scripts/smoke-starter.py`로 HTTP 흐름을 검사할 수 있다.
+6. 다음 이슈에 F-xx·범위·검토자·수용 기준을 적고 기능 브랜치에서 작업한다. PR에는 참고 시안 SHA와 실제 실행 결과를 남긴다.
 
-실제 프런트엔드·백엔드·DB를 기동한 뒤 저장소 루트에서 새 업무 HTTP 검사를 실행한다.
+HTTP 검사의 주소는 `SA_TEST_BASE_URL`, 계정 암호는 `.env` 또는 SA_DEMO_*_PASSWORD다. 이 검사는 새 합성 사업·신청·감사를 만든다. 실제 운영 DB에서 실행하지 않는다. 임시로 만들어진 스크린샷·로그에도 실제 내부 정보와 개인 자료를 넣지 않는다.
 
-```bash
-python3 scripts/smoke-starter.py
-```
+## 담당 영역별 출발점
 
-기본 주소는 `http://127.0.0.1:3000`이며 다른 합성 검증 서버는 `BOAN_TEST_BASE_URL`로 지정한다. 루트 `.env` 또는 환경변수의 역할별 시연 암호를 사용하고 새 합성 사업 건·신청·감사 이력을 만든다. 이 결과와 화면 확인 결과를 함께 인수 증거에 남긴다. 기존 `scripts/smoke.py`는 이전 procedure 호환 흐름의 검사로 유지한다.
+| 영역 | 첫 코드·문서 | 다음 인수 조건 |
+|---|---|---|
+| 팀장·통합 | README, verification-fresh, 시나리오, ADR 0003 | 한 번의 사업 설명으로 두 서류를 생성해 반환·재검토·제출·최종 확정까지 역할별 실제 경로 재현 |
+| 백엔드·아키텍처 | request/domain·service, review, assignment, audit, configuration, migrations | 최신 revision·배정·기관·제출본·감사 원자성 및 DB 제약, 신규 migration만 사용 |
+| 프런트엔드 | app, features/request·auth·llm, components/ui, lib/http.ts | 실제 DTO·에러·빈 상태·세션 만료·401/403/409, 사용자 입력 보존, 키보드·모바일 인수 |
+| AI·지식 | common/model, llm, request/CaseAnalysis*, document/UploadStorage, knowledge | 같은 합성 입력에서 외부 모델 2종 구동, 근거·미확정·실패·기관 분리, 공개자료 색인·검색 |
+| 기획·시연 | FUNCTIONAL_SPEC 3~6장, glossary, starter-scenarios | 질문/작성 책임/출처/반환 필드/양식 대응, 초보 사용자의 업무 문구 이해 |
+| 디자인·접근성 | prototype-soo 최신본·MERGE_NOTES, styles, ServiceShell·RequestComponents | 현행 업무 의미를 유지하며 시각 차이·키보드·반응형·출처 배지 확인 |
+| DB·실행·품질 | compose.yaml, scripts, .github/workflows, backend/src/test | 새 환경 첫 실행, 최소 DB 권한, 9문서 버전, 실제 PR CI·다른 사람 리뷰 |
 
-코드에서 구현한 동작과 기능 명세가 요구하는 동작은 구별한다. 미완성 코드를 근거로 기능 명세의 업무 의미를 축소하지 않는다. 업무 의미의 변경은 팀장·기획 결정, 기술 변경은 ADR, 시각 기준 변경은 디자이너의 `design.md` 개정으로 기록한다.
+실제 담당자 지정과 기획 범위 결정은 팀 운영 문서에 따라 기록한다. 위 표는 새로운 개인 배정이나 일정 확정이 아니다.
 
-## 팀장·통합 책임
+## 백엔드의 소유 경계
 
-**첫 진입점:** README, [alignment-notes.md](alignment-notes.md), [이번 검증 기록](verification-starter.md), [시나리오](starter-scenarios.md).
+`BusinessCase`는 CASE 공통 답변과 생성 시 게시본·기한 정책 스냅샷을 소유한다. `SecurityRequest`는 REQUEST 답변·단계·상태·반환·제출을 소유한다. 사업 건 상태를 저장하거나 한 신청의 명령으로 형제 신청을 함께 전이하지 않는다.
 
-사용자 가치가 드러나는 한 경로를 먼저 인수한다: 회원가입/로그인 → 사업 건·서류 2종 → 업로드·AI 요약·공통 정보 → INFRA 할당 → 보완·반환 1회 → 사용자 최종 검토 → 제출 → 두 분야 최종 확인 → SECURITY 확정 → 감사 이력. 실제 모델 교체와 기관별 운영 세부는 검증 여부를 별도로 확인한다.
+`review`는 분야별 협의·보완·최종 확인, `assignment`는 활성 배정, `audit`는 민감 원문 없는 추가 전용 이력을 담당한다. `configuration`은 현재 기관별 v1 게시본을 제공한다. 고정 질문·양식·기한은 코드의 seed 계약이며 동적 설정 편집은 P2다. 기본 담당자 정책의 운영 확장·합성 공휴일 seed를 다음 인수에서 확인한다.
 
-다음 결정은 P1 남은 작업의 담당·완료 조건, 동결 이후 허용 범위, 검증 환경과 교차 구동 담당이다. F-15~F-17은 11.09 리허설 통과 전에는 구현 완료로 표시하거나 필수 경로보다 먼저 착수하지 않는다. 규칙 문서의 동결/P2 문구 차이는 [정합성 기록](alignment-notes.md)에 남겼다.
+문서 생성은 `document.dto.DocumentRenderRequest`를 거쳐 `DocumentRenderer`로 전달한다. document에서 request 엔티티나 저장소를 직접 읽지 않는다. 실제 조회 시 선택한 현재 값·제출본·종료 스냅샷을 출처·근거·사람 확인과 함께 렌더링한다. 사용자 입력은 HTML에서도 이스케이프한다.
 
-**인수 기준:** 새 API 정상·거부 경로와 팀원이 직접 실행한 결과가 PR에 남고, 작성자 외 사람 1명 이상이 승인한다. GitHub 브랜치 보호·CODEOWNERS는 실제 설정·계정 확인 후 적용 여부를 확인한다. 파일이 존재한다는 이유만으로 보호가 활성화됐다고 판단하지 않는다.
+새 할당 검증은 입력 저장과 분리했다. 초안 텍스트를 보존하고 할당 완료에서만 IP·프로토콜·포트·기간 형식을 확인한다. CIDR·다중 IP·무기한 기간 등 현재 지원하지 않는 문법은 임의 사실로 변환하지 않고 후속 설계로 남긴다.
 
-## 백엔드·아키텍처 담당
+이미 병합된 여섯 migration은 변경하지 않았다. 예전 테이블과 SQL role 이름은 DB 이력 호환을 위해 남아 있지만 새 앱이 구형 업무 테이블을 읽지는 않는다. 이력 테이블은 기존 트리거에 더해 앱 role의 수정·삭제 권한도 회수했다. 기존 자료 삭제·자동 변환은 별도 검토 없이 하지 않는다.
 
-**첫 코드:** `backend/src/main/java/kr/securityadvisor/request/`, `review/`, `assignment/`, `audit/`, `auth/`, `common/`, `backend/src/main/resources/db/migration/`, `backend/src/test/java/kr/securityadvisor/`.
+## 프런트엔드·API 연결
 
-`BusinessCase`는 CASE 공통 답변, `SecurityRequest`는 각 문서의 단계·상태와 REQUEST 답변을 소유한다. `Review`의 할당 완료와 검토 완료를 분리하고, 실제 인증 주체·기관·활성 배정·revision을 서버에서 검사한다. 제출 시 공통 값과 신청 값을 같은 불변 제출본에 담고 동일 제출본의 두 최종 확인을 요구한다.
+프런트 수정 전에 `frontend/AGENTS.md`와 설치된 Next.js 문서를 읽는다. 새 기능은 해당 기능의 index.ts 공개 경계를 사용한다. 서버 상태는 TanStack Query 훅·공통 requestJson을 통해 요청하고 Zod DTO 계약으로 검사한다.
 
-다음 인수 작업은 API 계약과 구현의 누락, 기관별 ReviewerPool·공휴일·기한 정책, 감사 트랜잭션·동시성·권한 거부 경로의 증명, DB 제약과 migration 영향 검토다. 기존 `procedure`, `analysis`, `institution`은 보존 자산이다. 새 업무로 연결할 때 복사한 규칙을 두 군데 운영하지 않도록 경계를 정리한다.
+`/starter`의 데이터·역할은 메모리 시연이다. `/business-cases`, `/security-requests`, `/operations`는 실제 세션과 API를 사용한다. `allowedActions`는 표시 힌트이고 서버는 매번 권한·상태·버전을 검사한다. 오래된 revision 오류에서 작성 중인 값을 보존하고 최신 내용을 비교하도록 안내한다.
 
-**인수 기준:** JDK 25 빌드와 formatter/ArchUnit/도메인·DB 통합 검사, 오래된 revision·다른 기관·비배정자·자기 배정·중복 제출 거부, 반환 후 값·이력 보존을 실제로 확인한다. 기존 migration은 고치지 않고 후속 migration을 추가한다.
+관리자 회원 역할은 `/operations/members`, 모델 구성은 `/operations/models`에 연결했다. 역할 변경에는 사유·revision이 필요하다. 모델 구성은 원문 키 대신 환경변수 참조를 저장한다. 신청자용 모델 목록에는 endpoint·keyReference가 없다. 상세 DTO는 [auth-ai-api.md](auth-ai-api.md)에 있다.
 
-## 프런트엔드·AI 연동 담당
+설정 편집·공휴일 관리·정책 수명주기·지표·알림은 구현된 운영 버튼처럼 보이지 않게 한다. 모바일·스크린리더·실제 키보드 사용은 자동 렌더 테스트와 별도로 사람 인수가 필요하다.
 
-**첫 코드:** `frontend/app/`, `frontend/features/`, `frontend/lib/http.ts`, `backend/src/main/java/kr/securityadvisor/analysis/`, `llm/`. 파일별 실제 경로는 `rg --files frontend`로 확인한다. 프런트엔드 수정 전 `frontend/AGENTS.md`와 설치된 Next.js 문서를 읽는다.
+## AI·지식에서 이어갈 일
 
-`/starter`는 교육·설명용 메모리 시연이다. `/business-cases`와 `/security-requests`는 세션과 서버 DTO를 사용한다. 화면의 `allowedActions`는 표시 힌트이며 서버의 허용 판단을 대체하지 않는다. 409 때 사용자의 미저장 값을 보존하고 최신 revision으로 비교·재시도하게 한다.
+현재 사업 건 분석은 TXT/MD 또는 설명 텍스트에서 허용된 공통 필드만 미확정 후보로 만든다. 업로드 → 분석 → 후보 적용 → 사람 확인을 별개로 유지한다. 내부 IP·시스템명·포트를 AI가 제안 사실로 만들지 않는다. 오래된 분석 결과와 사람이 확인한 값의 자동 덮어쓰기를 막는다.
 
-새 BusinessCase 분석과 공통 인터뷰·신청별 질문을 연결할 때 기존 분석 서비스의 파일 검증·허용 엔드포인트·기밀 컨텍스트 분리·오래된 결과 방지를 재사용한다. 기존 Procedure ID에 새 Request ID를 섞지 않는다. 신규 후보는 서버 내부 제안 경계에서만 `AI_INFERRED`·미확정으로 생성한다. 일반 답변 API로 임의 AI 출처나 확인 주체를 보낼 수 없다.
+EXAMPLE은 라벨 행 발췌이며 외부 호출이 아니다. Spring AI는 공통 LlmGateway 뒤에서만 사용한다. 실제 OpenAI/Gemma 교차 구동은 키·허용 목록을 준비한 합성 환경에서 재현하고, 모델·대상 revision·근거·실패·결과 차이를 기록해야 한다. LIVE 구성 저장과 선택 목록 조회만으로 실제 모델 구동 성공을 주장하지 않는다.
 
-Spring AI 타입은 공통 어댑터 내부에 둔다. 다음 인수는 모델 2종에서 같은 합성 입력·질문·근거·실패 처리를 재현하는 것이다. 실제 호출과 EXAMPLE 추출을 화면과 증거에서 구분한다. pgvector 모듈을 추가한 사실과 RAG 색인·검색 품질 검증을 구분한다. PDF/DOCX/HWP는 현재 TXT/MD 입력과 별도 후속 범위다.
+공개자료 RAG, 대화형 인터뷰, 3단계 AI 최종 초안, PDF/DOCX/HWP 입력은 아직 남은 P1 인수·구현 항목이다. 현재 HTML 초안 미리보기를 AI가 새로 생성한 최종 초안이라고 부르지 않는다. 기관 비공개 컨텍스트는 암호화·권한·감사 API로 분리했고 현재 외부 모델로 전달하지 않는다.
 
-연결할 인증·회원가입·계정 역할·사업 건 분석·LLM 구성의 상세는 [auth-ai-api.md](auth-ai-api.md)에 있다. 신규 LLM 구성과 기존 `/admin/models`의 설정 저장소를 혼동하지 않는다. 모델 구성 선택·계정 역할 편집은 신규 화면의 다음 인수 항목이다.
+## 기획·디자인에서 확인할 차이
 
-**인수 기준:** `npm run check`, `npm run build`, 실제 API 흐름·세션 만료·401/403/409·AI 실패·재시도·미확정 표시를 확인한다. 파일 선택만으로 업로드하지 않는다. 키는 환경변수 참조만 사용한다.
+시안 최신본의 메뉴 구성·신청 목록·상세 패널·출처 표현을 참고하되, 1:N·상태·배정·기한은 FUNCTIONAL_SPEC이 우선한다. 시안의 3단계 `제출 준비`, 종료 `처리 완료/불가`를 그대로 업무 상태로 도입하지 않았다. 자세한 차이와 원본 SHA는 [SOURCE_REFERENCES.md](SOURCE_REFERENCES.md)에 있다.
 
-## 기획·업무 문구·합성 시나리오 담당
+사용자 요청대로 design.md는 수정하지 않았다. 시각 규칙의 다음 개정은 디자이너가 수행한다. 이번 개발용 토큰·응답형 레이아웃이 시안과 픽셀 단위로 일치한다고 주장하지 않는다. 본문 글자 크기·출처 배지·기한 텍스트·전체 페이지 가로 넘침·반환 강조를 실제 화면에서 인수한다.
 
-**첫 진입점:** FUNCTIONAL_SPEC 3·4·5·6장, [glossary.md](glossary.md), [starter-scenarios.md](starter-scenarios.md), `/starter`와 실제 역할별 화면.
+F-15~F-17은 필수 경로 리허설 통과 후의 범위다. 서류 확정이 방화벽 규칙 생성·적용을 완료한 것으로 보이지 않게 한다. 테이블만 있는 기능은 '설계 완료·구현 예정'으로 표시한다.
 
-공통 질문을 한 번만 묻는지, 두 서류가 독립으로 진행하는지, 할당·검토·제출·확정의 차이가 초보 사용자에게 분명한지 확인한다. 반환은 기존 값을 유지하면서 지정 필드를 강조해야 한다. 신청 상태에 “처리 완료/불가”를 다시 넣지 않는다. 사업 건 상태를 사용자가 직접 수정하는 기능을 만들지 않는다.
+## 다음 PR에 남길 증거
 
-다음 인수는 두 문서의 최소 질문·담당 역할·필수 조건·근거·출력 항목 대응과 합성 시연 대본이다. 실존 기관명·담당자 개인정보·내부 IP를 모의자료에 사용하지 않는다. 입력할 수 없는 필드는 “잘 모름/담당자 확인 필요”가 어떤 상태인지 정한다.
-
-**인수 기준:** 두 서류 모두 정상 흐름과 반환 1회를 설명할 수 있고, 반려·철회·확정 이후에는 조회·다운로드만 가능함을 화면과 API에서 확인한다. 대본의 각 문장에 구현·예시·예정을 구분한다.
-
-## 디자이너·접근성 담당
-
-**첫 진입점:** [prototype-soo](https://github.com/team-khfc/prototype-soo) 기본 브랜치의 최신 시안과 `MERGE_NOTES.md`, 본 저장소 `/starter`·실제 화면, [출처 기록](SOURCE_REFERENCES.md).
-
-시안 원본과 `design.md`는 디자이너의 후속 작업 영역이다. 이번 시작점은 해당 파일을 변경하지 않는다. 새 시안 참고 커밋은 PR별로 기록하며 규칙 문서에 고정하지 않는다. 화면의 브라우저 저장소·역할 전환·CDN·AI 모의 동작은 서비스 구현 기준으로 복사하지 않는다.
-
-다음 인수는 1:N 사업 건/서류별 상태, 회원가입, 배정·기한·감사 표시, 최종 확인·확정 문구, 반환 강조, 빈 상태·오류·모바일·키보드 탐색이다. 본문 크기는 현행 design.md 기준으로 적용하고 시안의 약 13.8px 축소와 차이를 정리한다. design.md의 이전 시안 경로·이전 상태 배지 갱신은 [정합성 기록](alignment-notes.md)에 남긴다.
-
-**인수 기준:** 데이터·권한·상태 의미를 유지하면서 시각·접근성 차이가 설명되고, 새 디자인 참고 SHA를 기록한다. 11.08 이후 반영은 오류·접근성 수정과 팀장 승인 범위인지 확인한다.
-
-## 다음 PR에 넘길 산출물
-
-| 산출물 | 반드시 담을 내용 |
+| 변경 | 필수 기록 |
 |---|---|
-| 기능 이슈 | 사용자 역할·문제·포함 범위·명세 F-xx·완료 조건·검토자 |
-| API 변경 | 경로·DTO·401/403/409·권한·revision·멱등성·기존 소비자 영향 |
-| 화면 변경 | 참고 시안 SHA·업무 의미 차이·실제 API/공개 시연 경계·접근성 결과 |
-| DB 변경 | 새 Flyway 파일·기존 자료 영향·복구 계획·불변 제출본/감사 영향 |
-| 검증 기록 | 실행 환경·명령·결과·증거·실행하지 못한 항목·인수 담당 |
+| 기능 | 역할·사용자 문제·명세 F-xx·포함/남은 범위·수용 기준 |
+| API | DTO·권한·기관·revision·멱등성·에러·소비자 영향 |
+| 화면 | 참고 시안 커밋·업무 문구·합성/실제 구분·접근성 결과 |
+| DB | 새 Flyway·기존 자료 영향·권한·이력 불변·복구 고려 |
+| 검증 | 실제 명령·환경·결과·실행하지 못한 항목 |
 
-과거 `docs/VERIFICATION.md`, `docs/evidence/`, ADR 0001~0003은 당시 결정·검사의 이력이다. 이번 변경의 적용 범위는 ADR 0004, 새 API 계약과 이번 검증 기록으로 읽는다.
+AGENTS.md 8장에 따라 작성자 외 사람 1명 이상의 승인 뒤 Squash merge한다. 이 문서·테스트 파일·CI 설정의 존재를 실행 통과나 리뷰 승인으로 대체하지 않는다.

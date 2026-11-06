@@ -2,8 +2,8 @@ package kr.securityadvisor.common.model;
 
 import java.util.UUID;
 
-/** 업무 기능이 기관 저장소 구현을 직접 참조하지 않게 한다. */
+/** 업무 기능에는 기관별 게시본 식별자만 공개한다. */
 public interface PolicyProvider {
-  /** 새 신청에 적용할 해당 기관의 게시본을 반환한다. */
-  PolicySnapshot current(UUID institutionId);
+  /** 새 사업 건과 하위 신청에 함께 고정할 현재 게시본 버전을 반환한다. */
+  long currentVersion(UUID institutionId);
 }

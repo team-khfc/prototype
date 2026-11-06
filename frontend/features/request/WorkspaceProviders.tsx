@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { useSession } from '@/features/auth';
+import { EXAMPLE_MODEL_OPTION, useLlmOptions } from '@/features/llm';
 import type { Role } from '@/lib/sharedTypes';
 import { WorkspaceProvider } from './WorkspaceContext';
 import { ServiceShell } from './ServiceShell';
@@ -55,6 +56,7 @@ export function StarterPreviewProvider({ children }: { children: ReactNode }) {
         cases: visibleCases,
         requests: visibleRequests.map((request) => demoRequestForActor(request, actor)),
         pools: DEMO_POOLS,
+        modelOptions: [EXAMPLE_MODEL_OPTION],
         auditEvents: state.auditEvents,
         pending,
         error: undefined,
@@ -166,6 +168,7 @@ export function LiveWorkspaceProvider({ children }: { children: ReactNode }) {
   const pools = useReviewerPools();
   const audit = useRequestAudit();
   const mutations = useWorkspaceMutations();
+  const models = useLlmOptions();
   return (
     <WorkspaceProvider
       value={{
@@ -175,6 +178,9 @@ export function LiveWorkspaceProvider({ children }: { children: ReactNode }) {
         cases: queries.cases.data ?? [],
         requests: queries.requests.data ?? [],
         pools: pools.data ?? [],
+        modelOptions: models.data ?? [],
+        modelsLoading: models.isPending,
+        modelsError: models.error,
         auditEvents: audit.data ?? [],
         loading: queries.cases.isPending || queries.requests.isPending,
         error: queries.cases.error ?? queries.requests.error,
@@ -184,6 +190,7 @@ export function LiveWorkspaceProvider({ children }: { children: ReactNode }) {
         refresh: () => {
           void queries.cases.refetch();
           void queries.requests.refetch();
+          void models.refetch();
         },
         createCase: async (input) => (await mutations.createCase.mutateAsync(input)).id,
         saveCase: async (id, expectedRevision, answers) => {

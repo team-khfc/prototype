@@ -130,7 +130,7 @@ public class SecurityRequestController {
       @AuthenticationPrincipal Actor actor,
       @PathVariable UUID id,
       @Valid @RequestBody Revision command,
-      @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
+      @RequestHeader("Idempotency-Key") String idempotencyKey,
       HttpServletRequest request) {
     return requests.submit(actor, id, command, idempotencyKey, requestId(request));
   }

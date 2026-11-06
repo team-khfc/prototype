@@ -51,6 +51,18 @@ class ArchitectureTest {
     slices().matching("kr.securityadvisor.(*)..").should().beFreeOfCycles().check(classes());
   }
 
+  @Test
+  @DisplayName("실행 클래스는 폐기한 예제 컨텍스트를 다시 포함하지 않는다")
+  void keepFreshApplicationBoundary() {
+    noClasses()
+        .should()
+        .resideInAnyPackage(
+            "kr.securityadvisor.procedure..",
+            "kr.securityadvisor.analysis..",
+            "kr.securityadvisor.institution..")
+        .check(classes());
+  }
+
   private com.tngtech.archunit.core.domain.JavaClasses classes() {
     return new ClassFileImporter()
         .withImportOption(new ImportOption.DoNotIncludeTests())

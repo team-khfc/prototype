@@ -3,6 +3,7 @@ package kr.securityadvisor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,7 +22,7 @@ class AuthIntegrationTest extends IntegrationTestSupport {
   @Test
   @DisplayName("인증 없는 업무 접근과 CSRF 없는 변경을 거절한다")
   void protectBusinessRequests() throws Exception {
-    mvc.perform(get("/api/procedures"))
+    mvc.perform(get("/api/business-cases"))
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.requestId").exists());
     var applicant = login("applicant.demo");
@@ -37,7 +38,7 @@ class AuthIntegrationTest extends IntegrationTestSupport {
     mvc.perform(get("/api/auth/session").session(applicant).header("X-Role", "ADMIN"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.user.role").value("APPLICANT"));
-    mvc.perform(get("/api/institution/settings").session(applicant).header("X-Role", "ADMIN"))
+    mvc.perform(get("/api/llm-configurations").session(applicant).header("X-Role", "ADMIN"))
         .andExpect(status().isForbidden());
   }
 
@@ -46,7 +47,8 @@ class AuthIntegrationTest extends IntegrationTestSupport {
   void endSession() throws Exception {
     var applicant = login("applicant.demo");
     mvc.perform(post("/api/auth/logout").session(applicant).with(csrf()))
-        .andExpect(status().isNoContent());
-    mvc.perform(get("/api/procedures")).andExpect(status().isUnauthorized());
+        .andExpect(status().isNoContent())
+        .andExpect(cookie().maxAge("SA_SESSION", 0));
+    mvc.perform(get("/api/business-cases")).andExpect(status().isUnauthorized());
   }
 }

@@ -11,12 +11,12 @@
     }
   ],
   "paths": {
-    "/api/procedures/{id}/network": {
-      "put": {
+    "/api/security-requests/{id}/withdraw": {
+      "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
-        "operationId": "updateNetwork",
+        "operationId": "withdraw",
         "parameters": [
           {
             "name": "id",
@@ -32,7 +32,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NetworkRequest"
+                "$ref": "#/components/schemas/Reason"
               }
             }
           },
@@ -44,7 +44,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -52,254 +52,10 @@
         }
       }
     },
-    "/api/institution/settings": {
-      "get": {
-        "tags": [
-          "institution-controller"
-        ],
-        "operationId": "getSettings",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/SettingsResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "institution-controller"
-        ],
-        "operationId": "updateSettings",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SettingsRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/SettingsResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/procedures": {
-      "get": {
-        "tags": [
-          "procedure-controller"
-        ],
-        "operationId": "list",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProcedureResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/security-requests/{id}/supplements": {
       "post": {
         "tags": [
-          "procedure-controller"
-        ],
-        "operationId": "create",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProcedureRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/procedures/{procedureId}/analysis": {
-      "get": {
-        "tags": [
-          "analysis-controller"
-        ],
-        "operationId": "list_1",
-        "parameters": [
-          {
-            "name": "procedureId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnalysisResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "analysis-controller"
-        ],
-        "operationId": "analyze",
-        "parameters": [
-          {
-            "name": "procedureId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "expectedRevision",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "text",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/AnalysisResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/procedures/{procedureId}/analysis/{analysisId}/apply": {
-      "post": {
-        "tags": [
-          "analysis-controller"
-        ],
-        "operationId": "apply",
-        "parameters": [
-          {
-            "name": "procedureId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "analysisId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ApplyAnalysisRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/procedures/{id}/supplements": {
-      "post": {
-        "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
         "operationId": "supplement",
         "parameters": [
@@ -317,7 +73,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupplementQuestionRequest"
+                "$ref": "#/components/schemas/Supplement"
               }
             }
           },
@@ -329,7 +85,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -337,10 +93,10 @@
         }
       }
     },
-    "/api/procedures/{id}/supplements/{supplementId}/resolve": {
+    "/api/security-requests/{id}/supplements/{supplementId}/resolve": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
         "operationId": "resolveSupplement",
         "parameters": [
@@ -367,7 +123,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevisionRequest"
+                "$ref": "#/components/schemas/Revision"
               }
             }
           },
@@ -379,7 +135,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -387,10 +143,10 @@
         }
       }
     },
-    "/api/procedures/{id}/supplements/{supplementId}/answer": {
+    "/api/security-requests/{id}/supplements/{supplementId}/answer": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
         "operationId": "answerSupplement",
         "parameters": [
@@ -417,7 +173,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupplementAnswerRequest"
+                "$ref": "#/components/schemas/SupplementAnswer"
               }
             }
           },
@@ -429,7 +185,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -437,10 +193,10 @@
         }
       }
     },
-    "/api/procedures/{id}/submit": {
+    "/api/security-requests/{id}/submit": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
         "operationId": "submit",
         "parameters": [
@@ -466,7 +222,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevisionRequest"
+                "$ref": "#/components/schemas/Revision"
               }
             }
           },
@@ -478,7 +234,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -486,12 +242,12 @@
         }
       }
     },
-    "/api/procedures/{id}/review": {
+    "/api/security-requests/{id}/reviews/complete": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
-        "operationId": "review",
+        "operationId": "completeReview",
         "parameters": [
           {
             "name": "id",
@@ -507,7 +263,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReviewRequest"
+                "$ref": "#/components/schemas/CompleteReview"
               }
             }
           },
@@ -519,7 +275,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -527,12 +283,12 @@
         }
       }
     },
-    "/api/procedures/{id}/receive": {
+    "/api/security-requests/{id}/returns": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
-        "operationId": "receive",
+        "operationId": "returnToStage",
         "parameters": [
           {
             "name": "id",
@@ -548,7 +304,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevisionRequest"
+                "$ref": "#/components/schemas/StageReturn"
               }
             }
           },
@@ -560,7 +316,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -568,10 +324,92 @@
         }
       }
     },
-    "/api/procedures/{id}/consult": {
+    "/api/security-requests/{id}/finalize": {
       "post": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
+        ],
+        "operationId": "finalizeRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Revision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-requests/{id}/final-confirmations": {
+      "post": {
+        "tags": [
+          "security-request-controller"
+        ],
+        "operationId": "confirmFinal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Revision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-requests/{id}/consult": {
+      "post": {
+        "tags": [
+          "security-request-controller"
         ],
         "operationId": "consult",
         "parameters": [
@@ -589,7 +427,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevisionRequest"
+                "$ref": "#/components/schemas/Revision"
               }
             }
           },
@@ -601,7 +439,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -609,19 +447,20 @@
         }
       }
     },
-    "/api/institution/settings/publish": {
+    "/api/security-requests/{id}/close": {
       "post": {
         "tags": [
-          "institution-controller"
+          "security-request-controller"
         ],
-        "operationId": "publishSettings",
+        "operationId": "close",
         "parameters": [
           {
-            "name": "Idempotency-Key",
-            "in": "header",
+            "name": "id",
+            "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -629,7 +468,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PublishRequest"
+                "$ref": "#/components/schemas/Reason"
               }
             }
           },
@@ -641,7 +480,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/SettingsResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -649,12 +488,53 @@
         }
       }
     },
-    "/api/institution/contexts": {
+    "/api/security-requests/{id}/allocation": {
+      "post": {
+        "tags": [
+          "security-request-controller"
+        ],
+        "operationId": "allocate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Revision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/private-contexts": {
       "get": {
         "tags": [
-          "institution-controller"
+          "private-context-controller"
         ],
-        "operationId": "getContexts",
+        "operationId": "list",
         "responses": {
           "200": {
             "description": "OK",
@@ -673,9 +553,9 @@
       },
       "post": {
         "tags": [
-          "institution-controller"
+          "private-context-controller"
         ],
-        "operationId": "createContext",
+        "operationId": "create",
         "requestBody": {
           "content": {
             "application/json": {
@@ -693,6 +573,292 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ContextResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm-configurations": {
+      "get": {
+        "tags": [
+          "llm-configuration-controller"
+        ],
+        "operationId": "list_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LlmConfigurationResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "llm-configuration-controller"
+        ],
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LlmConfigurationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LlmConfigurationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases": {
+      "get": {
+        "tags": [
+          "business-case-controller"
+        ],
+        "operationId": "list_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BusinessCaseResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "business-case-controller"
+        ],
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCase"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessCaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases/{caseId}/analyses": {
+      "get": {
+        "tags": [
+          "case-analysis-controller"
+        ],
+        "operationId": "list_3",
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CaseAnalysisResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "case-analysis-controller"
+        ],
+        "operationId": "analyze",
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expectedRevision",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "configurationId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseAnalysisResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases/{caseId}/analyses/{id}/apply": {
+      "post": {
+        "tags": [
+          "case-analysis-controller"
+        ],
+        "operationId": "apply",
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessCaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/signup": {
+      "post": {
+        "tags": [
+          "member-controller"
+        ],
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
                 }
               }
             }
@@ -720,12 +886,61 @@
         }
       }
     },
-    "/api/procedures/{id}/answers": {
+    "/api/security-requests/{id}/assignments/{field}": {
       "patch": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
-        "operationId": "updateAnswers",
+        "operationId": "reassign",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "field",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reassign"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-requests/{id}/answers": {
+      "patch": {
+        "tags": [
+          "security-request-controller"
+        ],
+        "operationId": "answer",
         "parameters": [
           {
             "name": "id",
@@ -741,7 +956,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AnswerPatchRequest"
+                "$ref": "#/components/schemas/AnswerPatch"
               }
             }
           },
@@ -753,7 +968,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -761,10 +976,115 @@
         }
       }
     },
-    "/api/procedures/{id}": {
+    "/api/members/{id}/role": {
+      "patch": {
+        "tags": [
+          "member-controller"
+        ],
+        "operationId": "changeRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeMemberRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases/{id}/answers": {
+      "patch": {
+        "tags": [
+          "business-case-controller"
+        ],
+        "operationId": "answer_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessCaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-requests": {
       "get": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
+        ],
+        "operationId": "list_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SecurityRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-requests/{id}": {
+      "get": {
+        "tags": [
+          "security-request-controller"
         ],
         "operationId": "get",
         "parameters": [
@@ -784,7 +1104,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcedureResponse"
+                  "$ref": "#/components/schemas/SecurityRequestResponse"
                 }
               }
             }
@@ -792,10 +1112,10 @@
         }
       }
     },
-    "/api/procedures/{id}/document": {
+    "/api/security-requests/{id}/document": {
       "get": {
         "tags": [
-          "procedure-controller"
+          "security-request-controller"
         ],
         "operationId": "document",
         "parameters": [
@@ -824,12 +1144,115 @@
         }
       }
     },
+    "/api/security-requests/{id}/audit-events": {
+      "get": {
+        "tags": [
+          "security-request-controller"
+        ],
+        "operationId": "auditEvents",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviewer-pools": {
+      "get": {
+        "tags": [
+          "reviewer-pool-controller"
+        ],
+        "operationId": "list_5",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewerPoolResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members": {
+      "get": {
+        "tags": [
+          "member-controller"
+        ],
+        "operationId": "list_6",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/llm-options": {
+      "get": {
+        "tags": [
+          "llm-option-controller"
+        ],
+        "operationId": "list_7",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LlmOptionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/knowledge": {
       "get": {
         "tags": [
           "knowledge-controller"
         ],
-        "operationId": "list_2",
+        "operationId": "list_8",
         "responses": {
           "200": {
             "description": "OK",
@@ -860,6 +1283,77 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases/{id}": {
+      "get": {
+        "tags": [
+          "business-case-controller"
+        ],
+        "operationId": "get_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessCaseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/business-cases/{caseId}/analyses/{id}": {
+      "get": {
+        "tags": [
+          "case-analysis-controller"
+        ],
+        "operationId": "get_2",
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseAnalysisResponse"
                 }
               }
             }
@@ -916,11 +1410,34 @@
           }
         }
       }
+    },
+    "/api/audit-events": {
+      "get": {
+        "tags": [
+          "audit-controller"
+        ],
+        "operationId": "list_9",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "NetworkRequest": {
+      "Reason": {
         "type": "object",
         "properties": {
           "expectedRevision": {
@@ -928,87 +1445,15 @@
             "format": "int64",
             "minimum": 0
           },
-          "rules": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RuleInput"
-            },
-            "maxItems": 50,
-            "minItems": 0
-          }
-        },
-        "required": [
-          "expectedRevision",
-          "rules"
-        ]
-      },
-      "RuleInput": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sourceName": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0
-          },
-          "sourceIp": {
-            "type": "string",
-            "maxLength": 64,
-            "minLength": 0
-          },
-          "destinationName": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0
-          },
-          "destinationIp": {
-            "type": "string",
-            "maxLength": 64,
-            "minLength": 0
-          },
-          "port": {
-            "type": "string",
-            "maxLength": 20,
-            "minLength": 0
-          },
-          "protocol": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "TCP|UDP|ICMP"
-          },
-          "direction": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "ONE_WAY|BIDIRECTIONAL"
-          },
-          "startsOn": {
-            "type": "string",
-            "format": "date"
-          },
-          "endsOn": {
-            "type": "string",
-            "format": "date"
-          },
-          "purpose": {
+          "reason": {
             "type": "string",
             "maxLength": 1000,
             "minLength": 0
           }
         },
         "required": [
-          "destinationIp",
-          "destinationName",
-          "direction",
-          "endsOn",
-          "port",
-          "protocol",
-          "purpose",
-          "sourceIp",
-          "sourceName",
-          "startsOn"
+          "expectedRevision",
+          "reason"
         ]
       },
       "AnswerResponse": {
@@ -1020,32 +1465,71 @@
           "label": {
             "type": "string"
           },
-          "reason": {
+          "scope": {
             "type": "string"
           },
           "ownerRole": {
             "type": "string"
           },
-          "requiredAt": {
-            "type": "string"
+          "required": {
+            "type": "boolean"
           },
           "value": {
             "type": "string"
           },
-          "status": {
+          "source": {
             "type": "string"
           },
-          "source": {
-            "$ref": "#/components/schemas/SourceResponse"
+          "evidence": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "notApplicable": {
+            "type": "boolean"
           },
           "confirmation": {
             "$ref": "#/components/schemas/ConfirmationResponse"
           }
         }
       },
+      "AssignmentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
+            "type": "string"
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assigneeName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "assignedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "ConfirmationResponse": {
         "type": "object",
         "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "actorName": {
             "type": "string"
           },
@@ -1058,174 +1542,113 @@
           }
         }
       },
-      "EventResponse": {
+      "DeadlineResponse": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "action": {
+          "field": {
             "type": "string"
           },
-          "description": {
+          "kind": {
+            "type": "string"
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "timing": {
+            "type": "string"
+          }
+        }
+      },
+      "FinalConfirmationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "submissionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
             "type": "string"
           },
           "actorName": {
             "type": "string"
           },
-          "at": {
+          "confirmedAt": {
             "type": "string",
             "format": "date-time"
           }
         }
       },
-      "ExtraQuestion": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
-          },
-          "ownerRole": {
-            "type": "string"
-          },
-          "required": {
-            "type": "boolean"
-          }
-        }
-      },
-      "ModelConnection": {
-        "type": "object",
-        "properties": {
-          "provider": {
-            "type": "string"
-          },
-          "endpoint": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "keyReference": {
-            "type": "string"
-          },
-          "temperature": {
-            "type": "number",
-            "format": "double"
-          },
-          "maxTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "timeoutSeconds": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "NetworkResponse": {
+      "ReviewResponse": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "sourceName": {
+          "field": {
             "type": "string"
           },
-          "sourceIp": {
+          "status": {
             "type": "string"
           },
-          "destinationName": {
+          "allocationCompleted": {
+            "type": "boolean"
+          },
+          "comment": {
             "type": "string"
           },
-          "destinationIp": {
+          "completedBy": {
             "type": "string"
           },
-          "port": {
-            "type": "string"
-          },
-          "protocol": {
-            "type": "string"
-          },
-          "direction": {
-            "type": "string"
-          },
-          "startsOn": {
+          "completedAt": {
             "type": "string",
-            "format": "date"
-          },
-          "endsOn": {
-            "type": "string",
-            "format": "date"
-          },
-          "purpose": {
-            "type": "string"
-          },
-          "source": {
-            "$ref": "#/components/schemas/SourceResponse"
-          },
-          "confirmation": {
-            "$ref": "#/components/schemas/ConfirmationResponse"
+            "format": "date-time"
           }
         }
       },
-      "OrganizationPolicy": {
-        "type": "object",
-        "properties": {
-          "institutionName": {
-            "type": "string"
-          },
-          "reviewMode": {
-            "type": "string"
-          },
-          "requireSecurity": {
-            "type": "boolean"
-          },
-          "requireInfra": {
-            "type": "boolean"
-          },
-          "questions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ExtraQuestion"
-            }
-          },
-          "documentFooter": {
-            "type": "string"
-          },
-          "model": {
-            "$ref": "#/components/schemas/ModelConnection"
-          }
-        }
-      },
-      "ProcedureResponse": {
+      "SecurityRequestResponse": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "title": {
+          "caseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caseTitle": {
             "type": "string"
           },
-          "documentType": {
+          "docType": {
             "type": "string"
           },
-          "department": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
           },
           "ownerName": {
             "type": "string"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
           },
           "status": {
             "type": "string"
@@ -1234,28 +1657,24 @@
             "type": "integer",
             "format": "int64"
           },
-          "policyVersion": {
+          "caseRevision": {
             "type": "integer",
             "format": "int64"
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
+          "publicationVersion": {
+            "type": "integer",
+            "format": "int64"
           },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "answers": {
+          "commonAnswers": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AnswerResponse"
             }
           },
-          "rules": {
+          "answers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NetworkResponse"
+              "$ref": "#/components/schemas/AnswerResponse"
             }
           },
           "reviews": {
@@ -1264,16 +1683,56 @@
               "$ref": "#/components/schemas/ReviewResponse"
             }
           },
+          "assignments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssignmentResponse"
+            }
+          },
           "supplements": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SupplementResponse"
             }
           },
-          "timeline": {
+          "returns": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/EventResponse"
+              "$ref": "#/components/schemas/StageReturnResponse"
+            }
+          },
+          "deadlines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeadlineResponse"
+            }
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmissionResponse"
+            }
+          },
+          "finalConfirmations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinalConfirmationResponse"
+            }
+          },
+          "currentSubmissionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "changedCommonFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "highlightedFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           },
           "blockers": {
@@ -1288,49 +1747,69 @@
               "type": "string"
             }
           },
-          "policy": {
-            "$ref": "#/components/schemas/OrganizationPolicy"
-          }
-        }
-      },
-      "ReviewResponse": {
-        "type": "object",
-        "properties": {
-          "role": {
-            "type": "string"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "status": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "comment": {
-            "type": "string"
-          },
-          "actorName": {
-            "type": "string"
-          },
-          "at": {
+          "updatedAt": {
             "type": "string",
             "format": "date-time"
           }
         }
       },
-      "SourceResponse": {
+      "StageReturnResponse": {
         "type": "object",
         "properties": {
-          "kind": {
-            "type": "string"
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "evidence": {
+          "fromStage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetStage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fieldKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
             "type": "string"
           },
           "actorName": {
             "type": "string"
           },
-          "at": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SubmissionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "caseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -1343,19 +1822,25 @@
             "type": "string",
             "format": "uuid"
           },
-          "question": {
+          "field": {
+            "type": "string"
+          },
+          "fieldKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
             "type": "string"
           },
           "answer": {
             "type": "string"
           },
-          "requestedByRole": {
+          "status": {
             "type": "string"
           },
           "requestedBy": {
-            "type": "string"
-          },
-          "status": {
             "type": "string"
           },
           "createdAt": {
@@ -1368,178 +1853,36 @@
           }
         }
       },
-      "SettingsRequest": {
+      "Supplement": {
         "type": "object",
         "properties": {
           "expectedRevision": {
             "type": "integer",
             "format": "int64",
-            "minimum": 1
+            "minimum": 0
           },
-          "policy": {
-            "$ref": "#/components/schemas/OrganizationPolicy"
+          "fieldKeys": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 40,
+            "minItems": 0
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0
           }
         },
         "required": [
           "expectedRevision",
-          "policy"
+          "fieldKeys",
+          "reason"
         ]
       },
-      "PublicationResponse": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "publishedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "publishedBy": {
-            "type": "string"
-          }
-        }
-      },
-      "SettingsResponse": {
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "publishedVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "draft": {
-            "$ref": "#/components/schemas/OrganizationPolicy"
-          },
-          "published": {
-            "$ref": "#/components/schemas/OrganizationPolicy"
-          },
-          "history": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PublicationResponse"
-            }
-          }
-        }
-      },
-      "CreateProcedureRequest": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "maxLength": 160,
-            "minLength": 0
-          },
-          "documentType": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "FIREWALL|SECURITY_REVIEW"
-          },
-          "department": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 20000,
-            "minLength": 0
-          }
-        },
-        "required": [
-          "department",
-          "description",
-          "documentType",
-          "title"
-        ]
-      },
-      "AnalysisResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "procedureId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "status": {
-            "type": "string"
-          },
-          "mode": {
-            "type": "string"
-          },
-          "provider": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "error": {
-            "type": "string"
-          },
-          "suggestions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AnalysisSuggestionResponse"
-            }
-          },
-          "references": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReferenceResponse"
-            }
-          }
-        }
-      },
-      "AnalysisSuggestionResponse": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "value": {
-            "type": "string"
-          },
-          "evidence": {
-            "type": "string"
-          }
-        }
-      },
-      "ReferenceResponse": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "section": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        }
-      },
-      "ApplyAnalysisRequest": {
+      "Revision": {
         "type": "object",
         "properties": {
           "expectedRevision": {
@@ -1552,39 +1895,7 @@
           "expectedRevision"
         ]
       },
-      "SupplementQuestionRequest": {
-        "type": "object",
-        "properties": {
-          "expectedRevision": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 0
-          },
-          "question": {
-            "type": "string",
-            "maxLength": 2000,
-            "minLength": 0
-          }
-        },
-        "required": [
-          "expectedRevision",
-          "question"
-        ]
-      },
-      "RevisionRequest": {
-        "type": "object",
-        "properties": {
-          "expectedRevision": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 0
-          }
-        },
-        "required": [
-          "expectedRevision"
-        ]
-      },
-      "SupplementAnswerRequest": {
+      "SupplementAnswer": {
         "type": "object",
         "properties": {
           "expectedRevision": {
@@ -1603,7 +1914,7 @@
           "expectedRevision"
         ]
       },
-      "ReviewRequest": {
+      "CompleteReview": {
         "type": "object",
         "properties": {
           "expectedRevision": {
@@ -1613,7 +1924,7 @@
           },
           "comment": {
             "type": "string",
-            "maxLength": 2000,
+            "maxLength": 1000,
             "minLength": 0
           }
         },
@@ -1622,17 +1933,39 @@
           "expectedRevision"
         ]
       },
-      "PublishRequest": {
+      "StageReturn": {
         "type": "object",
         "properties": {
           "expectedRevision": {
             "type": "integer",
             "format": "int64",
+            "minimum": 0
+          },
+          "targetStage": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 3,
             "minimum": 1
+          },
+          "fieldKeys": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 40,
+            "minItems": 0
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0
           }
         },
         "required": [
-          "expectedRevision"
+          "expectedRevision",
+          "fieldKeys",
+          "reason"
         ]
       },
       "ContextRequest": {
@@ -1685,20 +2018,300 @@
           }
         }
       },
-      "SessionResponse": {
+      "LlmConfigurationRequest": {
         "type": "object",
         "properties": {
-          "user": {
-            "$ref": "#/components/schemas/UserResponse"
+          "connection": {
+            "$ref": "#/components/schemas/ModelConnection"
           },
-          "institutionName": {
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "INTERVIEW|SUMMARY|DOCUMENT"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "connection",
+          "purpose",
+          "reason"
+        ]
+      },
+      "ModelConnection": {
+        "type": "object",
+        "properties": {
+          "provider": {
             "type": "string"
           },
-          "expiresAt": {
+          "endpoint": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "keyReference": {
+            "type": "string"
+          },
+          "temperature": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "timeoutSeconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LlmConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "connection": {
+            "$ref": "#/components/schemas/ModelConnection"
+          },
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           }
         }
+      },
+      "CreateCase": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 0
+          },
+          "department": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 20000,
+            "minLength": 0
+          },
+          "docTypes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "maxItems": 2,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "department",
+          "docTypes",
+          "title"
+        ]
+      },
+      "BusinessCaseResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "institutionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "publicationVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswerResponse"
+            }
+          },
+          "requests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityRequestSummary"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SecurityRequestSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caseTitle": {
+            "type": "string"
+          },
+          "docType": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AiAnswerProposal": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      },
+      "CaseAnalysisResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "caseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AiAnswerProposal"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApplyRequest": {
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "expectedRevision"
+        ]
+      },
+      "SignupRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "[A-Za-z0-9][A-Za-z0-9._-]{3,39}"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 12
+          },
+          "displayName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "department": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "displayName",
+          "password",
+          "username"
+        ]
       },
       "UserResponse": {
         "type": "object",
@@ -1728,6 +2341,45 @@
           }
         }
       },
+      "SessionResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "institutionName": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Reassign": {
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "assigneeId",
+          "expectedRevision",
+          "reason"
+        ]
+      },
       "AnswerInput": {
         "type": "object",
         "properties": {
@@ -1753,7 +2405,7 @@
           "value"
         ]
       },
-      "AnswerPatchRequest": {
+      "AnswerPatch": {
         "type": "object",
         "properties": {
           "expectedRevision": {
@@ -1766,7 +2418,7 @@
             "items": {
               "$ref": "#/components/schemas/AnswerInput"
             },
-            "maxItems": 100,
+            "maxItems": 40,
             "minItems": 0
           }
         },
@@ -1774,6 +2426,168 @@
           "answers",
           "expectedRevision"
         ]
+      },
+      "ChangeMemberRoleRequest": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "APPLICANT",
+              "SECURITY",
+              "INFRA",
+              "ADMIN"
+            ]
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "expectedRevision",
+          "reason",
+          "role"
+        ]
+      },
+      "MemberResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "username": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "APPLICANT",
+              "SECURITY",
+              "INFRA",
+              "ADMIN"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AuditEventResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorName": {
+            "type": "string"
+          },
+          "actorRole": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "fieldKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReviewerPoolResponse": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "reviewers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReviewerResponse"
+            }
+          },
+          "defaultReviewerId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ReviewerResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "LlmOptionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          }
+        }
       },
       "KnowledgeResponse": {
         "type": "object",

@@ -9,11 +9,11 @@ RUN ./gradlew --no-daemon bootJar
 FROM eclipse-temurin:25-jre
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
-    && groupadd --system boan && useradd --system --gid boan boan \
-    && mkdir -p /var/lib/boan/uploads && chown -R boan:boan /var/lib/boan
+    && groupadd --system securityadvisor && useradd --system --gid securityadvisor securityadvisor \
+    && mkdir -p /var/lib/securityadvisor/uploads && chown -R securityadvisor:securityadvisor /var/lib/securityadvisor
 WORKDIR /app
 COPY --from=build /app/build/libs/security-advisor.jar ./app.jar
-USER boan
+USER securityadvisor
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
