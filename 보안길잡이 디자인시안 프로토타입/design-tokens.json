@@ -4,11 +4,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.1450980392156863,
-          0.43137254901960786,
-          0.9568627450980393
-        ],
+        "components": [0.1450980392156863, 0.43137254901960786, 0.9568627450980393],
         "alpha": 1
       },
       "$description": "--sf-primary"
@@ -17,11 +13,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.9254901960784314,
-          0.9490196078431372,
-          0.996078431372549
-        ],
+        "components": [0.9254901960784314, 0.9490196078431372, 0.996078431372549],
         "alpha": 1
       },
       "$description": "--sf-primary-soft"
@@ -30,11 +22,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.11764705882352941,
-          0.12941176470588237,
-          0.1411764705882353
-        ],
+        "components": [0.11764705882352941, 0.12941176470588237, 0.1411764705882353],
         "alpha": 1
       },
       "$description": "--sf-text"
@@ -43,11 +31,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.27450980392156865,
-          0.2980392156862745,
-          0.3254901960784314
-        ],
+        "components": [0.27450980392156865, 0.2980392156862745, 0.3254901960784314],
         "alpha": 1
       },
       "$description": "--sf-muted"
@@ -56,11 +40,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.9568627450980393,
-          0.9607843137254902,
-          0.9647058823529412
-        ],
+        "components": [0.9568627450980393, 0.9607843137254902, 0.9647058823529412],
         "alpha": 1
       },
       "$description": "--sf-background"
@@ -69,11 +49,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.803921568627451,
-          0.8196078431372549,
-          0.8352941176470589
-        ],
+        "components": [0.803921568627451, 0.8196078431372549, 0.8352941176470589],
         "alpha": 1
       },
       "$description": "--sf-border"
@@ -82,11 +58,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.14901960784313725,
-          0.45098039215686275,
-          0.21568627450980393
-        ],
+        "components": [0.14901960784313725, 0.45098039215686275, 0.21568627450980393],
         "alpha": 1
       },
       "$description": "--sf-success"
@@ -95,11 +67,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.5411764705882353,
-          0.3607843137254902,
-          0.0
-        ],
+        "components": [0.5411764705882353, 0.3607843137254902, 0.0],
         "alpha": 1
       },
       "$description": "--sf-warning"
@@ -108,11 +76,7 @@
       "$type": "color",
       "$value": {
         "colorSpace": "srgb",
-        "components": [
-          0.7411764705882353,
-          0.17254901960784313,
-          0.058823529411764705
-        ],
+        "components": [0.7411764705882353, 0.17254901960784313, 0.058823529411764705],
         "alpha": 1
       },
       "$description": "--sf-danger"
@@ -121,11 +85,7 @@
   "fontFamily": {
     "body": {
       "$type": "fontFamily",
-      "$value": [
-        "Pretendard GOV",
-        "Malgun Gothic",
-        "sans-serif"
-      ]
+      "$value": ["Pretendard GOV", "Malgun Gothic", "sans-serif"]
     }
   },
   "fontSize": {
@@ -221,6 +181,53 @@
         "value": 48,
         "unit": "px"
       }
+    },
+    "20": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "px"
+      }
+    },
+    "64": {
+      "$type": "dimension",
+      "$value": {
+        "value": 64,
+        "unit": "px"
+      }
+    }
+  },
+  "$description": "보안길잡이 지정 디자인 시안의 교환용 토큰. Figma 네이티브 파일 또는 특정 플러그인 가져오기 호환을 보장하지 않습니다. 디자인 변경 시 design-overrides.css와 함께 검토합니다.",
+  "layout": {
+    "canvasWidth": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1920,
+        "unit": "px"
+      },
+      "$description": "설계 기준 폭. 최소 너비가 아닙니다."
+    },
+    "sidebarWidth": {
+      "$type": "dimension",
+      "$value": {
+        "value": 240,
+        "unit": "px"
+      }
+    },
+    "controlHeight": {
+      "$type": "dimension",
+      "$value": {
+        "value": 48,
+        "unit": "px"
+      }
+    },
+    "panelRadius": {
+      "$type": "dimension",
+      "$value": {
+        "value": 10,
+        "unit": "px"
+      },
+      "$description": "--sf-radius"
     }
   }
 }

@@ -1,25 +1,28 @@
 <!doctype html>
-
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>컴포넌트 가이드 · 보안길잡이 디자인 편집본</title>
+    <title>컴포넌트 가이드 · 보안길잡이 디자이너 작업본</title>
     <link href="assets/vendor/krds/css/token/krds_tokens.css" rel="stylesheet" />
     <link href="assets/css/tokens.css" rel="stylesheet" />
     <link href="assets/css/styles.css" rel="stylesheet" />
     <link href="assets/css/workspace.css" rel="stylesheet" />
     <link href="assets/css/handoff.css" rel="stylesheet" />
-    <script defer="" src="assets/js/sample-data.js"></script>
+
+    <link rel="stylesheet" href="assets/css/screen-patches.css" />
+    <link rel="stylesheet" href="assets/css/designer.css" />
+    <link rel="stylesheet" href="assets/css/design-overrides.css" />
+    <script defer="" src="assets/js/portable-assets.js"></script>
     <script defer="" src="assets/js/interactions.js"></script>
+    <script defer="" src="assets/js/designer.js"></script>
   </head>
-  <body data-base="" data-screen="16-components.html">
+  <body data-base="" data-screen="16-components.html" data-design-example="true">
     <a class="skip-link" href="#main-content">본문 바로가기</a>
     <div class="demo-strip">
-      <div>디자인 편집본 · 합성 데이터 · 실제 저장·AI·기관 전송 없음</div>
-      <a download="" href="docs/design.md"
-        >design.md v3.0
-        <svg
+      <div>디자이너 작업본 · 합성 데이터 · 실제 저장·AI·기관 전송 없음</div>
+      <a href="docs/DESIGN_GUIDE.html"
+        ><svg
           aria-hidden="true"
           class="lucide lucide-download"
           fill="none"
@@ -28,14 +31,15 @@
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
-          viewbox="0 0 24 24"
+          viewBox="0 0 24 24"
           width="13"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path d="M12 15V3"></path>
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <path d="m7 10 5 5 5-5"></path></svg
-      ></a>
+        >디자인 작업 가이드</a
+      >
     </div>
     <header class="app-header">
       <div class="header-inner">
@@ -56,7 +60,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            viewbox="0 0 24 24"
+            viewBox="0 0 24 24"
             width="23"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -75,7 +79,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="27"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -98,7 +102,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -110,15 +114,23 @@
             >화면 설정
           </button>
           <div class="role-picker">
-            <label for="role">화면 역할</label
-            ><select aria-label="화면 역할" id="role">
+            <label for="role">역할 시안</label
+            ><select aria-label="탐색할 역할 시안" id="role">
               <option selected="" value="SECURITY">정보보안</option>
               <option value="INFRA">ICT인프라</option>
               <option value="APPLICANT">신청자</option>
               <option value="ADMIN">기관 관리자</option>
             </select>
+            <button
+              type="button"
+              class="text-button design-role-open"
+              data-action="role-preview"
+              aria-label="선택한 역할의 대표 시안 열기"
+            >
+              열기
+            </button>
           </div>
-          <span class="user-avatar">김</span>
+          <span class="user-avatar">가</span>
         </div>
       </div>
     </header>
@@ -134,7 +146,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            viewbox="0 0 24 24"
+            viewBox="0 0 24 24"
             width="19"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -146,7 +158,7 @@
             ></path>
             <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
           </svg>
-          <div><strong>디지털혁신기관</strong><small>예시 기관 · 업무 공간</small></div>
+          <div><strong>가상 디지털기관</strong><small>예시 기관 · 업무 공간</small></div>
         </div>
         <div class="nav-label">협의 업무</div>
         <nav aria-label="주요 메뉴">
@@ -160,7 +172,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -179,7 +191,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -198,7 +210,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -223,7 +235,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -244,7 +256,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="16"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -264,7 +276,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -289,8 +301,8 @@
             <span class="overline">01 / FOUNDATION</span>
             <h2>색상과 의미</h2>
             <p>
-              값은 assets/css/tokens.css에서 수정합니다. 색상과 텍스트를 함께 사용해 상태를
-              구분하세요.
+              공통 변경은 assets/css/design-overrides.css에 기록합니다. 원본 CSS를 보존하고 색상과
+              텍스트를 함께 사용해 상태를 구분하세요.
             </p>
             <div class="swatch-grid">
               <div class="swatch">
@@ -337,7 +349,7 @@
             <p>Pretendard GOV · 기본 본문 17px · 행간 1.5 · 일반 400 / 굵게 700</p>
             <div class="type-example">
               <span>H1 · 32px</span>
-              <h1>업무 한눈에 보기</h1>
+              <p class="design-type-h1">업무 한눈에 보기</p>
             </div>
             <div class="type-example">
               <span>H2 · 24px</span>
@@ -415,11 +427,14 @@
             <fieldset>
               <legend>확인·선택</legend>
               <div class="component-row">
-                <label class="check-label"><input type="checkbox" />근거와 값을 확인했습니다</label
+                <label class="check-label"
+                  ><input type="checkbox" id="screen-16-field-06" />근거와 값을 확인했습니다</label
                 ><label class="check-label"
-                  ><input checked="" name="kit-workflow" type="radio" />병렬 검토</label
+                  ><input checked="" name="kit-workflow" type="radio" id="screen-16-field-07" />병렬
+                  검토</label
                 ><label class="check-label"
-                  ><input name="kit-workflow" type="radio" />순차 검토</label
+                  ><input name="kit-workflow" type="radio" id="screen-16-field-08" />순차
+                  검토</label
                 >
               </div>
             </fieldset>
@@ -451,28 +466,19 @@
             <button class="button" data-action="help" type="button">모달 동작 확인</button>
           </section>
           <section class="sf-panel handoff-section">
-            <span class="overline"
-              >06 /
-              <div><span style="width: 4px"></span><small>4px</small></div>
-              <div><span style="width: 8px"></span><small>8px</small></div>
-              <div><span style="width: 12px"></span><small>12px</small></div>
-              <div><span style="width: 16px"></span><small>16px</small></div>
-              <div><span style="width: 24px"></span><small>24px</small></div>
-              <div><span style="width: 32px"></span><small>32px</small></div>
-              <div><span style="width: 40px"></span><small>40px</small></div>
-              <div><span style="width: 48px"></span><small>48px</small></div>
-              &amp; RESPONSIVE</span
-            >
+            <span class="overline">06 / SPACING &amp; RESPONSIVE</span>
             <h2>간격과 반응형</h2>
             <div class="spacing-scale">
               <div><span style="width: 4px"></span><small>4px</small></div>
               <div><span style="width: 8px"></span><small>8px</small></div>
               <div><span style="width: 12px"></span><small>12px</small></div>
               <div><span style="width: 16px"></span><small>16px</small></div>
+              <div><span style="width: 20px"></span><small>20px</small></div>
               <div><span style="width: 24px"></span><small>24px</small></div>
               <div><span style="width: 32px"></span><small>32px</small></div>
               <div><span style="width: 40px"></span><small>40px</small></div>
               <div><span style="width: 48px"></span><small>48px</small></div>
+              <div><span style="width: 64px"></span><small>64px</small></div>
             </div>
             <div class="table-scroll">
               <table class="sf-table">
@@ -511,18 +517,155 @@
               </table>
             </div>
           </section>
+          <section class="sf-panel handoff-section design-state-board" id="state-variants">
+            <h2>컴포넌트 상태 비교</h2>
+            <p>
+              정적 상태 표시는 프로젝트 작업용 확장입니다. 실제 포인터·키보드로 hover·focus 동작도
+              함께 확인해 주세요.
+            </p>
+            <div class="design-state-grid">
+              <div class="design-state-cell">
+                <strong>기본</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="default"
+                  data-action="notice"
+                >
+                  답변 저장</button
+                ><code>Button / default</code>
+              </div>
+              <div class="design-state-cell">
+                <strong>마우스 올림</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="hover"
+                  data-action="notice"
+                >
+                  답변 저장</button
+                ><code>Button / hover</code>
+              </div>
+              <div class="design-state-cell">
+                <strong>누름</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="pressed"
+                  data-action="notice"
+                >
+                  답변 저장</button
+                ><code>Button / pressed</code>
+              </div>
+              <div class="design-state-cell">
+                <strong>키보드 초점</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="focus"
+                  data-action="notice"
+                >
+                  답변 저장</button
+                ><code>Button / focus</code>
+              </div>
+              <div class="design-state-cell">
+                <strong>비활성</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="disabled"
+                  data-action="notice"
+                  disabled=""
+                >
+                  답변 저장</button
+                ><code>Button / disabled</code>
+              </div>
+              <div class="design-state-cell">
+                <strong>처리 중</strong
+                ><button
+                  type="button"
+                  class="button primary"
+                  data-state="loading"
+                  data-action="notice"
+                  disabled=""
+                  aria-busy="true"
+                >
+                  요청 처리 중</button
+                ><code>Button / loading</code>
+              </div>
+            </div>
+            <p class="field-hint">
+              처리 중·비활성 버튼은 조작하지 않습니다. 다른 버튼은 상태 설명을 여는 디자인
+              예시입니다.
+            </p>
+            <h3>출처와 확인 상태는 별도 정보입니다.</h3>
+            <div class="design-state-grid">
+              <div class="design-state-cell">
+                <strong>사용자 답변</strong>
+                <p>이용 대상: 가상 기관 직원</p>
+                <span class="sf-badge green">확인 완료</span>
+              </div>
+              <div class="design-state-cell">
+                <strong>AI 추론</strong>
+                <p>외부 연계 후보 · 합성 원문 3절 근거</p>
+                <span class="sf-badge amber">미확정</span>
+              </div>
+              <div class="design-state-cell">
+                <strong>담당자 입력</strong>
+                <p>통신 목적: 가상 연계 조회</p>
+                <span class="sf-badge amber">담당자 확인 필요</span>
+              </div>
+              <div class="design-state-cell">
+                <strong>담당자 확인</strong>
+                <p>입력값과 합성 근거의 대조 기록</p>
+                <span class="sf-badge green">확인 완료</span>
+              </div>
+            </div>
+            <p class="field-hint">
+              출처가 없으면 담당자 확인 필요로 표시합니다. AI 원출처는 사람이 확인해도 그대로
+              남깁니다.
+            </p>
+            <h3>값의 상태</h3>
+            <div class="component-row">
+              <span class="sf-badge gray">미입력</span><span class="sf-badge amber">미확정</span
+              ><span class="sf-badge gray">미해당</span
+              ><span class="sf-badge green">확인 완료</span>
+            </div>
+            <p class="field-hint">
+              미입력은 답변 없음, 미확정은 값이 있으나 확인 전, 미해당은 이유를 확인한 제외, 확인
+              완료는 사람이 근거를 확인한 상태입니다.
+            </p>
+            <div class="sf-field">
+              <label for="kit-readonly">읽기 전용 신청번호</label
+              ><input
+                id="kit-readonly"
+                value="SYNTHETIC-2026-0001"
+                readonly=""
+                aria-describedby="kit-readonly-hint"
+              />
+              <p id="kit-readonly-hint" class="field-hint">
+                읽기 전용 값은 선택·복사할 수 있습니다.
+              </p>
+            </div>
+          </section>
         </main>
         <footer class="app-footer">
           <div>
             <strong>보안길잡이 AI</strong
-            ><span>2026 공공 AI 대전환 챌린지 · 팀 검토용 프로토타입</span>
+            ><span>2026 공공 AI 대전환 챌린지 · 디자이너 작업용 HTML</span>
           </div>
           <button class="text-button" data-action="help" type="button">데이터 처리 안내</button
           ><small>© 2026 보안길잡이 프로젝트</small>
         </footer>
       </div>
     </div>
-    <dialog aria-labelledby="design-dialog-title" class="sf-dialog" id="design-dialog">
+    <dialog
+      aria-labelledby="design-dialog-title"
+      class="sf-dialog"
+      id="design-dialog"
+      aria-describedby="design-dialog-body"
+      data-design-ignore=""
+    >
       <h2 id="design-dialog-title">화면 예시</h2>
       <div class="sf-dialog-body" id="design-dialog-body"></div>
       <div class="sf-dialog-actions" id="design-dialog-actions"></div>
@@ -535,6 +678,6 @@
         ×
       </button>
     </dialog>
-    <div class="toast" hidden="" id="design-toast" role="status"></div>
+    <div class="toast" hidden="" id="design-toast" role="status" data-design-ignore=""></div>
   </body>
 </html>

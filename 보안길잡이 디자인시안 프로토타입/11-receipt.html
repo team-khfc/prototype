@@ -3,22 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>제출 완료 · 보안길잡이 디자인 편집본</title>
+    <title>제출 완료 · 보안길잡이 디자이너 작업본</title>
     <link rel="stylesheet" href="assets/vendor/krds/css/token/krds_tokens.css" />
     <link rel="stylesheet" href="assets/css/tokens.css" />
     <link rel="stylesheet" href="assets/css/styles.css" />
     <link rel="stylesheet" href="assets/css/workspace.css" />
     <link rel="stylesheet" href="assets/css/handoff.css" />
-    <script defer src="assets/js/sample-data.js"></script>
-    <script defer src="assets/js/interactions.js"></script>
+
+    <link rel="stylesheet" href="assets/css/screen-patches.css" />
+    <link rel="stylesheet" href="assets/css/designer.css" />
+    <link rel="stylesheet" href="assets/css/design-overrides.css" />
+    <script defer="" src="assets/js/portable-assets.js"></script>
+    <script defer="" src="assets/js/interactions.js"></script>
+    <script defer="" src="assets/js/designer.js"></script>
   </head>
-  <body data-screen="11-receipt.html" data-base="">
+  <body data-screen="11-receipt.html" data-base="" data-design-example="true">
     <a class="skip-link" href="#main-content">본문 바로가기</a>
     <div class="demo-strip">
-      <div>디자인 편집본 · 합성 데이터 · 실제 저장·AI·기관 전송 없음</div>
-      <a download="" href="docs/design.md"
-        >design.md v3.0
-        <svg
+      <div>디자이너 작업본 · 합성 데이터 · 실제 저장·AI·기관 전송 없음</div>
+      <a href="docs/DESIGN_GUIDE.html"
+        ><svg
           aria-hidden="true"
           class="lucide lucide-download"
           fill="none"
@@ -27,14 +31,15 @@
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
-          viewbox="0 0 24 24"
+          viewBox="0 0 24 24"
           width="13"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path d="M12 15V3"></path>
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <path d="m7 10 5 5 5-5"></path></svg
-      ></a>
+        >디자인 작업 가이드</a
+      >
     </div>
     <header class="app-header">
       <div class="header-inner">
@@ -55,7 +60,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            viewbox="0 0 24 24"
+            viewBox="0 0 24 24"
             width="23"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -74,7 +79,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="27"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -97,7 +102,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -109,15 +114,23 @@
             >화면 설정
           </button>
           <div class="role-picker">
-            <label for="role">화면 역할</label
-            ><select aria-label="화면 역할" id="role">
+            <label for="role">역할 시안</label
+            ><select aria-label="탐색할 역할 시안" id="role">
               <option value="SECURITY">정보보안</option>
               <option value="INFRA">ICT인프라</option>
               <option selected="" value="APPLICANT">신청자</option>
               <option value="ADMIN">기관 관리자</option>
             </select>
+            <button
+              type="button"
+              class="text-button design-role-open"
+              data-action="role-preview"
+              aria-label="선택한 역할의 대표 시안 열기"
+            >
+              열기
+            </button>
           </div>
-          <span class="user-avatar">이</span>
+          <span class="user-avatar">가</span>
         </div>
       </div>
     </header>
@@ -133,7 +146,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            viewbox="0 0 24 24"
+            viewBox="0 0 24 24"
             width="19"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -145,7 +158,7 @@
             ></path>
             <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
           </svg>
-          <div><strong>디지털혁신기관</strong><small>예시 기관 · 업무 공간</small></div>
+          <div><strong>가상 디지털기관</strong><small>예시 기관 · 업무 공간</small></div>
         </div>
         <div class="nav-label">신청 업무</div>
         <nav aria-label="주요 메뉴">
@@ -159,7 +172,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -178,7 +191,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -197,7 +210,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -214,7 +227,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="20"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -239,7 +252,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -260,7 +273,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="16"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -280,7 +293,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              viewbox="0 0 24 24"
+              viewBox="0 0 24 24"
               width="18"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -297,8 +310,8 @@
           <!-- 이 영역의 HTML을 직접 편집하세요. 다른 페이지의 동일 컴포넌트도 함께 확인하세요. -->
           <div class="sf-heading">
             <div>
-              <h1 id="page-title" tabindex="-1">시연 제출을 완료했습니다</h1>
-              <p>제출 시점의 내용을 제출본 v1으로 보관했습니다.</p>
+              <h1 id="page-title" tabindex="-1">제출 완료 상태 예시</h1>
+              <p>제출번호·시각·제출본 버전·다음 단계를 안내하는 화면 시안입니다.</p>
             </div>
           </div>
           <section class="sf-panel receipt">
@@ -312,15 +325,15 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                viewbox="0 0 24 24"
+                viewBox="0 0 24 24"
                 width="52"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="m9 12 2 2 4-4"></path></svg
             ></span>
-            <h2>보안 협의 신청을 제출했습니다.</h2>
-            <p>이 시연의 데이터만 갱신했으며 실제 기관에는 전송하지 않았습니다.</p>
+            <h2>보안 협의 신청 제출 후 안내</h2>
+            <p>아래 번호와 시각은 합성 예시이며 실제 제출·보관·기관 전송은 실행하지 않았습니다.</p>
             <dl class="summary-list">
               <div>
                 <dt>신청번호</dt>
@@ -336,7 +349,7 @@
               </div>
               <div>
                 <dt>다음 단계</dt>
-                <dd>최종 담당자 검토 · 실제 처리 결과 확인</dd>
+                <dd>제출 서류 접수 · 실제 처리와 구분</dd>
               </div>
             </dl>
             <div class="receipt-actions">
@@ -350,7 +363,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  viewbox="0 0 24 24"
+                  viewBox="0 0 24 24"
                   width="18"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -371,21 +384,32 @@
         <footer class="app-footer">
           <div>
             <strong>보안길잡이 AI</strong
-            ><span>2026 공공 AI 대전환 챌린지 · 팀 검토용 프로토타입</span>
+            ><span>2026 공공 AI 대전환 챌린지 · 디자이너 작업용 HTML</span>
           </div>
           <button class="text-button" data-action="help" type="button">데이터 처리 안내</button
           ><small>© 2026 보안길잡이 프로젝트</small>
         </footer>
       </div>
     </div>
-    <dialog class="sf-dialog" id="design-dialog" aria-labelledby="design-dialog-title">
+    <dialog
+      class="sf-dialog"
+      id="design-dialog"
+      aria-labelledby="design-dialog-title"
+      aria-describedby="design-dialog-body"
+      data-design-ignore=""
+    >
       <h2 id="design-dialog-title">화면 예시</h2>
       <div class="sf-dialog-body" id="design-dialog-body"></div>
       <div class="sf-dialog-actions" id="design-dialog-actions"></div>
-      <button type="button" class="icon-button dialog-close" data-close aria-label="대화상자 닫기">
+      <button
+        type="button"
+        class="icon-button dialog-close"
+        data-close=""
+        aria-label="대화상자 닫기"
+      >
         ×
       </button>
     </dialog>
-    <div class="toast" id="design-toast" role="status" hidden></div>
+    <div class="toast" id="design-toast" role="status" hidden="" data-design-ignore=""></div>
   </body>
 </html>
